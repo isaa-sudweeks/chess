@@ -7,7 +7,7 @@ import java.util.*;
  * signature of the existing methods.
  */
 public class ChessBoard {
-    private List<List<Object>> pieces; //This is a list that contains all pieces with their positions
+    private List<List<Object>> pieces = new ArrayList<>(); //This is a list that contains all pieces with their positions
     public ChessBoard() {
         
     }
