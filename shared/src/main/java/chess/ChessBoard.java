@@ -34,7 +34,12 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        throw new RuntimeException("Not implemented");
+        for (List<Object> i : pieces){
+            if(i.contains(position)){
+                return (ChessPiece) i.get(1);
+            }
+        }
+        return null;
     }
 
     /**
