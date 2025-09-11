@@ -1,5 +1,5 @@
 package chess;
-
+import java.util.*;
 /**
  * A chessboard that can hold and rearrange chess pieces.
  * <p>
@@ -7,7 +7,7 @@ package chess;
  * signature of the existing methods.
  */
 public class ChessBoard {
-
+    private List<List<Object>> pieces; //This is a list that contains all pieces with their positions
     public ChessBoard() {
         
     }
@@ -19,7 +19,11 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        throw new RuntimeException("Not implemented");
+        List<Object> temp = new ArrayList<>();
+        temp.add(position);
+        temp.add(piece);
+        pieces.add(temp);
+
     }
 
     /**
