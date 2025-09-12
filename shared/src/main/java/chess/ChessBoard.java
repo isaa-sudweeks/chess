@@ -13,6 +13,45 @@ public class ChessBoard {
      * Creates a fresh chessboard
      */
     public ChessBoard() {
+        this.resetBoard();
+    }
+
+    /**
+     * Adds a chess piece to the chessboard
+     *
+     * @param position where to add the piece to
+     * @param piece    the piece to add
+     */
+    public void addPiece(ChessPosition position, ChessPiece piece) {
+        List<Object> temp = new ArrayList<>();
+        temp.add(position);
+        temp.add(piece);
+        pieces.add(temp);
+
+    }
+
+    /**
+     * Gets a chess piece on the chessboard
+     *
+     * @param position The position to get the piece from
+     * @return Either the piece at the position, or null if no piece is at that
+     * position
+     */
+    public ChessPiece getPiece(ChessPosition position) {
+        for (List<Object> i : pieces){
+            if(i.contains(position)){
+                return (ChessPiece) i.get(1);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Sets the board to the default starting board
+     * (How the game of chess normally starts)
+     */
+    public void resetBoard() {
+        pieces.clear();
         //Start with white side
         //First Rank
         ChessPiece rookW1 = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK);
@@ -74,43 +113,5 @@ public class ChessBoard {
         for (int i =1; i<=8;i++){
             addPiece(new ChessPosition(7,i),new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN));
         }
-    }
-
-    /**
-     * Adds a chess piece to the chessboard
-     *
-     * @param position where to add the piece to
-     * @param piece    the piece to add
-     */
-    public void addPiece(ChessPosition position, ChessPiece piece) {
-        List<Object> temp = new ArrayList<>();
-        temp.add(position);
-        temp.add(piece);
-        pieces.add(temp);
-
-    }
-
-    /**
-     * Gets a chess piece on the chessboard
-     *
-     * @param position The position to get the piece from
-     * @return Either the piece at the position, or null if no piece is at that
-     * position
-     */
-    public ChessPiece getPiece(ChessPosition position) {
-        for (List<Object> i : pieces){
-            if(i.contains(position)){
-                return (ChessPiece) i.get(1);
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Sets the board to the default starting board
-     * (How the game of chess normally starts)
-     */
-    public void resetBoard() {
-        throw new RuntimeException("Not implemented");
     }
 }
