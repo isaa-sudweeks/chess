@@ -50,6 +50,8 @@ public class ChessPiece {
         int x = myPosition.getColumn();
         int y = myPosition.getRow();
         PieceType promote = null;
+
+        //TODO I forgot to check if the pieces are ours or the other teams
         if (piece.getPieceType() == PieceType.PAWN){
             //White first
             if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
@@ -97,7 +99,29 @@ public class ChessPiece {
         return moves;
     }
 
+    public Collection<ChessMove> rookMoves(ChessBoard board, ChessPosition myPosition) {
+        ChessPiece piece = board.getPiece(myPosition);
+        List<ChessMove> moves = new ArrayList<>();
+        int x = myPosition.getColumn();
+        int y = myPosition.getRow();
+        PieceType promote = null;
 
+        for (int i = x; i <=8;i++){
+            ChessPiece oPiece = board.getPiece(new ChessPosition(y, i));
+            if (oPiece == null){
+                moves.add(new ChessMove(myPosition, new ChessPosition(y,i), promote));
+            }
+            if (oPiece.pieceColor == piece.pieceColor){
+                break;
+            }
+            if (oPiece.pieceColor != piece.pieceColor){
+                moves.add(new ChessMove(myPosition, new ChessPosition(y,i), promote));
+                break;
+            }
+        }
+
+        return moves;
+    }
     /**
      * Calculates all the positions a chess piece can move to
      * Does not take into account moves that are illegal due to leaving the king in
