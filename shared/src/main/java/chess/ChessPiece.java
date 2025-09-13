@@ -111,10 +111,10 @@ public class ChessPiece {
             if (oPiece == null){
                 moves.add(new ChessMove(myPosition, new ChessPosition(y,i), promote));
             }
-            if (oPiece.pieceColor == piece.pieceColor){
+            else if (oPiece.pieceColor == piece.pieceColor){
                 break;
             }
-            if (oPiece.pieceColor != piece.pieceColor){
+            else {
                 moves.add(new ChessMove(myPosition, new ChessPosition(y,i), promote));
                 break;
             }
