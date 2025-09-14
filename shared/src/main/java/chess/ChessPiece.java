@@ -133,6 +133,33 @@ public class ChessPiece {
             }
         }
 
+        for (int i = x; i >=1;i--){
+            ChessPiece oPiece = board.getPiece(new ChessPosition(y, i));
+            if (oPiece == null){
+                moves.add(new ChessMove(myPosition, new ChessPosition(y,i), promote));
+            }
+            else if (oPiece.pieceColor == piece.pieceColor){
+                break;
+            }
+            else {
+                moves.add(new ChessMove(myPosition, new ChessPosition(y,i), promote));
+                break;
+            }
+        }
+        for (int i = y; i >=1;i--){
+            ChessPiece oPiece = board.getPiece(new ChessPosition(i, x));
+            if (oPiece == null){
+                moves.add(new ChessMove(myPosition, new ChessPosition(i,x), promote));
+            }
+            else if (oPiece.pieceColor == piece.pieceColor){
+                break;
+            }
+            else {
+                moves.add(new ChessMove(myPosition, new ChessPosition(i,x), promote));
+                break;
+            }
+        }
+
         return moves;
     }
     public Collection<ChessMove> bishopMoves(ChessBoard board, ChessPosition myPosition) {
@@ -153,7 +180,7 @@ public class ChessPiece {
                     break;
                 }
         }
-        for (int i = 0; i+x >=0 && i+y>=0;i--) {
+        for (int i = 0; i+x >=1 && i+y>=1;i--) {
             ChessPiece oPiece = board.getPiece(new ChessPosition(y+i, x+i));
             if (oPiece == null) {
                 moves.add(new ChessMove(myPosition, new ChessPosition(y+i, x+i), promote));
@@ -164,7 +191,7 @@ public class ChessPiece {
                 break;
             }
         }
-        for (int i = 0; x-i >=0 && i+y<=8;i++) {
+        for (int i = 0; x-i >=1 && i+y<=8;i++) {
             ChessPiece oPiece = board.getPiece(new ChessPosition(y+i, x-i));
             if (oPiece == null) {
                 moves.add(new ChessMove(myPosition, new ChessPosition(y+i, x-i), promote));
@@ -175,7 +202,7 @@ public class ChessPiece {
                 break;
             }
         }
-        for (int i = 0; i+x <=8 && y-i>=0;i++) {
+        for (int i = 0; i+x <=8 && y-i>=1;i++) {
             ChessPiece oPiece = board.getPiece(new ChessPosition(y-i, x+i));
             if (oPiece == null) {
                 moves.add(new ChessMove(myPosition, new ChessPosition(y-i, x+i), promote));
