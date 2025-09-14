@@ -119,6 +119,43 @@ public class ChessPiece {
                 break;
             }
         }
+        for (int i = y; i <=8;i++){
+            ChessPiece oPiece = board.getPiece(new ChessPosition(i, x));
+            if (oPiece == null){
+                moves.add(new ChessMove(myPosition, new ChessPosition(i,x), promote));
+            }
+            else if (oPiece.pieceColor == piece.pieceColor){
+                break;
+            }
+            else {
+                moves.add(new ChessMove(myPosition, new ChessPosition(i,x), promote));
+                break;
+            }
+        }
+
+        return moves;
+    }
+    //TODO fix this so it works for bishops
+    public Collection<ChessMove> bishopMoves(ChessBoard board, ChessPosition myPosition) {
+        ChessPiece piece = board.getPiece(myPosition);
+        List<ChessMove> moves = new ArrayList<>();
+        int x = myPosition.getColumn();
+        int y = myPosition.getRow();
+        PieceType promote = null;
+
+        for (int i = x; i <=8;i++){
+            ChessPiece oPiece = board.getPiece(new ChessPosition(y, i));
+            if (oPiece == null){
+                moves.add(new ChessMove(myPosition, new ChessPosition(y,i), promote));
+            }
+            else if (oPiece.pieceColor == piece.pieceColor){
+                break;
+            }
+            else {
+                moves.add(new ChessMove(myPosition, new ChessPosition(y,i), promote));
+                break;
+            }
+        }
 
         return moves;
     }
@@ -135,6 +172,7 @@ public class ChessPiece {
         //Instantiate variable
         List<ChessMove> moves = new ArrayList<>();
         moves.addAll(pawnMoves(board, myPosition));
+        moves.addAll(rookMoves(board,myPosition));
 
 
 
