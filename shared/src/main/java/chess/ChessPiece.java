@@ -135,7 +135,6 @@ public class ChessPiece {
 
         return moves;
     }
-    //TODO fix this so it works for bishops
     public Collection<ChessMove> bishopMoves(ChessBoard board, ChessPosition myPosition) {
         ChessPiece piece = board.getPiece(myPosition);
         List<ChessMove> moves = new ArrayList<>();
@@ -143,16 +142,47 @@ public class ChessPiece {
         int y = myPosition.getRow();
         PieceType promote = null;
 
-        for (int i = x; i <=8;i++){
-            ChessPiece oPiece = board.getPiece(new ChessPosition(y, i));
-            if (oPiece == null){
-                moves.add(new ChessMove(myPosition, new ChessPosition(y,i), promote));
-            }
-            else if (oPiece.pieceColor == piece.pieceColor){
+        for (int i = 0; i+x <=8 && i+y <=8;i++) {
+                ChessPiece oPiece = board.getPiece(new ChessPosition(y+i, x+i));
+                if (oPiece == null) {
+                    moves.add(new ChessMove(myPosition, new ChessPosition(y+i, x+i), promote));
+                } else if (oPiece.pieceColor == piece.pieceColor) {
+                    break;
+                } else {
+                    moves.add(new ChessMove(myPosition, new ChessPosition(y+i, x+i), promote));
+                    break;
+                }
+        }
+        for (int i = 0; i+x >=0 && i+y>=0;i--) {
+            ChessPiece oPiece = board.getPiece(new ChessPosition(y+i, x+i));
+            if (oPiece == null) {
+                moves.add(new ChessMove(myPosition, new ChessPosition(y+i, x+i), promote));
+            } else if (oPiece.pieceColor == piece.pieceColor) {
+                break;
+            } else {
+                moves.add(new ChessMove(myPosition, new ChessPosition(y+i, x+i), promote));
                 break;
             }
-            else {
-                moves.add(new ChessMove(myPosition, new ChessPosition(y,i), promote));
+        }
+        for (int i = 0; x-i >=0 && i+y<=8;i++) {
+            ChessPiece oPiece = board.getPiece(new ChessPosition(y+i, x-i));
+            if (oPiece == null) {
+                moves.add(new ChessMove(myPosition, new ChessPosition(y+i, x-i), promote));
+            } else if (oPiece.pieceColor == piece.pieceColor) {
+                break;
+            } else {
+                moves.add(new ChessMove(myPosition, new ChessPosition(y+i, x-i), promote));
+                break;
+            }
+        }
+        for (int i = 0; i+x <=8 && y-i>=0;i++) {
+            ChessPiece oPiece = board.getPiece(new ChessPosition(y-i, x+i));
+            if (oPiece == null) {
+                moves.add(new ChessMove(myPosition, new ChessPosition(y-i, x+i), promote));
+            } else if (oPiece.pieceColor == piece.pieceColor) {
+                break;
+            } else {
+                moves.add(new ChessMove(myPosition, new ChessPosition(y-i, x+i), promote));
                 break;
             }
         }
@@ -173,6 +203,7 @@ public class ChessPiece {
         List<ChessMove> moves = new ArrayList<>();
         moves.addAll(pawnMoves(board, myPosition));
         moves.addAll(rookMoves(board,myPosition));
+        moves.addAll(bishopMoves(board, myPosition));
 
 
 
