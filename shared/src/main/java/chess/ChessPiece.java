@@ -104,7 +104,7 @@ public class ChessPiece {
         int x = myPosition.getColumn();
         int y = myPosition.getRow();
         PieceType promote = null;
-        if (piece.getPieceType() == PieceType.ROOK) {
+        if (piece.getPieceType() == PieceType.ROOK || piece.getPieceType() == PieceType.QUEEN) {
             for (int i = x; i <= 8; i++) {
                 ChessPiece oPiece = board.getPiece(new ChessPosition(y, i));
                 if (oPiece == null) {
@@ -159,7 +159,7 @@ public class ChessPiece {
         int x = myPosition.getColumn();
         int y = myPosition.getRow();
         PieceType promote = null;
-        if (piece.getPieceType() == PieceType.BISHOP) {
+        if (piece.getPieceType() == PieceType.BISHOP || piece.getPieceType() == PieceType.QUEEN) {
             for (int i = 0; i + x <= 8 && i + y <= 8; i++) {
                 ChessPiece oPiece = board.getPiece(new ChessPosition(y + i, x + i));
                 if (oPiece == null) {
@@ -205,6 +205,17 @@ public class ChessPiece {
                 }
             }
         }
+        return moves;
+    }
+
+    //TODO Complete this
+    public Collection<ChessMove> knightMoves(ChessBoard board, ChessPosition myPosition) {
+        ChessPiece piece = board.getPiece(myPosition);
+        List<ChessMove> moves = new ArrayList<>();
+        int x = myPosition.getColumn();
+        int y = myPosition.getRow();
+        PieceType promote = null;
+
         return moves;
     }
     /**
