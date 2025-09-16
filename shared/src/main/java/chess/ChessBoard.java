@@ -130,4 +130,34 @@ public class ChessBoard {
     public int hashCode() {
         return Objects.hashCode(pieces);
     }
+    @Override
+    public String toString(){
+        StringBuilder sb = new StringBuilder("|");
+        for (int row = 1; row <= 8; row++){
+            for (int col = 1; col <= 8; col++){
+                ChessPiece piece = getPiece(new ChessPosition(row, col));
+                if (piece.getPieceType() == ChessPiece.PieceType.KING){
+                    sb.append("K");
+                }
+                else if (piece.getPieceType() == ChessPiece.PieceType.KNIGHT){
+                    sb.append("Kn");
+                }
+                else if (piece.getPieceType() == ChessPiece.PieceType.PAWN){
+                    sb.append("P");
+                }
+                else if (piece.getPieceType() == ChessPiece.PieceType.BISHOP){
+                    sb.append("B");
+                }
+                else if (piece.getPieceType() == ChessPiece.PieceType.QUEEN){
+                    sb.append("Q");
+                }
+                else if (piece.getPieceType() == ChessPiece.PieceType.ROOK){
+                    sb.append("R");
+                }
+                sb.append("|");
+            }
+        sb.append("\n");
+        }
+        return sb.toString();
+    }
 }
