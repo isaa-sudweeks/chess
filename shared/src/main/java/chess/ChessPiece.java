@@ -92,49 +92,97 @@ public class ChessPiece {
 
         int x = myPosition.getColumn();
         int y = myPosition.getRow();
-        PieceType promote = null;
+        List<PieceType> promotes = new ArrayList<>();
 
         if (piece.getPieceType() == PieceType.PAWN){
             //White first
             if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
                 //Moving forward by 1 not promoting
                 if ((y+1) == 8){
-                    promote = PieceType.QUEEN;
+                    promotes.add(PieceType.QUEEN);
+                    //promotes.add(PieceType.PAWN);
+                    promotes.add(PieceType.BISHOP);
+                    promotes.add(PieceType.KNIGHT);
+                    promotes.add(PieceType.ROOK);
                 }
 
                 if (board.getPiece(new ChessPosition(y + 1, x)) == null) {
-                    moves.add(new ChessMove(myPosition, new ChessPosition(y + 1, x), promote));
+                    if (promotes.isEmpty()){
+                        moves.add(new ChessMove(myPosition, new ChessPosition(y + 1, x), null));
+                    }
+                    for (PieceType promote : promotes) {
+                        moves.add(new ChessMove(myPosition, new ChessPosition(y + 1, x), promote));
+                    }
                 }
-                if (y == 2 && board.getPiece(new ChessPosition(y+2,x))==null) {
-                    moves.add(new ChessMove(myPosition, new ChessPosition(y + 2, x), promote));
+                if (y == 2 && board.getPiece(new ChessPosition(y+2,x))==null && board.getPiece(new ChessPosition(y + 1, x)) == null) {
+                    if (promotes.isEmpty()){
+                        moves.add(new ChessMove(myPosition, new ChessPosition(y + 2, x), null));
+                    }
+                    for (PieceType promote : promotes) {
+                        moves.add(new ChessMove(myPosition, new ChessPosition(y + 2, x), promote));
+                    }
                 }
 
                 //Moving Diagonally to take
                 //First left direction
                 if (x != 1 && board.getPiece(new ChessPosition(y+1,x-1)) != null && board.getPiece((new ChessPosition(y+1, x-1))).getTeamColor() != piece.getTeamColor()){
-                    moves.add(new ChessMove(myPosition, new ChessPosition(y+1,x-1),promote));
+                    if (promotes.isEmpty()){
+                        moves.add(new ChessMove(myPosition, new ChessPosition(y + 1, x - 1), null));
+                    }
+                    for (PieceType promote : promotes) {
+                        moves.add(new ChessMove(myPosition, new ChessPosition(y + 1, x - 1), promote));
+                    }
                 }
                 //Right direction
                 if (x != 8 && board.getPiece(new ChessPosition(y+1,x+1)) != null && board.getPiece(new ChessPosition(y+1,x+1)).getTeamColor() != piece.getTeamColor()){
-                    moves.add(new ChessMove(myPosition, new ChessPosition(y+1,x+1),promote));
+                    if (promotes.isEmpty()){
+                        moves.add(new ChessMove(myPosition, new ChessPosition(y+1,x+1),null));
+                    }
+                    for (PieceType promote : promotes) {
+                        moves.add(new ChessMove(myPosition, new ChessPosition(y + 1, x + 1), promote));
+                    }
                 }
             }
             else if (piece.getTeamColor() == ChessGame.TeamColor.BLACK){
                 if ((y-1) == 1){
-                    promote = PieceType.QUEEN;
+                    promotes.add(PieceType.QUEEN);
+                    //promotes.add(PieceType.PAWN);
+                    promotes.add(PieceType.BISHOP);
+                    promotes.add(PieceType.KNIGHT);
+                    promotes.add(PieceType.ROOK);
                 }
                 if (board.getPiece(new ChessPosition(y-1, x)) == null) {
-                    moves.add(new ChessMove(myPosition, new ChessPosition(y - 1, x), promote));
+                    if (promotes.isEmpty()){
+                        moves.add(new ChessMove(myPosition, new ChessPosition(y - 1, x), null));
+                    }
+                    for (PieceType promote : promotes) {
+                        moves.add(new ChessMove(myPosition, new ChessPosition(y - 1, x), promote));
+                    }
                 }
-                if (y == 7 && board.getPiece(new ChessPosition(y-2,x))==null) {
-                    moves.add(new ChessMove(myPosition, new ChessPosition(y - 2, x), promote));
+                if (y == 7 && board.getPiece(new ChessPosition(y-2,x))==null && board.getPiece(new ChessPosition(y-1, x)) == null) {
+                    if (promotes.isEmpty()){
+                        moves.add(new ChessMove(myPosition, new ChessPosition(y - 2, x), null));
+                    }
+                    for (PieceType promote : promotes) {
+                        moves.add(new ChessMove(myPosition, new ChessPosition(y - 2, x), promote));
+                    }
                 }
                 if (x != 1 && board.getPiece(new ChessPosition(y-1,x-1)) != null){
-                    moves.add(new ChessMove(myPosition, new ChessPosition(y-1,x-1),promote));
+                    if (promotes.isEmpty()){
+                        moves.add(new ChessMove(myPosition, new ChessPosition(y - 1, x - 1), null));
+                    }
+                    for (PieceType promote : promotes) {
+                        moves.add(new ChessMove(myPosition, new ChessPosition(y - 1, x - 1), promote));
+                    }
                 }
                 //Right direction
                 if (x != 8 && board.getPiece(new ChessPosition(y-1,x+1)) != null){
-                    moves.add(new ChessMove(myPosition, new ChessPosition(y-1,x+1),promote));
+                    if (promotes.isEmpty()){
+                        moves.add(new ChessMove(myPosition, new ChessPosition(y - 1, x + 1), null));
+                    }
+                    for (PieceType promote : promotes) {
+                        moves.add(new ChessMove(myPosition, new ChessPosition(y - 1, x + 1), promote));
+                    }
                 }
             }
         }
