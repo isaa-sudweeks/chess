@@ -196,7 +196,7 @@ public class ChessPiece {
         int y = myPosition.getRow();
         PieceType promote = null;
         if (piece.getPieceType() == PieceType.ROOK || piece.getPieceType() == PieceType.QUEEN) {
-            for (int i = x; i <= 8; i++) {
+            for (int i = x+1; i <= 8; i++) {
                 ChessPiece oPiece = board.getPiece(new ChessPosition(y, i));
                 if (oPiece == null) {
                     moves.add(new ChessMove(myPosition, new ChessPosition(y, i), promote));
@@ -207,7 +207,7 @@ public class ChessPiece {
                     break;
                 }
             }
-            for (int i = y; i <= 8; i++) {
+            for (int i = y+1; i <= 8; i++) {
                 ChessPiece oPiece = board.getPiece(new ChessPosition(i, x));
                 if (oPiece == null) {
                     moves.add(new ChessMove(myPosition, new ChessPosition(i, x), promote));
@@ -219,7 +219,7 @@ public class ChessPiece {
                 }
             }
 
-            for (int i = x; i >= 1; i--) {
+            for (int i = x-1; i >= 1; i--) {
                 ChessPiece oPiece = board.getPiece(new ChessPosition(y, i));
                 if (oPiece == null) {
                     moves.add(new ChessMove(myPosition, new ChessPosition(y, i), promote));
@@ -230,7 +230,7 @@ public class ChessPiece {
                     break;
                 }
             }
-            for (int i = y; i >= 1; i--) {
+            for (int i = y-1; i >= 1; i--) {
                 ChessPiece oPiece = board.getPiece(new ChessPosition(i, x));
                 if (oPiece == null) {
                     moves.add(new ChessMove(myPosition, new ChessPosition(i, x), promote));
