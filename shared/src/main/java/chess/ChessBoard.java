@@ -13,7 +13,6 @@ public class ChessBoard {
      * Creates a fresh chessboard
      */
     public ChessBoard() {
-        this.resetBoard();
     }
 
     /**
