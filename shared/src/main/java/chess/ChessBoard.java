@@ -57,10 +57,10 @@ public class ChessBoard {
         addPiece(new ChessPosition(1,1),rookW1);
 
         ChessPiece bishopW1 = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.BISHOP);
-        addPiece(new ChessPosition(1,2),bishopW1);
+        addPiece(new ChessPosition(1,3),bishopW1);
 
         ChessPiece knightW1 = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT);
-        addPiece(new ChessPosition(1,3),knightW1);
+        addPiece(new ChessPosition(1,2),knightW1);
 
         ChessPiece queenW = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.QUEEN);
         addPiece(new ChessPosition(1,4),queenW);
@@ -69,10 +69,10 @@ public class ChessBoard {
         addPiece(new ChessPosition(1,5),kingW);
 
         ChessPiece knightW2 = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT);
-        addPiece(new ChessPosition(1,6),knightW2);
+        addPiece(new ChessPosition(1,7),knightW2);
 
         ChessPiece bishopW2 = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.BISHOP);
-        addPiece(new ChessPosition(1,7),bishopW2);
+        addPiece(new ChessPosition(1,6),bishopW2);
 
         ChessPiece rookW2 = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK);
         addPiece(new ChessPosition(1,8),rookW2);
@@ -88,10 +88,10 @@ public class ChessBoard {
         addPiece(new ChessPosition(8,1),rookB1);
 
         ChessPiece bishopB1 = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP);
-        addPiece(new ChessPosition(8,2),bishopW1);
+        addPiece(new ChessPosition(8,3),bishopW1);
 
         ChessPiece knightB1 = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KNIGHT);
-        addPiece(new ChessPosition(8,3), knightB1);
+        addPiece(new ChessPosition(8,2), knightB1);
 
         ChessPiece queenB = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.QUEEN);
         addPiece(new ChessPosition(8,4), queenB);
@@ -100,10 +100,10 @@ public class ChessBoard {
         addPiece(new ChessPosition(8,5), kingB);
 
         ChessPiece knightB2 = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KNIGHT);
-        addPiece(new ChessPosition(8,6), knightB2);
+        addPiece(new ChessPosition(8,7), knightB2);
 
         ChessPiece bishopB2 = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP);
-        addPiece(new ChessPosition(8,7),bishopB2);
+        addPiece(new ChessPosition(8,6),bishopB2);
 
         ChessPiece rookB2 = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK);
         addPiece(new ChessPosition(8,8), rookB2);
@@ -136,28 +136,32 @@ public class ChessBoard {
         for (int row = 1; row <= 8; row++){
             for (int col = 1; col <= 8; col++){
                 ChessPiece piece = getPiece(new ChessPosition(row, col));
-                if (piece.getPieceType() == ChessPiece.PieceType.KING){
-                    sb.append("K");
+                if (piece == null){
+                    sb.append("  ");
+                }
+                else if (piece.getPieceType() == ChessPiece.PieceType.KING){
+                    sb.append("K ");
                 }
                 else if (piece.getPieceType() == ChessPiece.PieceType.KNIGHT){
                     sb.append("Kn");
                 }
                 else if (piece.getPieceType() == ChessPiece.PieceType.PAWN){
-                    sb.append("P");
+                    sb.append("P ");
                 }
                 else if (piece.getPieceType() == ChessPiece.PieceType.BISHOP){
-                    sb.append("B");
+                    sb.append("B ");
                 }
                 else if (piece.getPieceType() == ChessPiece.PieceType.QUEEN){
-                    sb.append("Q");
+                    sb.append("Q ");
                 }
                 else if (piece.getPieceType() == ChessPiece.PieceType.ROOK){
-                    sb.append("R");
+                    sb.append("R ");
                 }
                 sb.append("|");
             }
-        sb.append("\n");
+        sb.append("\n|");
         }
+        sb.append(pieces);
         return sb.toString();
     }
 }
