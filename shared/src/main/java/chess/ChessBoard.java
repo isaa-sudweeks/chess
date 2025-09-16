@@ -121,9 +121,9 @@ public class ChessBoard {
             return false;
         }
         ChessBoard that = (ChessBoard) o;
-        for (int i =1; i<=8; i++){
-            for (int j =1; j<=8;j++){
-                ChessPosition temp = new ChessPosition(i,i);
+        for (int i = 1; i<=8; i++){
+            for (int j = 1; j <= 8;j++){
+                ChessPosition temp = new ChessPosition(j,i);
                 if (this.getPiece(temp) != that.getPiece(temp)){
                     return false;
                 }
