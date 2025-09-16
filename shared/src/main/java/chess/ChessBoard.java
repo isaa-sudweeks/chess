@@ -88,7 +88,7 @@ public class ChessBoard {
         addPiece(new ChessPosition(8,1),rookB1);
 
         ChessPiece bishopB1 = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP);
-        addPiece(new ChessPosition(8,3),bishopW1);
+        addPiece(new ChessPosition(8,3),bishopB1);
 
         ChessPiece knightB1 = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KNIGHT);
         addPiece(new ChessPosition(8,2), knightB1);
