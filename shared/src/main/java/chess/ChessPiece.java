@@ -207,14 +207,46 @@ public class ChessPiece {
         }
         return moves;
     }
-
-    //TODO Complete this
+    
     public Collection<ChessMove> knightMoves(ChessBoard board, ChessPosition myPosition) {
         ChessPiece piece = board.getPiece(myPosition);
         List<ChessMove> moves = new ArrayList<>();
         int x = myPosition.getColumn();
         int y = myPosition.getRow();
         PieceType promote = null;
+        //There are eight possible moves for knights
+        //Up 2 left 1
+        if ((y+2<=8 && x-1 >=0) && (board.getPiece(new ChessPosition(y+2,x-1)) == null || board.getPiece(new ChessPosition(y+2,x-1)).getTeamColor() != piece.getTeamColor())){
+            moves.add(new ChessMove(myPosition, new ChessPosition(y+2,x-1),promote));
+        }
+        //Up 2 right 1
+        if ((y+2<=8 && x+1 <=8) && (board.getPiece(new ChessPosition(y+2,x+1)) == null || board.getPiece(new ChessPosition(y+2,x+1)).getTeamColor() != piece.getTeamColor())){
+            moves.add(new ChessMove(myPosition, new ChessPosition(y+2,x+1),promote));
+        }
+        //left 2 up 1
+        if ((y+1<=8 && x-2 >=0) && (board.getPiece(new ChessPosition(y+1,x-2)) == null || board.getPiece(new ChessPosition(y+1,x-2)).getTeamColor() != piece.getTeamColor())){
+            moves.add(new ChessMove(myPosition, new ChessPosition(y+1,x-2),promote));
+        }
+        //right 2 up 1
+        if ((y+1<=8 && x+2 <=8) && (board.getPiece(new ChessPosition(y+1,x+2)) == null || board.getPiece(new ChessPosition(y+1,x+2)).getTeamColor() != piece.getTeamColor())){
+            moves.add(new ChessMove(myPosition, new ChessPosition(y+1,x+2),promote));
+        }
+        //Down 2 left 1
+        if ((y-2>=0 && x-1 >=0) && (board.getPiece(new ChessPosition(y-2,x-1)) == null || board.getPiece(new ChessPosition(y-2,x-1)).getTeamColor() != piece.getTeamColor())){
+            moves.add(new ChessMove(myPosition, new ChessPosition(y-2,x-1),promote));
+        }
+        //Down 2 right 1
+        if ((y-2>=0 && x+1 <=8) && (board.getPiece(new ChessPosition(y-2,x+1)) == null || board.getPiece(new ChessPosition(y-2,x+1)).getTeamColor() != piece.getTeamColor())){
+            moves.add(new ChessMove(myPosition, new ChessPosition(y-2,x+1),promote));
+        }
+        //left 2 down 1
+        if ((y-1>=0 && x-2 >=0) && (board.getPiece(new ChessPosition(y-1,x-2)) == null || board.getPiece(new ChessPosition(y-1,x-2)).getTeamColor() != piece.getTeamColor())){
+            moves.add(new ChessMove(myPosition, new ChessPosition(y-1,x-2),promote));
+        }
+        //right 2 down 1
+        if ((y-1>=0 && x+2 <=8) && (board.getPiece(new ChessPosition(y-1,x+2)) == null || board.getPiece(new ChessPosition(y-1,x+2)).getTeamColor() != piece.getTeamColor())){
+            moves.add(new ChessMove(myPosition, new ChessPosition(y-1,x+2),promote));
+        }
 
         return moves;
     }
@@ -233,6 +265,7 @@ public class ChessPiece {
         moves.addAll(pawnMoves(board, myPosition));
         moves.addAll(rookMoves(board,myPosition));
         moves.addAll(bishopMoves(board, myPosition));
+        moves.addAll(knightMoves(board, myPosition));
 
 
 
