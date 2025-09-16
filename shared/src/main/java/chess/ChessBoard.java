@@ -120,10 +120,12 @@ public class ChessBoard {
             return false;
         }
         ChessBoard that = (ChessBoard) o;
-        if (that.pieces.equals(pieces)){
-            return true;
+        for (List<Object> piece : pieces){
+            if (!that.pieces.contains(piece)){
+                return false ;
+            }
         }
-        return false;
+        return true;
     }
 
     @Override
@@ -161,7 +163,7 @@ public class ChessBoard {
             }
         sb.append("\n|");
         }
-        sb.append(pieces);
+        //sb.append(pieces);
         return sb.toString();
     }
 }

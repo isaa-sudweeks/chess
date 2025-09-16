@@ -31,6 +31,35 @@ public class ChessPiece {
     public int hashCode() {
         return Objects.hash(pieceColor, type);
     }
+    @Override
+    public String toString(){
+        StringBuilder sb = new StringBuilder();
+        if (pieceColor == ChessGame.TeamColor.WHITE){
+            sb.append("(W)");
+        }
+        else if (pieceColor == ChessGame.TeamColor.BLACK){
+            sb.append("(B)");
+        }
+        if (this.getPieceType() == PieceType.BISHOP){
+            sb.append("B");
+        }
+        else if (this.getPieceType() == PieceType.KING){
+            sb.append("K");
+        }
+        else if (this.getPieceType() == PieceType.PAWN){
+            sb.append("P");
+        }
+        else if (this.getPieceType() == PieceType.QUEEN){
+            sb.append("Q");
+        }
+        else if (this.getPieceType() == PieceType.KNIGHT){
+            sb.append("Kn");
+        }
+        else if (this.getPieceType() == PieceType.ROOK){
+            sb.append("R");
+        }
+        return sb.toString();
+    }
 
     /**
      * The various different chess piece options
