@@ -305,8 +305,8 @@ public class ChessPiece {
         //There is simply just a box of moves around the king
         if (piece.getPieceType() == PieceType.KING) {
             for (int i = Math.max(1, x - 1); i <= Math.min(x + 1, 8); i++) {
-                for (int j = Math.min(y + 1, 8); j <= Math.max(1, y - 1); j--) {
-                    if (i != x && j != y) {
+                for (int j = Math.min(y + 1, 8); j >= Math.max(1, y - 1); j--) {
+                    if (!(i == x && j == y)) {
                         if (board.getPiece(new ChessPosition(j, i)) == null || board.getPiece(new ChessPosition(j, i)).getTeamColor() != piece.getTeamColor()) {
                             moves.add(new ChessMove(myPosition, new ChessPosition(j, i), promote));
                         }
