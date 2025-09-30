@@ -72,7 +72,34 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        throw new RuntimeException("Not implemented");
+        Collection<ChessMove> validMoves = validMoves(move.getStartPosition());
+        ChessBoard temp = new ChessBoard();
+        if (validMoves.contains(move)){
+            int i_col = move.getStartPosition().getColumn();
+            int i_row = move.getStartPosition().getRow();
+            int e_col = move.getEndPosition().getColumn();
+            int e_row = move.getEndPosition().getRow();
+            for (int row = 1; row <=8;row++){
+                for (int col = 1; col<=8;col++){
+                    if (row == e_row && col == e_col){
+                        ChessPiece piece = new ChessPiece(board.getPiece(new ChessPosition(i_row,i_col)).getTeamColor(),board.getPiece(new ChessPosition(i_row,i_col)).getPieceType());
+                        temp.addPiece(new ChessPosition(row, col), piece);
+                    }
+                    else if (!(row == i_row && col == i_col)){
+                        ChessPiece piece = new ChessPiece(board.getPiece(new ChessPosition(row, col)).getTeamColor(),board.getPiece(new ChessPosition(row,col)).getPieceType());
+                        temp.addPiece(new ChessPosition(row, col), piece);
+                    }
+                }
+            }
+            setBoard(temp);
+        }
+        else {
+            StringBuilder sb = new StringBuilder();
+            sb.append(move);
+            sb.append(" is not a valid move");
+            throw new InvalidMoveException(sb.toString());
+        }
+
     }
 
     /**
