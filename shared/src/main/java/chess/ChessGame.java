@@ -67,10 +67,8 @@ public class ChessGame {
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         
         ChessPiece piece = board.getPiece(startPosition);
-        //if (isInCheck) do stuff to figure out how to see if the moves are still valid.
         List<ChessMove> temp = (List) piece.pieceMoves(board,startPosition);
         List<ChessMove> moves = new ArrayList<>();
-        //TODO: THere is a problem here removing pieces.
         for (ChessMove move : temp){
             if (!keepsCheck(move)){
                 moves.add(move);
@@ -105,15 +103,20 @@ public class ChessGame {
 
     private void forceMakeMove(int e_row, int e_col, int i_row, int i_col) {
         ChessBoard temp = new ChessBoard();
+        TeamColor clr = board.getPiece(new ChessPosition(i_row,i_col)).getTeamColor();
+        ChessPiece.PieceType type = board.getPiece(new ChessPosition(i_row,i_col)).getPieceType();
         for (int row = 1; row <=8;row++){
             for (int col = 1; col<=8;col++){
                 if (row == e_row && col == e_col){
-                    ChessPiece piece = new ChessPiece(board.getPiece(new ChessPosition(i_row, i_col)).getTeamColor(),board.getPiece(new ChessPosition(i_row, i_col)).getPieceType());
+                    ChessPiece piece = new ChessPiece(clr,type);
                     temp.addPiece(new ChessPosition(row, col), piece);
                 }
                 else if (!(row == i_row && col == i_col)){
-                    ChessPiece piece = new ChessPiece(board.getPiece(new ChessPosition(row, col)).getTeamColor(),board.getPiece(new ChessPosition(row,col)).getPieceType());
-                    temp.addPiece(new ChessPosition(row, col), piece);
+                    ChessPiece temp_piece = board.getPiece(new ChessPosition(row, col));
+                    if (temp_piece != null) {
+                        ChessPiece piece = new ChessPiece(board.getPiece(new ChessPosition(row, col)).getTeamColor(), board.getPiece(new ChessPosition(row, col)).getPieceType());
+                        temp.addPiece(new ChessPosition(row, col), piece);
+                    }
                 }
             }
         }
@@ -126,7 +129,7 @@ public class ChessGame {
             for (int col = 1; col<=8;col++){
                 ChessPiece piece = board.getPiece(new ChessPosition(row,col));
                 if (piece != null && teamColor == piece.getTeamColor()) {
-                    moves.addAll(validMoves(new ChessPosition(row,col)));
+                    moves.addAll(piece.pieceMoves(this.board,new ChessPosition(row,col)));
                 }
             }
         }
@@ -147,14 +150,13 @@ public class ChessGame {
     }
 
     public boolean keepsCheck(ChessMove move){
-        ChessBoard temp = new ChessBoard();
         TeamColor clr = this.board.getPiece(move.getStartPosition()).getTeamColor();
         //Simulate the move
         ChessGame simGame = new ChessGame();
         simGame.setBoard(this.board);
         //Manually set the board
-        simGame.forceMakeMove(move.getStartPosition().getRow(),move.getStartPosition().getColumn(),move.getEndPosition().getRow(),move.getStartPosition().getColumn());
-        if (simGame.isInCheck(clr)){
+        simGame.forceMakeMove(move.getEndPosition().getRow(),move.getEndPosition().getColumn(),move.getStartPosition().getRow(),move.getStartPosition().getColumn());
+        if (simGame.isInCheck(clr)){ //We have an inf loop
             return true;
         }
         return false;
@@ -168,13 +170,13 @@ public class ChessGame {
     public boolean isInCheck(TeamColor teamColor) {
         //Collect all the moves for the opposite team
 
-        TeamColor checkColor = TeamColor.WHITE;
+        TeamColor opponent = TeamColor.WHITE;
         ChessPosition kingPosition = getKingsPosition(teamColor);
         if (teamColor == TeamColor.WHITE){
-            checkColor = TeamColor.BLACK;
+            opponent = TeamColor.BLACK;
         }
  
-        List<ChessMove> moves = (List) getAllPosibleMoves(checkColor);
+        List<ChessMove> moves = (List) getAllPosibleMoves(opponent);
         for (ChessMove move : moves){
             if (move.getEndPosition().equals(kingPosition)){
                 return true;
