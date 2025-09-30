@@ -84,13 +84,25 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
+        if (board.getPiece(move.getStartPosition())==null){
+            throw new InvalidMoveException("No Piece at position");
+        }
+        if (board.getPiece(move.getStartPosition()).getTeamColor() != team){
+            throw new InvalidMoveException("Piece is not of your teams color");
+        }
         Collection<ChessMove> validMoves = validMoves(move.getStartPosition());
         if (validMoves.contains(move)){
             int i_col = move.getStartPosition().getColumn();
             int i_row = move.getStartPosition().getRow();
             int e_col = move.getEndPosition().getColumn();
             int e_row = move.getEndPosition().getRow();
-            forceMakeMove(e_row, e_col, i_row, i_col);
+            forceMakeMove(e_row, e_col, i_row, i_col, move.getPromotionPiece());
+            if (team == TeamColor.WHITE){
+                team = TeamColor.BLACK;
+            }
+            else {
+                team = TeamColor.WHITE;
+            }
         }
         else {
             StringBuilder sb = new StringBuilder();
@@ -101,14 +113,18 @@ public class ChessGame {
 
     }
 
-    private void forceMakeMove(int e_row, int e_col, int i_row, int i_col) {
+    private void forceMakeMove(int e_row, int e_col, int i_row, int i_col, ChessPiece.PieceType promotion) {
         ChessBoard temp = new ChessBoard();
         TeamColor clr = board.getPiece(new ChessPosition(i_row,i_col)).getTeamColor();
-        ChessPiece.PieceType type = board.getPiece(new ChessPosition(i_row,i_col)).getPieceType();
+        ChessPiece.PieceType type = board.getPiece(new ChessPosition(i_row, i_col)).getPieceType();
+        if (promotion != null) {
+            type = promotion;
+        }
+
         for (int row = 1; row <=8;row++){
             for (int col = 1; col<=8;col++){
                 if (row == e_row && col == e_col){
-                    ChessPiece piece = new ChessPiece(clr,type);
+                    ChessPiece piece = new ChessPiece(clr, type);
                     temp.addPiece(new ChessPosition(row, col), piece);
                 }
                 else if (!(row == i_row && col == i_col)){
@@ -155,7 +171,7 @@ public class ChessGame {
         ChessGame simGame = new ChessGame();
         simGame.setBoard(this.board);
         //Manually set the board
-        simGame.forceMakeMove(move.getEndPosition().getRow(),move.getEndPosition().getColumn(),move.getStartPosition().getRow(),move.getStartPosition().getColumn());
+        simGame.forceMakeMove(move.getEndPosition().getRow(),move.getEndPosition().getColumn(),move.getStartPosition().getRow(),move.getStartPosition().getColumn(),move.getPromotionPiece());
         if (simGame.isInCheck(clr)){ //We have an inf loop
             return true;
         }
