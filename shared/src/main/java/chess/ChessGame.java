@@ -138,6 +138,20 @@ public class ChessGame {
         }
         setBoard(temp);
     }
+    public Collection<ChessMove> getAllPosibleMovesStrict(TeamColor teamColor){
+        List<ChessMove> moves = new ArrayList<>();
+        for (int row = 1; row<=8;row++){
+            for (int col = 1; col<=8;col++){
+                ChessPiece piece = board.getPiece(new ChessPosition(row,col));
+                if (piece != null && teamColor == piece.getTeamColor()) {
+                    moves.addAll(validMoves(new ChessPosition(row,col)));
+                }
+            }
+        }
+
+        return moves;
+    }
+
 
     public Collection<ChessMove> getAllPosibleMoves(TeamColor teamColor){
         List<ChessMove> moves = new ArrayList<>();
@@ -210,7 +224,7 @@ public class ChessGame {
      */
     public boolean isInCheckmate(TeamColor teamColor) {
         if (isInCheck(teamColor)){
-            List moves = (List) getAllPosibleMoves(teamColor);
+            List moves = (List) getAllPosibleMovesStrict(teamColor); //I need to use valid moves here
             if (moves.isEmpty()){
                 return true;
             }
@@ -226,7 +240,7 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        List moves = (List) getAllPosibleMoves(teamColor);
+        List moves = (List) getAllPosibleMovesStrict(teamColor);
         if (moves.isEmpty() && !isInCheck(teamColor)){
             return true;
         }
