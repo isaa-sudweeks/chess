@@ -97,7 +97,16 @@ public class ChessGame {
      * @param board the new board to use
      */
     public void setBoard(ChessBoard board) {
-        throw new RuntimeException("Not implemented");
+        //Go Piece by piece
+        ChessBoard temp = new ChessBoard();
+        for (int row = 1; row<=8; row++){
+            for (int col = 1; col<=8; col++){
+                ChessPiece piece = board.getPiece(new ChessPosition(row, col));
+                if (piece != null){
+                    temp.addPiece(new ChessPosition(row,col),new ChessPiece(piece.pieceColor,piece.type));
+                }
+            }
+        }
     }
 
     /**
