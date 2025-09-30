@@ -7,8 +7,8 @@ import java.util.*;
  * signature of the existing methods.
  */
 public class ChessBoard {
-    private List<List<Object>> pieces = new ArrayList<>(); //This is a list that contains all pieces with their positions
-
+    //private List<List<Object>> pieces = new ArrayList<>();
+    private Map<ChessPosition, ChessPiece> pieces = new HashMap<>();
     /**
      * Creates a fresh chessboard
      */
@@ -22,10 +22,8 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        List<Object> temp = new ArrayList<>();
-        temp.add(position);
-        temp.add(piece);
-        pieces.add(temp);
+        pieces.put(position, piece);
+
 
     }
 
@@ -37,12 +35,7 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        for (List<Object> i : pieces){
-            if(i.contains(position)){
-                return (ChessPiece) i.get(1);
-            }
-        }
-        return null;
+        return pieces.get(position);
     }
 
     /**
@@ -116,17 +109,13 @@ public class ChessBoard {
 
     @Override
     public boolean equals(Object o) {
-        if (o == null || getClass() != ChessBoard.class) {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
         ChessBoard that = (ChessBoard) o;
-        for (List<Object> piece : pieces){
-            if (!that.pieces.contains(piece)){
-                return false ;
-            }
-        }
-        return true;
+        return Objects.equals(pieces, that.pieces);
     }
+
 
     @Override
     public int hashCode() {
