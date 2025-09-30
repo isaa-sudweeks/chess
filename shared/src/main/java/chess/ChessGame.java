@@ -68,11 +68,12 @@ public class ChessGame {
         
         ChessPiece piece = board.getPiece(startPosition);
         //if (isInCheck) do stuff to figure out how to see if the moves are still valid.
-        List<ChessMove> moves = (List) piece.pieceMoves(board,startPosition);
+        List<ChessMove> temp = (List) piece.pieceMoves(board,startPosition);
+        List<ChessMove> moves = new ArrayList<>();
         //TODO: THere is a problem here removing pieces.
-        for (ChessMove move : moves){
-            if (keepsCheck(move)){
-                moves.remove(move);
+        for (ChessMove move : temp){
+            if (!keepsCheck(move)){
+                moves.add(move);
             }
         }
         return moves;
@@ -147,14 +148,14 @@ public class ChessGame {
 
     public boolean keepsCheck(ChessMove move){
         ChessBoard temp = new ChessBoard();
-        if (isInCheck(board.getPiece(move.getStartPosition()).getTeamColor())){
-            //Simulate the move
-            ChessGame simGame = new ChessGame();
-            //Manually set the board 
-            simGame.forceMakeMove(move.getStartPosition().getRow(),move.getStartPosition().getColumn(),move.getEndPosition().getRow(),move.getStartPosition().getColumn());
-            if (simGame.isInCheck(board.getPiece(move.getStartPosition()).getTeamColor())){
-                return true;
-            }
+        TeamColor clr = this.board.getPiece(move.getStartPosition()).getTeamColor();
+        //Simulate the move
+        ChessGame simGame = new ChessGame();
+        simGame.setBoard(this.board);
+        //Manually set the board
+        simGame.forceMakeMove(move.getStartPosition().getRow(),move.getStartPosition().getColumn(),move.getEndPosition().getRow(),move.getStartPosition().getColumn());
+        if (simGame.isInCheck(clr)){
+            return true;
         }
         return false;
     }
@@ -230,6 +231,7 @@ public class ChessGame {
                 }
             }
         }
+        this.board = temp;
     }
 
     /**
