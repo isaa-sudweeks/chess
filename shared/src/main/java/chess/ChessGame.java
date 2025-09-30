@@ -13,6 +13,7 @@ public class ChessGame {
     private TeamColor team;
     private ChessBoard board = new ChessBoard();
     public ChessGame() {
+        team = TeamColor.WHITE;
         board.resetBoard();
     }
 
@@ -62,7 +63,8 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        throw new RuntimeException("Not implemented");
+        ChessPiece piece = board.getPiece(startPosition);
+        return piece.pieceMoves(board,startPosition);
     }
 
     /**
