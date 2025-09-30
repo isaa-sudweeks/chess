@@ -69,6 +69,7 @@ public class ChessGame {
         ChessPiece piece = board.getPiece(startPosition);
         //if (isInCheck) do stuff to figure out how to see if the moves are still valid.
         List<ChessMove> moves = (List) piece.pieceMoves(board,startPosition);
+        //TODO: THere is a problem here removing pieces.
         for (ChessMove move : moves){
             if (keepsCheck(move)){
                 moves.remove(move);
@@ -123,7 +124,7 @@ public class ChessGame {
         for (int row = 1; row<=8;row++){
             for (int col = 1; col<=8;col++){
                 ChessPiece piece = board.getPiece(new ChessPosition(row,col));
-                if (teamColor == piece.getTeamColor()) {
+                if (piece != null && teamColor == piece.getTeamColor()) {
                     moves.addAll(validMoves(new ChessPosition(row,col)));
                 }
             }
@@ -136,7 +137,7 @@ public class ChessGame {
         for (int row =1; row<=8;row++){
             for (int col =1; col<=8;col++){
                 ChessPiece piece = board.getPiece(new ChessPosition(row,col));
-                if (teamColor == piece.getTeamColor() && piece.getPieceType() == ChessPiece.PieceType.KING){
+                if (piece != null &&teamColor == piece.getTeamColor() && piece.getPieceType() == ChessPiece.PieceType.KING){
                     return new ChessPosition(row, col);
                 }
             }
