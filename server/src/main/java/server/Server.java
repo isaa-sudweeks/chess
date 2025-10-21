@@ -1,6 +1,7 @@
 package server;
 
 import io.javalin.*;
+import java.util.UUID;
 
 public class Server {
 
@@ -20,5 +21,9 @@ public class Server {
 
     public void stop() {
         javalin.stop();
+    }
+
+    public static String generateToken() {
+        return UUID.randomUUID().toString();
     }
 }
