@@ -23,7 +23,5 @@ public class Server {
         javalin.stop();
     }
 
-    public static String generateToken() {
-        return UUID.randomUUID().toString();
-    }
+
 }

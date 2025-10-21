@@ -5,31 +5,17 @@ import model.UserData;
 import java.util.HashMap;
 import java.util.Map;
 
-//TODO: Consider changing this so that it returns null if a user is not found
 public class MemoryUserDAO implements UserDAO {
     private Map<String,UserData> users = new HashMap<>();
     @Override
-    public UserData getUser(String username) throws DataAccessException {
+    public UserData getUser(String username) {
 
-        UserData user = users.get(username);
-        if (user == null){
-            throw new DataAccessException("User Not Found");
-        }
-        else{
-            return user;
-        }
+        return users.get(username);
     }
 
-
     @Override
-    public void addUser(UserData userData) throws DataAccessException {
-        try {
-            getUser(userData.username());
-            throw new DataAccessException("The user already exists");
-        }
-        catch (DataAccessException e){
+    public void addUser(UserData userData){
             users.put(userData.username(), userData);
-        }
     }
 
     @Override
