@@ -1,10 +1,12 @@
 package service;
 import dataaccess.DataAccessException;
+import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryUserDAO;
+import model.AuthData;
 import model.UserData;
 import org.junit.jupiter.api.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class UserServiceTests {
     @BeforeEach
@@ -31,8 +33,41 @@ public class UserServiceTests {
     }
 
     @Test
-    void testLoginPass(){
+    void testLoginPass() throws DataAccessException {
+        MemoryAuthDAO memoryAuthDAO = new MemoryAuthDAO();
+        AuthService authService = new AuthService(memoryAuthDAO);
+        MemoryUserDAO memoryUserDAO = new MemoryUserDAO();
+        UserService service = new UserService(authService, memoryUserDAO);
 
+        memoryUserDAO.addUser(new UserData("Isaac", "Sudweeks", "isuds@byu.edu"));
+
+        RegisterLoginResult actual = service.login(new LoginRequest("Isaac","Sudweeks"));
+        AuthData data = memoryAuthDAO.getAuth(actual.authToken());
+        assertEquals(data.username(), actual.userName());
     }
 
+    @Test
+    void testLoginFail() {
+        MemoryAuthDAO memoryAuthDAO = new MemoryAuthDAO();
+        AuthService authService = new AuthService(memoryAuthDAO);
+        MemoryUserDAO memoryUserDAO = new MemoryUserDAO();
+        UserService service = new UserService(authService, memoryUserDAO);
+        memoryUserDAO.addUser(new UserData("Isaac", "Sudweeks", "isuds@byu.edu"));
+        assertThrows(DataAccessException.class, () ->
+                service.login(new LoginRequest("Isaac","Sudweek"))); //Bad password
+    }
+    @Test
+    void testLogoutPass() throws DataAccessException {
+        MemoryAuthDAO memoryAuthDAO = new MemoryAuthDAO();
+        AuthService authService = new AuthService(memoryAuthDAO);
+        MemoryUserDAO memoryUserDAO = new MemoryUserDAO();
+        UserService service = new UserService(authService, memoryUserDAO);
+        memoryUserDAO.addUser(new UserData("Isaac", "Sudweeks", "isuds@byu.edu"));
+        RegisterLoginResult result = service.login(new LoginRequest("Isaac", "Sudweeks")); //See if I can figure out how to do this another way
+
+        assertNull(service.logout(result.authToken()));
+    }
+
+
 }
+

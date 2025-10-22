@@ -6,6 +6,13 @@ import java.util.UUID;
 
 public class AuthService {
     private MemoryAuthDAO authDAO = new MemoryAuthDAO();
+
+    public AuthService(MemoryAuthDAO authDAO){
+        this.authDAO = authDAO;
+    }
+
+    public AuthService(){}
+
     public static String generateToken() {
         return UUID.randomUUID().toString();
     }
@@ -14,7 +21,8 @@ public class AuthService {
         authDAO.addAuth(new AuthData(authToken, userName));
         return authToken;
     }
-    public void removeAuthData(String authToken) {
-        authDAO.removeAuth(authToken);
+    public AuthData removeAuthData(String authToken) {
+
+        return authDAO.removeAuth(authToken);
     }
 }

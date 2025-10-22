@@ -14,8 +14,9 @@ public class UserService {
 
     public UserService(){}
 
-    public UserService(AuthService authService){
-
+    public UserService(AuthService authService, MemoryUserDAO memoryUserDAO){
+        this.authService = authService;
+        this.dataAccess = memoryUserDAO;
     }
 
     public RegisterLoginResult register(RegisterRequest registerRequest) throws DataAccessException {
@@ -39,7 +40,10 @@ public class UserService {
             throw new DataAccessException("User not found or password doesn't match");
         }
     }
-    public void logout(String authToken){
-        authService.removeAuthData(authToken);
+    public Object logout(String authToken) throws DataAccessException {
+        if (authService.removeAuthData(authToken) == null){
+            throw new DataAccessException("User is not logged in");
+        }
+        return null;
     }
 }
