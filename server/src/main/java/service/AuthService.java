@@ -9,9 +9,9 @@ public class AuthService {
     public static String generateToken() {
         return UUID.randomUUID().toString();
     }
-    public void addAuthData(AuthData authData){
-        if (authDAO.getAuth(authData.authToken()) == null){
-            authDAO.addAuth(authData);
-        }
+    public String addAuthData(String userName){
+        String authToken = generateToken();
+        authDAO.addAuth(new AuthData(authToken, userName));
+        return authToken;
     }
 }
