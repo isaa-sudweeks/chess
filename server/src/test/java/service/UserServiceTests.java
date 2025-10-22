@@ -68,6 +68,19 @@ public class UserServiceTests {
         assertNull(service.logout(result.authToken()));
     }
 
+    @Test
+    void testLogoutFail() throws DataAccessException {
+        MemoryAuthDAO memoryAuthDAO = new MemoryAuthDAO();
+        AuthService authService = new AuthService(memoryAuthDAO);
+        MemoryUserDAO memoryUserDAO = new MemoryUserDAO();
+        UserService service = new UserService(authService, memoryUserDAO);
+        memoryUserDAO.addUser(new UserData("Isaac", "Sudweeks", "isuds@byu.edu"));
+        RegisterLoginResult result = service.login(new LoginRequest("Isaac", "Sudweeks"));
+        service.logout(result.authToken()); //Already Logged Out
+        assertThrows(DataAccessException.class, () ->
+                service.logout(result.authToken()));
+    }
+    }
 
-}
+
 
