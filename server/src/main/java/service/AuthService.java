@@ -14,4 +14,7 @@ public class AuthService {
         authDAO.addAuth(new AuthData(authToken, userName));
         return authToken;
     }
+    public void removeAuthData(String authToken) {
+        authDAO.removeAuth(authToken);
+    }
 }

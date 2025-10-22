@@ -30,7 +30,7 @@ public class UserService {
             throw new DataAccessException("User not found or password doesn't match");
         }
     }
-    public void logout(){
-
+    public void logout(String authToken){
+        authService.removeAuthData(authToken);
     }
 }
