@@ -10,8 +10,8 @@ import java.util.Map;
 public class MemoryGameDAO implements GameDAO{
     private Map<String, GameData> games = new HashMap<>();
     @Override
-    public List<GameData> listGames() {
-        return (List)games.values();
+    public Map<String, GameData> getGames() {
+        return games;
     }
 
     @Override
