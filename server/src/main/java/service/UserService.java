@@ -21,20 +21,20 @@ public class UserService {
 
     public RegisterLoginResult register(RegisterRequest registerRequest) throws DataAccessException {
 
-        if (dataAccess.getUser(registerRequest.userName()) == null){
-            dataAccess.addUser(new UserData(registerRequest.userName(), registerRequest.password(),registerRequest.email()));
-            String authToken = authService.addAuthData(registerRequest.userName());
-            return new RegisterLoginResult(registerRequest.userName(), authToken);
+        if (dataAccess.getUser(registerRequest.username()) == null){
+            dataAccess.addUser(new UserData(registerRequest.username(), registerRequest.password(),registerRequest.email()));
+            String authToken = authService.addAuthData(registerRequest.username());
+            return new RegisterLoginResult(registerRequest.username(), authToken);
         }
         else {
             throw new DataAccessException("User already taken");
         }
     }
     public RegisterLoginResult login(LoginRequest loginRequest) throws DataAccessException {
-        UserData userData = dataAccess.getUser(loginRequest.userName());
-        if ((dataAccess.getUser(loginRequest.userName())!= null) && (Objects.equals(userData.password(), loginRequest.password()))){
-            String authToken = authService.addAuthData(loginRequest.userName());
-            return new RegisterLoginResult(loginRequest.userName(), authToken);
+        UserData userData = dataAccess.getUser(loginRequest.username());
+        if ((dataAccess.getUser(loginRequest.username())!= null) && (Objects.equals(userData.password(), loginRequest.password()))){
+            String authToken = authService.addAuthData(loginRequest.username());
+            return new RegisterLoginResult(loginRequest.username(), authToken);
         }
         else {
             throw new DataAccessException("User not found or password doesn't match");

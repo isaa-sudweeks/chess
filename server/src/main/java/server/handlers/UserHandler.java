@@ -2,6 +2,7 @@ package server.handlers;
 import dataaccess.DataAccessException;
 import io.javalin.http.Context;
 import io.javalin.Javalin;
+import service.RegisterLoginResult;
 import service.RegisterRequest;
 import service.UserService;
 
@@ -11,9 +12,10 @@ public class UserHandler {
         app.post("/user",this::register);
     }
 
-    public void register(Context ctx) throws DataAccessException { //TODO: Test this
+    public void register(Context ctx) throws DataAccessException {
         RegisterRequest request = ctx.bodyAsClass(RegisterRequest.class);
-        service.register(request);
+        RegisterLoginResult result = service.register(request);
+        ctx.json(result);
     }
 }
 
