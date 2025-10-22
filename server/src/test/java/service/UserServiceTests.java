@@ -31,6 +31,8 @@ public class UserServiceTests {
     }
 
     @Test
-    void test
+    void testLoginPass(){
+
+    }
 
 }

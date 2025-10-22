@@ -13,6 +13,11 @@ public class UserService {
     }
 
     public UserService(){}
+
+    public UserService(AuthService authService){
+
+    }
+
     public RegisterLoginResult register(RegisterRequest registerRequest) throws DataAccessException {
 
         if (dataAccess.getUser(registerRequest.userName()) == null){
