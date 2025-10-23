@@ -118,103 +118,140 @@ public class ChessPiece {
         }
     }
 
+    private boolean isSquareEmpty(final ChessBoard board, final int row, final int col) {
+        if (!inBounds(row, col)) {
+            return false;
+        }
+        return null == board.getPiece(new ChessPosition(row, col));
+    }
+
+    private boolean isPawnStartRow(final ChessGame.TeamColor color, final int row) {
+        return (ChessGame.TeamColor.WHITE == color && 2 == row)
+                || (ChessGame.TeamColor.BLACK == color && 7 == row);
+    }
+
+    private List<PieceType> pawnPromotions(final int targetRow) {
+        final List<PieceType> promotes = new ArrayList<>();
+        if (8 == targetRow || 1 == targetRow) {
+            promotes.add(PieceType.QUEEN);
+            //promotes.add(PieceType.PAWN);
+            promotes.add(PieceType.BISHOP);
+            promotes.add(PieceType.KNIGHT);
+            promotes.add(PieceType.ROOK);
+        }
+        return promotes;
+    }
+
+    private void addPawnMoveWithPromotions(final List<ChessMove> moves,
+                                           final ChessPosition from,
+                                           final int row,
+                                           final int col,
+                                           final List<PieceType> promotes) {
+        if (!inBounds(row, col)) {
+            return;
+        }
+        final ChessPosition to = new ChessPosition(row, col);
+        if (promotes.isEmpty()) {
+            moves.add(new ChessMove(from, to, null));
+        }
+        for (final PieceType promote : promotes) {
+            moves.add(new ChessMove(from, to, promote));
+        }
+    }
+
+    private void addPawnForwardMoves(final List<ChessMove> moves,
+                                     final ChessBoard board,
+                                     final ChessPosition from,
+                                     final ChessPiece piece,
+                                     final int x,
+                                     final int y,
+                                     final int direction,
+                                     final List<PieceType> promotes) {
+        final int nextRow = y + direction;
+        if (!isSquareEmpty(board, nextRow, x)) {
+            return;
+        }
+        addPawnMoveWithPromotions(moves, from, nextRow, x, promotes);
+        if (isPawnStartRow(piece.getTeamColor(), y)) {
+            final int jumpRow = y + (direction * 2);
+            if (isSquareEmpty(board, jumpRow, x)) {
+                addPawnMoveWithPromotions(moves, from, jumpRow, x, promotes);
+            }
+        }
+    }
+
+    private void addPawnCaptureMove(final List<ChessMove> moves,
+                                    final ChessBoard board,
+                                    final ChessPosition from,
+                                    final ChessPiece piece,
+                                    final int row,
+                                    final int col,
+                                    final List<PieceType> promotes,
+                                    final boolean mustCaptureOpponent) {
+        if (!inBounds(row, col)) {
+            return;
+        }
+        final ChessPiece target = board.getPiece(new ChessPosition(row, col));
+        if (null == target) {
+            return;
+        }
+        if (mustCaptureOpponent && target.pieceColor == piece.pieceColor) {
+            return;
+        }
+        addPawnMoveWithPromotions(moves, from, row, col, promotes);
+    }
+
     public Collection<ChessMove> pawnMoves(final ChessBoard board, final ChessPosition myPosition) {
         final ChessPiece piece = board.getPiece(myPosition);
         final List<ChessMove> moves = new ArrayList<>();
 
         final int x = myPosition.getColumn();
         final int y = myPosition.getRow();
-        final List<PieceType> promotes = new ArrayList<>();
 
         if (PieceType.PAWN == piece.getPieceType()) {
             //White first
             if (ChessGame.TeamColor.WHITE == piece.getTeamColor()) {
-                //Moving forward by 1 not promoting
-                if (8 == (y + 1)) {
-                    promotes.add(PieceType.QUEEN);
-                    //promotes.add(PieceType.PAWN);
-                    promotes.add(PieceType.BISHOP);
-                    promotes.add(PieceType.KNIGHT);
-                    promotes.add(PieceType.ROOK);
-                }
-
-                if (null == board.getPiece(new ChessPosition(y + 1, x))) {
-                    if (promotes.isEmpty()) {
-                        moves.add(new ChessMove(myPosition, new ChessPosition(y + 1, x), null));
-                    }
-                    for (final PieceType promote : promotes) {
-                        moves.add(new ChessMove(myPosition, new ChessPosition(y + 1, x), promote));
-                    }
-                }
-                if (2 == y && null == board.getPiece(new ChessPosition(y + 2, x)) && null == board.getPiece(new ChessPosition(y + 1, x))) {
-                    if (promotes.isEmpty()) {
-                        moves.add(new ChessMove(myPosition, new ChessPosition(2 + 2, x), null));
-                    }
-                    for (final PieceType promote : promotes) {
-                        moves.add(new ChessMove(myPosition, new ChessPosition(y + 2, x), promote));
-                    }
-                }
-
-                //Moving Diagonally to take
-                //First left direction
-                if (1 != x && null != board.getPiece(new ChessPosition(y + 1, x - 1)) && board.getPiece((new ChessPosition(y + 1, x - 1))).pieceColor != piece.pieceColor) {
-                    if (promotes.isEmpty()) {
-                        moves.add(new ChessMove(myPosition, new ChessPosition(y + 1, x - 1), null));
-                    }
-                    for (final PieceType promote : promotes) {
-                        moves.add(new ChessMove(myPosition, new ChessPosition(y + 1, x - 1), promote));
-                    }
-                }
-                //Right direction
-                if (8 != x && null != board.getPiece(new ChessPosition(y + 1, x + 1)) && board.getPiece(new ChessPosition(y + 1, x + 1)).pieceColor != piece.pieceColor) {
-                    if (promotes.isEmpty()) {
-                        moves.add(new ChessMove(myPosition, new ChessPosition(y + 1, x + 1), null));
-                    }
-                    for (final PieceType promote : promotes) {
-                        moves.add(new ChessMove(myPosition, new ChessPosition(y + 1, x + 1), promote));
-                    }
-                }
+                final int direction = 1;
+                final List<PieceType> promotes = pawnPromotions(y + direction);
+                addPawnForwardMoves(moves, board, myPosition, piece, x, y, direction, promotes);
+                addPawnCaptureMove(
+                        moves,
+                        board,
+                        myPosition,
+                        piece,
+                        y + direction,
+                        x - 1, promotes,
+                        true);
+                addPawnCaptureMove(
+                        moves,
+                        board,
+                        myPosition,
+                        piece,
+                        y + direction,
+                        x + 1,
+                        promotes,
+                        true);
             } else if (ChessGame.TeamColor.BLACK == piece.getTeamColor()) {
-                if (1 == (y - 1)) {
-                    promotes.add(PieceType.QUEEN);
-                    //promotes.add(PieceType.PAWN);
-                    promotes.add(PieceType.BISHOP);
-                    promotes.add(PieceType.KNIGHT);
-                    promotes.add(PieceType.ROOK);
-                }
-                if (null == board.getPiece(new ChessPosition(y - 1, x))) {
-                    if (promotes.isEmpty()) {
-                        moves.add(new ChessMove(myPosition, new ChessPosition(y - 1, x), null));
-                    }
-                    for (final PieceType promote : promotes) {
-                        moves.add(new ChessMove(myPosition, new ChessPosition(y - 1, x), promote));
-                    }
-                }
-                if (7 == y && null == board.getPiece(new ChessPosition(y - 2, x)) && null == board.getPiece(new ChessPosition(y - 1, x))) {
-                    if (promotes.isEmpty()) {
-                        moves.add(new ChessMove(myPosition, new ChessPosition(7 - 2, x), null));
-                    }
-                    for (final PieceType promote : promotes) {
-                        moves.add(new ChessMove(myPosition, new ChessPosition(y - 2, x), promote));
-                    }
-                }
-                if (1 != x && null != board.getPiece(new ChessPosition(y - 1, x - 1))) {
-                    if (promotes.isEmpty()) {
-                        moves.add(new ChessMove(myPosition, new ChessPosition(y - 1, x - 1), null));
-                    }
-                    for (final PieceType promote : promotes) {
-                        moves.add(new ChessMove(myPosition, new ChessPosition(y - 1, x - 1), promote));
-                    }
-                }
-                //Right direction
-                if (8 != x && null != board.getPiece(new ChessPosition(y - 1, x + 1))) {
-                    if (promotes.isEmpty()) {
-                        moves.add(new ChessMove(myPosition, new ChessPosition(y - 1, x + 1), null));
-                    }
-                    for (final PieceType promote : promotes) {
-                        moves.add(new ChessMove(myPosition, new ChessPosition(y - 1, x + 1), promote));
-                    }
-                }
+                final int direction = -1;
+                final List<PieceType> promotes = pawnPromotions(y + direction);
+                addPawnForwardMoves(moves, board, myPosition, piece, x, y, direction, promotes);
+                addPawnCaptureMove(
+                        moves,
+                        board,
+                        myPosition,
+                        piece,
+                        y + direction,
+                        x - 1, promotes,
+                        false);
+                addPawnCaptureMove(
+                        moves,
+                        board,
+                        myPosition,
+                        piece,
+                        y + direction,
+                        x + 1,
+                        promotes,
+                        false);
             }
         }
         return moves;

@@ -103,7 +103,12 @@ public class ChessGame {
 
     }
 
-    private void forceMakeMove(final int eRow, final int eCol, final int iRow, final int iCol, final ChessPiece.PieceType promotion) {
+    private void forceMakeMove(final int eRow,
+                               final int eCol,
+                               final int iRow,
+                               final int iCol,
+                               final ChessPiece.PieceType promotion) {
+
         final ChessBoard temp = new ChessBoard();
         final TeamColor clr = this.board.getPiece(new ChessPosition(iRow, iCol)).getTeamColor();
         ChessPiece.PieceType type = this.board.getPiece(new ChessPosition(iRow, iCol)).getPieceType();
@@ -119,7 +124,9 @@ public class ChessGame {
                 } else if (!(row == iRow && col == iCol)) {
                     final ChessPiece chessPiece = this.board.getPiece(new ChessPosition(row, col));
                     if (null != chessPiece) {
-                        final ChessPiece piece = new ChessPiece(this.board.getPiece(new ChessPosition(row, col)).getTeamColor(), this.board.getPiece(new ChessPosition(row, col)).getPieceType());
+                        final ChessPiece piece = new ChessPiece(
+                                this.board.getPiece(new ChessPosition(row, col)).getTeamColor(),
+                                this.board.getPiece(new ChessPosition(row, col)).getPieceType());
                         temp.addPiece(new ChessPosition(row, col), piece);
                     }
                 }
@@ -174,8 +181,12 @@ public class ChessGame {
         final ChessGame simGame = new ChessGame();
         simGame.setBoard(board);
         //Manually set the board
-        simGame.forceMakeMove(move.getEndPosition().getRow(), move.getEndPosition().getColumn(), move.getStartPosition().getRow(), move.getStartPosition().getColumn(), move.getPromotionPiece());
-        //We have an inf loop
+        simGame.forceMakeMove(
+                move.getEndPosition().getRow(),
+                move.getEndPosition().getColumn(),
+                move.getStartPosition().getRow(),
+                move.getStartPosition().getColumn(),
+                move.getPromotionPiece());
         return simGame.isInCheck(clr);
     }
 
