@@ -71,10 +71,10 @@ public class GameServiceTests {
 
         //Get that game
         final Map<Integer, GameData> games = memoryGameDAO.getGames();
-        final GameData game = games.get(0);
+        final GameData game = games.get(1);
 
         //Check if the game has been created and is stored
-        assertEquals(new GameData(0, null, null, "Game1", new ChessGame()), game);
+        assertEquals(new GameData(1, null, null, "Game1", new ChessGame()), game);
 
     }
 

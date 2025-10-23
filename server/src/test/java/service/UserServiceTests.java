@@ -25,7 +25,7 @@ public class UserServiceTests {
         dataAccess.addUser(new UserData("Isaac", "Sudweeks", "isuds@byu.edu"));
         final UserService service = new UserService(dataAccess);
 
-        assertThrows(DataAccessException.class, () ->
+        assertThrows(AlreadyTakenException.class, () ->
                 service.register(new RegisterRequest("Isaac", "Sudweeks", "isuds@byu.edu")));
     }
 
@@ -50,7 +50,7 @@ public class UserServiceTests {
         final MemoryUserDAO memoryUserDAO = new MemoryUserDAO();
         final UserService service = new UserService(authService, memoryUserDAO);
         memoryUserDAO.addUser(new UserData("Isaac", "Sudweeks", "isuds@byu.edu"));
-        assertThrows(DataAccessException.class, () ->
+        assertThrows(UnauthorizedException.class, () ->
                 service.login(new LoginRequest("Isaac", "Sudweek"))); //Bad password
     }
 
@@ -81,7 +81,7 @@ public class UserServiceTests {
 
         service.logout(result.authToken()); //Already Logged Out
 
-        assertThrows(DataAccessException.class, () ->
+        assertThrows(UnauthorizedException.class, () ->
                 service.logout(result.authToken()));
     }
 
