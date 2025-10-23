@@ -24,8 +24,8 @@ public class GameService {
         this.authService = authService;
     }
 
-    public ListResult ListGames(final String authToken) throws UnauthorizedException {
-        //First make sure it is authorized
+    public ListResult listGames(final String authToken) throws UnauthorizedException {
+        //First, make sure it is authorized.
         if (null != authService.getAuth(authToken)) {
             final List<GameData> games = new ArrayList<>(this.dataAccess.getGames().values());
             return new ListResult(games);
@@ -34,7 +34,7 @@ public class GameService {
         }
     }
 
-    public int CreateGame(final CreateGameRequest createGameRequest) {
+    public int createGame(final CreateGameRequest createGameRequest) {
         if (null == createGameRequest.gameName()) {
             throw new BadRequestException("The game name is null");
         }
@@ -47,7 +47,8 @@ public class GameService {
         }
     }
 
-    public Object JoinGame(final JoinGameRequest joinGameRequest) {
+    @SuppressWarnings("SameReturnValue")
+    public Object joinGame(final JoinGameRequest joinGameRequest) {
 
         final Map<Integer, GameData> games = this.dataAccess.getGames();
         GameData gameData = games.get(joinGameRequest.gameID());

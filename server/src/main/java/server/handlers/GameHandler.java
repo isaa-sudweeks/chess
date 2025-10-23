@@ -12,16 +12,16 @@ public class GameHandler {
 
     public void registerRoutes(final Javalin app, final AuthService authService, final MemoryGameDAO memoryGameDAO) {
         service = new GameService(memoryGameDAO, authService);
-        app.get("/game", this::ListGames);
-        app.post("/game", this::CreateGame);
-        app.put("/game", this::JoinGame);
+        app.get("/game", this::listGames);
+        app.post("/game", this::createGame);
+        app.put("/game", this::joinGame);
 
     }
 
-    public void ListGames(final Context ctx) {
+    public void listGames(final Context ctx) {
         final String authToken = ctx.header("authorization");
         try {
-            final ListResult result = this.service.ListGames(authToken);
+            final ListResult result = this.service.listGames(authToken);
             ctx.json(result);
         } catch (final AlreadyTakenException e) {
             ctx.status(403).json(Map.of("message", "Error: already taken"));
@@ -34,12 +34,12 @@ public class GameHandler {
         }
     }
 
-    public void CreateGame(final Context ctx) {
+    public void createGame(final Context ctx) {
         final CreateGameRequest body = ctx.bodyAsClass(CreateGameRequest.class);
         final String authToken = ctx.header("authorization");
         final CreateGameRequest request = new CreateGameRequest(authToken, body.gameName());
         try {
-            final int gameID = this.service.CreateGame(request);
+            final int gameID = this.service.createGame(request);
             ctx.json(Map.of("gameID", gameID));
         } catch (final AlreadyTakenException e) {
             ctx.status(403).json(Map.of("message", "Error: already taken"));
@@ -52,12 +52,12 @@ public class GameHandler {
         }
     }
 
-    public void JoinGame(final Context ctx) {
+    public void joinGame(final Context ctx) {
         final JoinGameRequest body = ctx.bodyAsClass(JoinGameRequest.class);
         final String authToken = ctx.header("authorization");
         final JoinGameRequest request = new JoinGameRequest(body.playerColor(), body.gameID(), authToken);
         try {
-            this.service.JoinGame(request);
+            this.service.joinGame(request);
             ctx.json(Map.of());
         } catch (final AlreadyTakenException e) {
             ctx.status(403).json(Map.of("message", "Error: already taken"));

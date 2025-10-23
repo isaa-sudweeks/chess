@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class AuthServiceTests {
     @Test
-    public void TestAddAuthPass() {
+    public void testAddAuthPass() {
         final MemoryAuthDAO memoryAuthDAO = new MemoryAuthDAO();
         final AuthService authService = new AuthService(memoryAuthDAO);
 
@@ -22,7 +22,7 @@ public class AuthServiceTests {
     }
 
     @Test
-    public void TestRemoveAuthData() {
+    public void testRemoveAuthData() {
         final MemoryAuthDAO memoryAuthDAO = new MemoryAuthDAO();
         final AuthService authService = new AuthService(memoryAuthDAO);
 
@@ -36,7 +36,7 @@ public class AuthServiceTests {
     }
 
     @Test
-    public void TestClear() {
+    public void testClear() {
         final MemoryAuthDAO memoryAuthDAO = new MemoryAuthDAO();
         final AuthService authService = new AuthService(memoryAuthDAO);
 

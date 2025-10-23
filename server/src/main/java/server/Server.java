@@ -12,22 +12,22 @@ import service.AuthService;
 public class Server {
 
     private final Javalin javalin;
-    private final MemoryGameDAO memoryGameDAO = new MemoryGameDAO();
-    private final MemoryUserDAO memoryUserDAO = new MemoryUserDAO();
     AuthService authService = new AuthService();
 
 
     public Server() {
         this.javalin = Javalin.create(config -> {
             config.staticFiles.add("web");
-            //Setup a global JSON mapper so I do not need to GSON all the time
+            //Set up a global JSON mapper, so I do not need to GSON all the time
             config.jsonMapper(new JavalinGson());
         });
 
         //Handlers
-        new UserHandler().registerRoutes(this.javalin, this.authService, this.memoryUserDAO);
-        new GameHandler().registerRoutes(this.javalin, this.authService, this.memoryGameDAO);
-        new DataBaseHandler().registerRoutes(this.javalin, this.authService, this.memoryUserDAO, this.memoryGameDAO);
+        MemoryUserDAO memoryUserDAO = new MemoryUserDAO();
+        new UserHandler().registerRoutes(this.javalin, this.authService, memoryUserDAO);
+        MemoryGameDAO memoryGameDAO = new MemoryGameDAO();
+        new GameHandler().registerRoutes(this.javalin, this.authService, memoryGameDAO);
+        new DataBaseHandler().registerRoutes(this.javalin, this.authService, memoryUserDAO, memoryGameDAO);
 
 
     }

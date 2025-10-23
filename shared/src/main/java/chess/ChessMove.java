@@ -59,12 +59,11 @@ public class ChessMove {
 
     @Override
     public String toString() {
-        String sb = "Starting Location: " +
+        return "Starting Location: " +
                 this.startPosition +
                 " Moving Location: " +
                 this.endPosition +
                 " Promotion Peice: " +
                 this.promotionPiece;
-        return sb;
     }
 }

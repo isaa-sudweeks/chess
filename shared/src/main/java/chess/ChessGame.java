@@ -128,7 +128,7 @@ public class ChessGame {
         this.setBoard(temp);
     }
 
-    public Collection<ChessMove> getAllPosibleMovesStrict(final TeamColor teamColor) {
+    public Collection<ChessMove> getAllPossibleMovesStrict(final TeamColor teamColor) {
         final List<ChessMove> moves = new ArrayList<>();
         for (int row = 1; 8 >= row; row++) {
             for (int col = 1; 8 >= col; col++) {
@@ -142,7 +142,7 @@ public class ChessGame {
         return moves;
     }
 
-    public Collection<ChessMove> getAllPosibleMoves(final TeamColor teamColor) {
+    public Collection<ChessMove> getAllPossibleMoves(final TeamColor teamColor) {
         final List<ChessMove> moves = new ArrayList<>();
         for (int row = 1; 8 >= row; row++) {
             for (int col = 1; 8 >= col; col++) {
@@ -194,7 +194,7 @@ public class ChessGame {
             opponent = TeamColor.BLACK;
         }
 
-        final List<ChessMove> moves = (List) this.getAllPosibleMoves(opponent);
+        final List<ChessMove> moves = (List) this.getAllPossibleMoves(opponent);
         for (final ChessMove move : moves) {
             if (move.getEndPosition().equals(kingPosition)) {
                 return true;
@@ -212,7 +212,7 @@ public class ChessGame {
      */
     public boolean isInCheckmate(final TeamColor teamColor) {
         if (this.isInCheck(teamColor)) {
-            final List moves = (List) this.getAllPosibleMovesStrict(teamColor); //I need to use valid moves here
+            final List moves = (List) this.getAllPossibleMovesStrict(teamColor); //I need to use valid moves here
             return moves.isEmpty();
         }
         return false;
@@ -226,7 +226,7 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(final TeamColor teamColor) {
-        final List moves = (List) this.getAllPosibleMovesStrict(teamColor);
+        final List moves = (List) this.getAllPossibleMovesStrict(teamColor);
         return moves.isEmpty() && !this.isInCheck(teamColor);
     }
 

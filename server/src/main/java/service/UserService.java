@@ -24,7 +24,7 @@ public class UserService {
 
     public RegisterLoginResult register(final RegisterRequest registerRequest) throws DataAccessException {
 
-        //Check if password or username are null
+        //Check if the password or username are null
         if (null == registerRequest.password() || null == registerRequest.username()) {
             throw new BadRequestException("The user needs a password/username");
         }
@@ -57,6 +57,7 @@ public class UserService {
         }
     }
 
+    @SuppressWarnings("SameReturnValue")
     public Object logout(final String authToken) throws DataAccessException {
         if (null == authService.removeAuthData(authToken)) {
             throw new UnauthorizedException("User is not logged in");

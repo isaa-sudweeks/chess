@@ -1,85 +1,83 @@
 package service;
+
 import dataaccess.DataAccessException;
 import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryUserDAO;
 import model.AuthData;
 import model.UserData;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class UserServiceTests {
-    @BeforeEach
-    public void init() {
-    }
-
     @Test
     void testRegisterPass() throws DataAccessException {
-        MemoryUserDAO dataAccess = new MemoryUserDAO();
-        UserService service = new UserService(dataAccess);
+        final MemoryUserDAO dataAccess = new MemoryUserDAO();
+        final UserService service = new UserService(dataAccess);
         service.register(new RegisterRequest("Isaac", "Sudweeks", "isuds@byu.edu"));
-        UserData data = dataAccess.getUser("Isaac");
+        final UserData data = dataAccess.getUser("Isaac");
         assertEquals(new UserData("Isaac", "Sudweeks", "isuds@byu.edu"), data);
     }
 
     @Test
     void testRegisterFail() {
-        MemoryUserDAO dataAccess = new MemoryUserDAO();
-        dataAccess.addUser(new UserData("Isaac","Sudweeks", "isuds@byu.edu"));
-        UserService service = new UserService(dataAccess);
+        final MemoryUserDAO dataAccess = new MemoryUserDAO();
+        dataAccess.addUser(new UserData("Isaac", "Sudweeks", "isuds@byu.edu"));
+        final UserService service = new UserService(dataAccess);
 
         assertThrows(DataAccessException.class, () ->
-                service.register(new RegisterRequest("Isaac","Sudweeks", "isuds@byu.edu")));
+                service.register(new RegisterRequest("Isaac", "Sudweeks", "isuds@byu.edu")));
     }
 
     @Test
     void testLoginPass() throws DataAccessException {
-        MemoryAuthDAO memoryAuthDAO = new MemoryAuthDAO();
-        AuthService authService = new AuthService(memoryAuthDAO);
-        MemoryUserDAO memoryUserDAO = new MemoryUserDAO();
-        UserService service = new UserService(authService, memoryUserDAO);
+        final MemoryAuthDAO memoryAuthDAO = new MemoryAuthDAO();
+        final AuthService authService = new AuthService(memoryAuthDAO);
+        final MemoryUserDAO memoryUserDAO = new MemoryUserDAO();
+        final UserService service = new UserService(authService, memoryUserDAO);
 
         memoryUserDAO.addUser(new UserData("Isaac", "Sudweeks", "isuds@byu.edu"));
 
-        RegisterLoginResult actual = service.login(new LoginRequest("Isaac","Sudweeks"));
-        AuthData data = memoryAuthDAO.getAuth(actual.authToken());
+        final RegisterLoginResult actual = service.login(new LoginRequest("Isaac", "Sudweeks"));
+        final AuthData data = memoryAuthDAO.getAuth(actual.authToken());
         assertEquals(data.username(), actual.username());
     }
 
     @Test
     void testLoginFail() {
-        MemoryAuthDAO memoryAuthDAO = new MemoryAuthDAO();
-        AuthService authService = new AuthService(memoryAuthDAO);
-        MemoryUserDAO memoryUserDAO = new MemoryUserDAO();
-        UserService service = new UserService(authService, memoryUserDAO);
+        final MemoryAuthDAO memoryAuthDAO = new MemoryAuthDAO();
+        final AuthService authService = new AuthService(memoryAuthDAO);
+        final MemoryUserDAO memoryUserDAO = new MemoryUserDAO();
+        final UserService service = new UserService(authService, memoryUserDAO);
         memoryUserDAO.addUser(new UserData("Isaac", "Sudweeks", "isuds@byu.edu"));
         assertThrows(DataAccessException.class, () ->
-                service.login(new LoginRequest("Isaac","Sudweek"))); //Bad password
+                service.login(new LoginRequest("Isaac", "Sudweek"))); //Bad password
     }
+
     @Test
     void testLogoutPass() throws DataAccessException {
-        MemoryAuthDAO memoryAuthDAO = new MemoryAuthDAO();
-        AuthService authService = new AuthService(memoryAuthDAO);
-        MemoryUserDAO memoryUserDAO = new MemoryUserDAO();
-        UserService service = new UserService(authService, memoryUserDAO);
+        final MemoryAuthDAO memoryAuthDAO = new MemoryAuthDAO();
+        final AuthService authService = new AuthService(memoryAuthDAO);
+        final MemoryUserDAO memoryUserDAO = new MemoryUserDAO();
+        final UserService service = new UserService(authService, memoryUserDAO);
         memoryUserDAO.addUser(new UserData("Isaac", "Sudweeks", "isuds@byu.edu"));
-        RegisterLoginResult result = service.login(new LoginRequest("Isaac", "Sudweeks")); //See if I can figure out how to do this another way
+        final RegisterLoginResult result = service.login(new LoginRequest("Isaac", "Sudweeks")); //See if I can figure out how to do this another way
 
         assertNull(service.logout(result.authToken()));
     }
 
     @Test
     void testLogoutFail() throws DataAccessException {
-        MemoryAuthDAO memoryAuthDAO = new MemoryAuthDAO();
-        AuthService authService = new AuthService(memoryAuthDAO);
-        MemoryUserDAO memoryUserDAO = new MemoryUserDAO();
+        final MemoryAuthDAO memoryAuthDAO = new MemoryAuthDAO();
+        final AuthService authService = new AuthService(memoryAuthDAO);
+        final MemoryUserDAO memoryUserDAO = new MemoryUserDAO();
 
-        UserService service = new UserService(authService, memoryUserDAO);
+        final UserService service = new UserService(authService, memoryUserDAO);
 
         //Add a user
         memoryUserDAO.addUser(new UserData("Isaac", "Sudweeks", "isuds@byu.edu"));
 
-        RegisterLoginResult result = service.login(new LoginRequest("Isaac", "Sudweeks"));
+        final RegisterLoginResult result = service.login(new LoginRequest("Isaac", "Sudweeks"));
 
         service.logout(result.authToken()); //Already Logged Out
 
@@ -88,12 +86,12 @@ public class UserServiceTests {
     }
 
     @Test
-    void testClear(){
-        MemoryAuthDAO memoryAuthDAO = new MemoryAuthDAO();
-        AuthService authService = new AuthService(memoryAuthDAO);
-        MemoryUserDAO memoryUserDAO = new MemoryUserDAO();
+    void testClear() {
+        final MemoryAuthDAO memoryAuthDAO = new MemoryAuthDAO();
+        final AuthService authService = new AuthService(memoryAuthDAO);
+        final MemoryUserDAO memoryUserDAO = new MemoryUserDAO();
 
-        UserService service = new UserService(authService, memoryUserDAO);
+        final UserService service = new UserService(authService, memoryUserDAO);
 
         //Add a user
         memoryUserDAO.addUser(new UserData("Isaac", "Sudweeks", "isuds@byu.edu"));
@@ -102,7 +100,7 @@ public class UserServiceTests {
 
         assertNull(memoryUserDAO.getUser("Isaac"));
     }
-    }
+}
 
 
 

@@ -48,10 +48,9 @@ public class ChessPosition {
 
     @Override
     public String toString() {
-        String sb = " Col: " +
+        return " Col: " +
                 this.col +
                 " Row: " +
                 this.row;
-        return sb;
     }
 }
