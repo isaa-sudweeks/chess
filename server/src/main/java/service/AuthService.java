@@ -13,7 +13,7 @@ public class AuthService {
 
     public AuthService(){}
 
-    public static String generateToken() {
+    private static String generateToken() {
         return UUID.randomUUID().toString();
     }
     public String addAuthData(String userName){
@@ -26,5 +26,9 @@ public class AuthService {
     }
     public AuthData getAuth(String authToken){
         return authDAO.getAuth(authToken);
+    }
+
+    public void clear(){
+        authDAO.clear();
     }
 }

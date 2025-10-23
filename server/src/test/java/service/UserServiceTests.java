@@ -43,7 +43,7 @@ public class UserServiceTests {
 
         RegisterLoginResult actual = service.login(new LoginRequest("Isaac","Sudweeks"));
         AuthData data = memoryAuthDAO.getAuth(actual.authToken());
-        assertEquals(data.username(), actual.userName());
+        assertEquals(data.username(), actual.username());
     }
 
     @Test
@@ -73,12 +73,34 @@ public class UserServiceTests {
         MemoryAuthDAO memoryAuthDAO = new MemoryAuthDAO();
         AuthService authService = new AuthService(memoryAuthDAO);
         MemoryUserDAO memoryUserDAO = new MemoryUserDAO();
+
         UserService service = new UserService(authService, memoryUserDAO);
+
+        //Add a user
         memoryUserDAO.addUser(new UserData("Isaac", "Sudweeks", "isuds@byu.edu"));
+
         RegisterLoginResult result = service.login(new LoginRequest("Isaac", "Sudweeks"));
+
         service.logout(result.authToken()); //Already Logged Out
+
         assertThrows(DataAccessException.class, () ->
                 service.logout(result.authToken()));
+    }
+
+    @Test
+    void testClear(){
+        MemoryAuthDAO memoryAuthDAO = new MemoryAuthDAO();
+        AuthService authService = new AuthService(memoryAuthDAO);
+        MemoryUserDAO memoryUserDAO = new MemoryUserDAO();
+
+        UserService service = new UserService(authService, memoryUserDAO);
+
+        //Add a user
+        memoryUserDAO.addUser(new UserData("Isaac", "Sudweeks", "isuds@byu.edu"));
+        //Clear users
+        service.clear();
+
+        assertNull(memoryUserDAO.getUser("Isaac"));
     }
     }
 
