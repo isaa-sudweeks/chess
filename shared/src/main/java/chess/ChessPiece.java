@@ -71,6 +71,53 @@ public class ChessPiece {
         return this.type;
     }
 
+    // --- helpers to reduce duplication ---
+    private boolean inBounds(final int row, final int col) {
+        return 1 <= row && row <= 8 && 1 <= col && col <= 8;
+    }
+
+    private void addMoveIfFreeOrCapture(final List<ChessMove> moves,
+                                        final ChessBoard board,
+                                        final ChessPosition from,
+                                        final int row,
+                                        final int col,
+                                        final PieceType promote,
+                                        final ChessPiece piece) {
+        if (!inBounds(row, col)) {
+            return;
+        }
+        final ChessPiece oPiece = board.getPiece(new ChessPosition(row, col));
+        if (null == oPiece || oPiece.pieceColor != piece.pieceColor) {
+            moves.add(new ChessMove(from, new ChessPosition(row, col), promote));
+        }
+    }
+
+    private void sweep(final List<ChessMove> moves,
+                       final ChessBoard board,
+                       final ChessPosition from,
+                       final int startRow,
+                       final int startCol,
+                       final int dRow,
+                       final int dCol,
+                       final PieceType promote,
+                       final ChessPiece piece) {
+        int r = startRow + dRow;
+        int c = startCol + dCol;
+        while (inBounds(r, c)) {
+            final ChessPiece oPiece = board.getPiece(new ChessPosition(r, c));
+            if (null == oPiece) {
+                moves.add(new ChessMove(from, new ChessPosition(r, c), promote));
+            } else if (oPiece.pieceColor == piece.pieceColor) {
+                break;
+            } else {
+                moves.add(new ChessMove(from, new ChessPosition(r, c), promote));
+                break;
+            }
+            r += dRow;
+            c += dCol;
+        }
+    }
+
     public Collection<ChessMove> pawnMoves(final ChessBoard board, final ChessPosition myPosition) {
         final ChessPiece piece = board.getPiece(myPosition);
         final List<ChessMove> moves = new ArrayList<>();
@@ -179,52 +226,13 @@ public class ChessPiece {
         final int x = myPosition.getColumn();
         final int y = myPosition.getRow();
         final PieceType promote = null;
-        if (PieceType.ROOK == piece.getPieceType() || PieceType.QUEEN == piece.getPieceType()) {
-            for (int i = x + 1; 8 >= i; i++) {
-                final ChessPiece oPiece = board.getPiece(new ChessPosition(y, i));
-                if (null == oPiece) {
-                    moves.add(new ChessMove(myPosition, new ChessPosition(y, i), promote));
-                } else if (oPiece.pieceColor == piece.pieceColor) {
-                    break;
-                } else {
-                    moves.add(new ChessMove(myPosition, new ChessPosition(y, i), promote));
-                    break;
-                }
-            }
-            for (int i = y + 1; 8 >= i; i++) {
-                final ChessPiece oPiece = board.getPiece(new ChessPosition(i, x));
-                if (null == oPiece) {
-                    moves.add(new ChessMove(myPosition, new ChessPosition(i, x), promote));
-                } else if (oPiece.pieceColor == piece.pieceColor) {
-                    break;
-                } else {
-                    moves.add(new ChessMove(myPosition, new ChessPosition(i, x), promote));
-                    break;
-                }
-            }
 
-            for (int i = x - 1; 1 <= i; i--) {
-                final ChessPiece oPiece = board.getPiece(new ChessPosition(y, i));
-                if (null == oPiece) {
-                    moves.add(new ChessMove(myPosition, new ChessPosition(y, i), promote));
-                } else if (oPiece.pieceColor == piece.pieceColor) {
-                    break;
-                } else {
-                    moves.add(new ChessMove(myPosition, new ChessPosition(y, i), promote));
-                    break;
-                }
-            }
-            for (int i = y - 1; 1 <= i; i--) {
-                final ChessPiece oPiece = board.getPiece(new ChessPosition(i, x));
-                if (null == oPiece) {
-                    moves.add(new ChessMove(myPosition, new ChessPosition(i, x), promote));
-                } else if (oPiece.pieceColor == piece.pieceColor) {
-                    break;
-                } else {
-                    moves.add(new ChessMove(myPosition, new ChessPosition(i, x), promote));
-                    break;
-                }
-            }
+        if (PieceType.ROOK == piece.getPieceType() || PieceType.QUEEN == piece.getPieceType()) {
+            // right, up, left, down
+            sweep(moves, board, myPosition, y, x, 0, 1, promote, piece);
+            sweep(moves, board, myPosition, y, x, 1, 0, promote, piece);
+            sweep(moves, board, myPosition, y, x, 0, -1, promote, piece);
+            sweep(moves, board, myPosition, y, x, -1, 0, promote, piece);
         }
         return moves;
     }
@@ -237,50 +245,11 @@ public class ChessPiece {
         final PieceType promote = null;
 
         if (PieceType.BISHOP == piece.getPieceType() || PieceType.QUEEN == piece.getPieceType()) {
-            for (int i = 1; 8 >= i + x && 8 >= i + y; i++) {
-                final ChessPiece oPiece = board.getPiece(new ChessPosition(y + i, x + i));
-                if (null == oPiece) {
-                    moves.add(new ChessMove(myPosition, new ChessPosition(y + i, x + i), promote));
-                } else if (oPiece.pieceColor == piece.pieceColor) {
-                    break;
-                } else {
-                    moves.add(new ChessMove(myPosition, new ChessPosition(y + i, x + i), promote));
-                    break;
-                }
-            }
-            for (int i = -1; 1 <= i + x && 1 <= i + y; i--) {
-                final ChessPiece oPiece = board.getPiece(new ChessPosition(y + i, x + i));
-                if (null == oPiece) {
-                    moves.add(new ChessMove(myPosition, new ChessPosition(y + i, x + i), promote));
-                } else if (oPiece.pieceColor == piece.pieceColor) {
-                    break;
-                } else {
-                    moves.add(new ChessMove(myPosition, new ChessPosition(y + i, x + i), promote));
-                    break;
-                }
-            }
-            for (int i = 1; 1 <= x - i && 8 >= i + y; i++) {
-                final ChessPiece oPiece = board.getPiece(new ChessPosition(y + i, x - i));
-                if (null == oPiece) {
-                    moves.add(new ChessMove(myPosition, new ChessPosition(y + i, x - i), promote));
-                } else if (oPiece.pieceColor == piece.pieceColor) {
-                    break;
-                } else {
-                    moves.add(new ChessMove(myPosition, new ChessPosition(y + i, x - i), promote));
-                    break;
-                }
-            }
-            for (int i = 1; 8 >= i + x && 1 <= y - i; i++) {
-                final ChessPiece oPiece = board.getPiece(new ChessPosition(y - i, x + i));
-                if (null == oPiece) {
-                    moves.add(new ChessMove(myPosition, new ChessPosition(y - i, x + i), promote));
-                } else if (oPiece.pieceColor == piece.pieceColor) {
-                    break;
-                } else {
-                    moves.add(new ChessMove(myPosition, new ChessPosition(y - i, x + i), promote));
-                    break;
-                }
-            }
+            // diagonals: NE, NW, SE, SW (in row/col coordinates)
+            sweep(moves, board, myPosition, y, x, 1, 1, promote, piece);
+            sweep(moves, board, myPosition, y, x, 1, -1, promote, piece);
+            sweep(moves, board, myPosition, y, x, -1, 1, promote, piece);
+            sweep(moves, board, myPosition, y, x, -1, -1, promote, piece);
         }
         return moves;
     }
@@ -291,39 +260,16 @@ public class ChessPiece {
         final int x = myPosition.getColumn();
         final int y = myPosition.getRow();
         final PieceType promote = null;
-        //There are eight possible moves for knights
-        //Up 2 left 1
+
         if (PieceType.KNIGHT == piece.getPieceType()) {
-            if ((8 >= y + 2 && 1 <= x - 1) && (null == board.getPiece(new ChessPosition(y + 2, x - 1)) || board.getPiece(new ChessPosition(y + 2, x - 1)).pieceColor != piece.pieceColor)) {
-                moves.add(new ChessMove(myPosition, new ChessPosition(y + 2, x - 1), promote));
-            }
-            //Up 2 right 1
-            if ((8 >= y + 2 && 8 >= x + 1) && (null == board.getPiece(new ChessPosition(y + 2, x + 1)) || board.getPiece(new ChessPosition(y + 2, x + 1)).pieceColor != piece.pieceColor)) {
-                moves.add(new ChessMove(myPosition, new ChessPosition(y + 2, x + 1), promote));
-            }
-            //left 2 up 1
-            if ((8 >= y + 1 && 1 <= x - 2) && (null == board.getPiece(new ChessPosition(y + 1, x - 2)) || board.getPiece(new ChessPosition(y + 1, x - 2)).pieceColor != piece.pieceColor)) {
-                moves.add(new ChessMove(myPosition, new ChessPosition(y + 1, x - 2), promote));
-            }
-            //right 2 up 1
-            if ((8 >= y + 1 && 8 >= x + 2) && (null == board.getPiece(new ChessPosition(y + 1, x + 2)) || board.getPiece(new ChessPosition(y + 1, x + 2)).pieceColor != piece.pieceColor)) {
-                moves.add(new ChessMove(myPosition, new ChessPosition(y + 1, x + 2), promote));
-            }
-            //Down 2 left 1
-            if ((1 <= y - 2 && 1 <= x - 1) && (null == board.getPiece(new ChessPosition(y - 2, x - 1)) || board.getPiece(new ChessPosition(y - 2, x - 1)).pieceColor != piece.pieceColor)) {
-                moves.add(new ChessMove(myPosition, new ChessPosition(y - 2, x - 1), promote));
-            }
-            //Down 2 right 1
-            if ((1 <= y - 2 && 8 >= x + 1) && (null == board.getPiece(new ChessPosition(y - 2, x + 1)) || board.getPiece(new ChessPosition(y - 2, x + 1)).pieceColor != piece.pieceColor)) {
-                moves.add(new ChessMove(myPosition, new ChessPosition(y - 2, x + 1), promote));
-            }
-            //left 2 down 1
-            if ((1 <= y - 1 && 1 <= x - 2) && (null == board.getPiece(new ChessPosition(y - 1, x - 2)) || board.getPiece(new ChessPosition(y - 1, x - 2)).pieceColor != piece.pieceColor)) {
-                moves.add(new ChessMove(myPosition, new ChessPosition(y - 1, x - 2), promote));
-            }
-            //right 2 down 1
-            if ((1 <= y - 1 && 8 >= x + 2) && (null == board.getPiece(new ChessPosition(y - 1, x + 2)) || board.getPiece(new ChessPosition(y - 1, x + 2)).pieceColor != piece.pieceColor)) {
-                moves.add(new ChessMove(myPosition, new ChessPosition(y - 1, x + 2), promote));
+            final int[][] offsets = {
+                    {2, -1}, {2, 1},
+                    {1, -2}, {1, 2},
+                    {-2, -1}, {-2, 1},
+                    {-1, -2}, {-1, 2}
+            };
+            for (final int[] d : offsets) {
+                addMoveIfFreeOrCapture(moves, board, myPosition, y + d[0], x + d[1], promote, piece);
             }
         }
         return moves;
@@ -335,15 +281,14 @@ public class ChessPiece {
         final int x = myPosition.getColumn();
         final int y = myPosition.getRow();
         final PieceType promote = null;
-        //There is simply just a box of moves around the king
+
         if (PieceType.KING == piece.getPieceType()) {
-            for (int i = Math.max(1, x - 1); i <= Math.min(x + 1, 8); i++) {
-                for (int j = Math.min(y + 1, 8); j >= Math.max(1, y - 1); j--) {
-                    if (!(i == x && j == y)) {
-                        if (null == board.getPiece(new ChessPosition(j, i)) || board.getPiece(new ChessPosition(j, i)).pieceColor != piece.pieceColor) {
-                            moves.add(new ChessMove(myPosition, new ChessPosition(j, i), promote));
-                        }
+            for (int dc = -1; dc <= 1; dc++) {
+                for (int dr = -1; dr <= 1; dr++) {
+                    if (0 == dc && 0 == dr) {
+                        continue;
                     }
+                    addMoveIfFreeOrCapture(moves, board, myPosition, y + dr, x + dc, promote, piece);
                 }
             }
         }

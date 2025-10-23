@@ -117,8 +117,8 @@ public class ChessGame {
                     final ChessPiece piece = new ChessPiece(clr, type);
                     temp.addPiece(new ChessPosition(row, col), piece);
                 } else if (!(row == iRow && col == iCol)) {
-                    final ChessPiece temp_piece = this.board.getPiece(new ChessPosition(row, col));
-                    if (null != temp_piece) {
+                    final ChessPiece chessPiece = this.board.getPiece(new ChessPosition(row, col));
+                    if (null != chessPiece) {
                         final ChessPiece piece = new ChessPiece(this.board.getPiece(new ChessPosition(row, col)).getTeamColor(), this.board.getPiece(new ChessPosition(row, col)).getPieceType());
                         temp.addPiece(new ChessPosition(row, col), piece);
                     }
