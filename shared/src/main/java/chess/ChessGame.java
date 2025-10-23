@@ -85,11 +85,11 @@ public class ChessGame {
         }
         final Collection<ChessMove> validMoves = this.validMoves(move.getStartPosition());
         if (validMoves.contains(move)) {
-            final int i_col = move.getStartPosition().getColumn();
-            final int i_row = move.getStartPosition().getRow();
-            final int e_col = move.getEndPosition().getColumn();
-            final int e_row = move.getEndPosition().getRow();
-            this.forceMakeMove(e_row, e_col, i_row, i_col, move.getPromotionPiece());
+            final int iCol = move.getStartPosition().getColumn();
+            final int iRow = move.getStartPosition().getRow();
+            final int eCol = move.getEndPosition().getColumn();
+            final int eRow = move.getEndPosition().getRow();
+            this.forceMakeMove(eRow, eCol, iRow, iCol, move.getPromotionPiece());
             if (TeamColor.WHITE == team) {
                 this.team = TeamColor.BLACK;
             } else {
@@ -103,20 +103,20 @@ public class ChessGame {
 
     }
 
-    private void forceMakeMove(final int e_row, final int e_col, final int i_row, final int i_col, final ChessPiece.PieceType promotion) {
+    private void forceMakeMove(final int eRow, final int eCol, final int iRow, final int iCol, final ChessPiece.PieceType promotion) {
         final ChessBoard temp = new ChessBoard();
-        final TeamColor clr = this.board.getPiece(new ChessPosition(i_row, i_col)).getTeamColor();
-        ChessPiece.PieceType type = this.board.getPiece(new ChessPosition(i_row, i_col)).getPieceType();
+        final TeamColor clr = this.board.getPiece(new ChessPosition(iRow, iCol)).getTeamColor();
+        ChessPiece.PieceType type = this.board.getPiece(new ChessPosition(iRow, iCol)).getPieceType();
         if (null != promotion) {
             type = promotion;
         }
 
         for (int row = 1; 8 >= row; row++) {
             for (int col = 1; 8 >= col; col++) {
-                if (row == e_row && col == e_col) {
+                if (row == eRow && col == eCol) {
                     final ChessPiece piece = new ChessPiece(clr, type);
                     temp.addPiece(new ChessPosition(row, col), piece);
-                } else if (!(row == i_row && col == i_col)) {
+                } else if (!(row == iRow && col == iCol)) {
                     final ChessPiece temp_piece = this.board.getPiece(new ChessPosition(row, col));
                     if (null != temp_piece) {
                         final ChessPiece piece = new ChessPiece(this.board.getPiece(new ChessPosition(row, col)).getTeamColor(), this.board.getPiece(new ChessPosition(row, col)).getPieceType());
@@ -165,7 +165,7 @@ public class ChessGame {
                 }
             }
         }
-        return new ChessPosition(0, 0); //TODO: Get Rid of This so that it is better
+        return new ChessPosition(0, 0);
     }
 
     public boolean keepsCheck(final ChessMove move) {
