@@ -15,7 +15,10 @@ public class DataBaseHandler {
     private UserService userService;
     private GameService gameService;
 
-    public void registerRoutes(final Javalin app, final AuthService authService, final MemoryUserDAO memoryUserDAO, final MemoryGameDAO memoryGameDAO) {
+    public void registerRoutes(final Javalin app,
+                               final AuthService authService,
+                               final MemoryUserDAO memoryUserDAO,
+                               final MemoryGameDAO memoryGameDAO) {
         this.authService = authService;
         userService = new UserService(authService, memoryUserDAO);
         gameService = new GameService(memoryGameDAO, authService);
