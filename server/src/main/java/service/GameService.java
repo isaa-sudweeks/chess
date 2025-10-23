@@ -60,9 +60,9 @@ public class GameService {
                 if (joinGameRequest.playerColor() == ChessGame.TeamColor.WHITE) {
                     if (gameData.whiteUsername() == null) {
                         gameData = new GameData(
-                                gameData.GameID(),
+                                gameData.gameID(),
                                 authService.getAuth(joinGameRequest.authToken()).username(),
-                                null,
+                                gameData.blackUsername(),
                                 gameData.gameName(),
                                 gameData.game());
                         dataAccess.updateGame(gameData);
@@ -74,8 +74,8 @@ public class GameService {
                 else if (joinGameRequest.playerColor() == ChessGame.TeamColor.BLACK) {
                     if (gameData.blackUsername() == null) {
                         gameData = new GameData(
-                                gameData.GameID(),
-                                null,
+                                gameData.gameID(),
+                                gameData.whiteUsername(),
                                 authService.getAuth(joinGameRequest.authToken()).username(),
                                 gameData.gameName(),
                                 gameData.game());

@@ -16,12 +16,12 @@ public class MemoryGameDAO implements GameDAO{
 
     @Override
     public void addGame(GameData gameData) { //Consider checking to see if the name has been used for.
-         games.put(gameData.GameID(),gameData);
+         games.put(gameData.gameID(),gameData);
     }
 
     @Override
     public void updateGame(GameData gameData) {
-        games.replace(gameData.GameID(), gameData);
+        games.replace(gameData.gameID(), gameData);
     }
 
     @Override

@@ -38,6 +38,11 @@ public class UserService {
 
     public RegisterLoginResult login(LoginRequest loginRequest) throws DataAccessException {
         UserData userData = dataAccess.getUser(loginRequest.username());
+
+        if (loginRequest.password() == null || loginRequest.username() == null){
+            throw  new BadRequestException("Need a username or password to login");
+        }
+
         if ((dataAccess.getUser(loginRequest.username()) != null)){
             if ((Objects.equals(userData.password(), loginRequest.password()))) {
                 String authToken = authService.addAuthData(loginRequest.username());
@@ -48,7 +53,7 @@ public class UserService {
             }
         }
         else {
-            throw new BadRequestException("User not found or password doesn't match");
+            throw new UnauthorizedException("User not found or password doesn't match");
         }
     }
 

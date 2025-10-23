@@ -113,11 +113,11 @@ public class GameServiceTests {
         service.JoinGame(new JoinGameRequest(ChessGame.TeamColor.WHITE, 1, authToken));
 
         //Change game 1 to be what it should be now
-        gameOne = new GameData(gameOne.GameID(),"Isaac", gameOne.blackUsername(),gameOne.gameName(),gameOne.game());
+        gameOne = new GameData(gameOne.gameID(),"Isaac", gameOne.blackUsername(),gameOne.gameName(),gameOne.game());
 
         //Get games from memoryGameDAO
         Map<Integer, GameData> games = memoryGameDAO.getGames();
-        GameData game = games.get(gameOne.GameID());
+        GameData game = games.get(gameOne.gameID());
 
         assertEquals(gameOne, game);
 
