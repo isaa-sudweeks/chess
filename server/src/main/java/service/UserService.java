@@ -1,70 +1,70 @@
 package service;
+
 import dataaccess.DataAccessException;
 import dataaccess.MemoryUserDAO;
 import model.UserData;
+
 import java.util.Objects;
 
 public class UserService {
     private MemoryUserDAO dataAccess = new MemoryUserDAO();
     private AuthService authService = new AuthService();
 
-    public UserService(MemoryUserDAO memoryUserDAO){
-        this.dataAccess = memoryUserDAO;
+    public UserService(final MemoryUserDAO memoryUserDAO) {
+        dataAccess = memoryUserDAO;
     }
 
-    public UserService(){}
+    public UserService() {
+    }
 
-    public UserService(AuthService authService, MemoryUserDAO memoryUserDAO){
+    public UserService(final AuthService authService, final MemoryUserDAO memoryUserDAO) {
         this.authService = authService;
-        this.dataAccess = memoryUserDAO;
+        dataAccess = memoryUserDAO;
     }
 
-    public RegisterLoginResult register(RegisterRequest registerRequest) throws DataAccessException {
+    public RegisterLoginResult register(final RegisterRequest registerRequest) throws DataAccessException {
 
         //Check if password or username are null
-        if (registerRequest.password() == null || registerRequest.username() == null){
+        if (null == registerRequest.password() || null == registerRequest.username()) {
             throw new BadRequestException("The user needs a password/username");
         }
 
-        if (dataAccess.getUser(registerRequest.username()) == null){
-            dataAccess.addUser(new UserData(registerRequest.username(), registerRequest.password(),registerRequest.email()));
-            String authToken = authService.addAuthData(registerRequest.username());
+        if (null == dataAccess.getUser(registerRequest.username())) {
+            this.dataAccess.addUser(new UserData(registerRequest.username(), registerRequest.password(), registerRequest.email()));
+            final String authToken = this.authService.addAuthData(registerRequest.username());
             return new RegisterLoginResult(registerRequest.username(), authToken);
-        }
-        else {
+        } else {
             throw new AlreadyTakenException("User already taken");
         }
     }
 
-    public RegisterLoginResult login(LoginRequest loginRequest) throws DataAccessException {
-        UserData userData = dataAccess.getUser(loginRequest.username());
+    public RegisterLoginResult login(final LoginRequest loginRequest) throws DataAccessException {
+        final UserData userData = this.dataAccess.getUser(loginRequest.username());
 
-        if (loginRequest.password() == null || loginRequest.username() == null){
-            throw  new BadRequestException("Need a username or password to login");
+        if (null == loginRequest.password() || null == loginRequest.username()) {
+            throw new BadRequestException("Need a username or password to login");
         }
 
-        if ((dataAccess.getUser(loginRequest.username()) != null)){
+        if ((null != dataAccess.getUser(loginRequest.username()))) {
             if ((Objects.equals(userData.password(), loginRequest.password()))) {
-                String authToken = authService.addAuthData(loginRequest.username());
+                final String authToken = this.authService.addAuthData(loginRequest.username());
                 return new RegisterLoginResult(loginRequest.username(), authToken);
-            }
-            else {
+            } else {
                 throw new UnauthorizedException("User Password Doesn't match");
             }
-        }
-        else {
+        } else {
             throw new UnauthorizedException("User not found or password doesn't match");
         }
     }
 
-    public Object logout(String authToken) throws DataAccessException {
-        if (authService.removeAuthData(authToken) == null){
+    public Object logout(final String authToken) throws DataAccessException {
+        if (null == authService.removeAuthData(authToken)) {
             throw new UnauthorizedException("User is not logged in");
         }
         return null;
     }
 
-    public void clear(){
-        dataAccess.clear();
+    public void clear() {
+        this.dataAccess.clear();
     }
 }

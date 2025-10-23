@@ -20,10 +20,10 @@ public class ChessBoardTests extends EqualsTestingUtility<ChessBoard> {
     @Test
     @DisplayName("Construct Empty ChessBoard")
     public void constructChessBoard() {
-        ChessBoard board = new ChessBoard();
+        final ChessBoard board = new ChessBoard();
 
-        for (int row = 1; row <= 8; row++) {
-            for (int col = 1; col <= 8; col++) {
+        for (int row = 1; 8 >= row; row++) {
+            for (int col = 1; 8 >= col; col++) {
                 Assertions.assertNull(
                         board.getPiece(new ChessPosition(row, col)),
                         "Immediately upon construction, a ChessBoard should be empty."
@@ -36,13 +36,13 @@ public class ChessBoardTests extends EqualsTestingUtility<ChessBoard> {
     @Test
     @DisplayName("Add and Get Piece")
     public void getAddPiece() {
-        ChessPosition position = new ChessPosition(4, 4);
-        ChessPiece piece = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP);
+        final ChessPosition position = new ChessPosition(4, 4);
+        final ChessPiece piece = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP);
 
-        var board = new ChessBoard();
+        final var board = new ChessBoard();
         board.addPiece(position, piece);
 
-        ChessPiece foundPiece = board.getPiece(position);
+        final ChessPiece foundPiece = board.getPiece(position);
 
         Assertions.assertNotNull(foundPiece, "getPiece returned null for a position just added");
         Assertions.assertEquals(piece.getPieceType(), foundPiece.getPieceType(),
@@ -54,9 +54,9 @@ public class ChessBoardTests extends EqualsTestingUtility<ChessBoard> {
     @Test
     @DisplayName("Reset Board")
     public void defaultGameBoard() {
-        var expectedBoard = TestUtilities.defaultBoard();
+        final var expectedBoard = TestUtilities.defaultBoard();
 
-        var actualBoard = new ChessBoard();
+        final var actualBoard = new ChessBoard();
         actualBoard.resetBoard();
 
         Assertions.assertEquals(expectedBoard, actualBoard, "Reset board did not create the correct board");
@@ -64,18 +64,18 @@ public class ChessBoardTests extends EqualsTestingUtility<ChessBoard> {
 
     @Override
     protected ChessBoard buildOriginal() {
-        var basicBoard = new ChessBoard();
+        final var basicBoard = new ChessBoard();
         basicBoard.resetBoard();
         return basicBoard;
     }
 
     @Override
     protected Collection<ChessBoard> buildAllDifferent() {
-        List<ChessBoard> differentBoards = new ArrayList<>();
+        final List<ChessBoard> differentBoards = new ArrayList<>();
 
         differentBoards.add(new ChessBoard()); // An empty board
 
-        ChessPiece.PieceType[] pieceSchedule = {
+        final ChessPiece.PieceType[] pieceSchedule = {
                 ChessPiece.PieceType.ROOK, ChessPiece.PieceType.KNIGHT,
                 ChessPiece.PieceType.BISHOP, ChessPiece.PieceType.QUEEN,
                 ChessPiece.PieceType.KING, ChessPiece.PieceType.PAWN,
@@ -86,24 +86,24 @@ public class ChessBoardTests extends EqualsTestingUtility<ChessBoard> {
         // The color is assigned in a mixed pattern.
         ChessPiece.PieceType type;
         boolean isWhite;
-        for (int col = 1; col <= 8; col++) {
-            for (int row = 1; row <= 8; row++) {
-                type = pieceSchedule[row-1];
-                isWhite = (row + col) % 2 == 0;
-                differentBoards.add(createBoardWithPiece(row, col, type, isWhite));
+        for (int col = 1; 8 >= col; col++) {
+            for (int row = 1; 8 >= row; row++) {
+                type = pieceSchedule[row - 1];
+                isWhite = 0 == (row + col) % 2;
+                differentBoards.add(this.createBoardWithPiece(row, col, type, isWhite));
             }
         }
 
         return differentBoards;
     }
 
-    private ChessBoard createBoardWithPiece(int row, int col, ChessPiece.PieceType type, boolean isWhite) {
-        var board = new ChessBoard();
+    private ChessBoard createBoardWithPiece(final int row, final int col, final ChessPiece.PieceType type, final boolean isWhite) {
+        final var board = new ChessBoard();
 
-        var teamColor = isWhite ? ChessGame.TeamColor.WHITE : ChessGame.TeamColor.BLACK;
-        var piece = new ChessPiece(teamColor, type);
+        final var teamColor = isWhite ? ChessGame.TeamColor.WHITE : ChessGame.TeamColor.BLACK;
+        final var piece = new ChessPiece(teamColor, type);
 
-        var position = new ChessPosition(row, col);
+        final var position = new ChessPosition(row, col);
         board.addPiece(position, piece);
 
         return board;

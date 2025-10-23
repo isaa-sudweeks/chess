@@ -2,7 +2,6 @@ package service;
 
 import chess.ChessGame;
 import dataaccess.MemoryGameDAO;
-import dataaccess.MemoryUserDAO;
 import model.GameData;
 
 import java.util.ArrayList;
@@ -13,75 +12,72 @@ public class GameService {
     private MemoryGameDAO dataAccess = new MemoryGameDAO();
     private AuthService authService = new AuthService();
 
-    public GameService(){}
-    public GameService(MemoryGameDAO memoryGameDAO){
-        this.dataAccess = memoryGameDAO;
+    public GameService() {
     }
 
-    public GameService(MemoryGameDAO memoryGameDAO, AuthService authService){
-        this.dataAccess = memoryGameDAO;
+    public GameService(final MemoryGameDAO memoryGameDAO) {
+        dataAccess = memoryGameDAO;
+    }
+
+    public GameService(final MemoryGameDAO memoryGameDAO, final AuthService authService) {
+        dataAccess = memoryGameDAO;
         this.authService = authService;
     }
 
-    public ListResult ListGames(String authToken) throws UnauthorizedException {
+    public ListResult ListGames(final String authToken) throws UnauthorizedException {
         //First make sure it is authorized
-        if (authService.getAuth(authToken) != null) {
-            List<GameData> games = new ArrayList<>(dataAccess.getGames().values());
+        if (null != authService.getAuth(authToken)) {
+            final List<GameData> games = new ArrayList<>(this.dataAccess.getGames().values());
             return new ListResult(games);
-        }
-        else {
+        } else {
             throw new UnauthorizedException("AuthToken was unauthorized");
         }
     }
 
-    public int CreateGame(CreateGameRequest createGameRequest){
-        if(createGameRequest.gameName() == null){
+    public int CreateGame(final CreateGameRequest createGameRequest) {
+        if (null == createGameRequest.gameName()) {
             throw new BadRequestException("The game name is null");
         }
-        if (authService.getAuth(createGameRequest.authToken()) != null) {
-            int gameID = dataAccess.getGames().size()+1;
-            dataAccess.addGame(new GameData(gameID, null,null,createGameRequest.gameName(), new ChessGame()));
+        if (null != authService.getAuth(createGameRequest.authToken())) {
+            final int gameID = this.dataAccess.getGames().size() + 1;
+            this.dataAccess.addGame(new GameData(gameID, null, null, createGameRequest.gameName(), new ChessGame()));
             return gameID;
-        }
-        else {
+        } else {
             throw new UnauthorizedException("Auth Token not found");
         }
     }
 
-    public Object JoinGame(JoinGameRequest joinGameRequest) {
+    public Object JoinGame(final JoinGameRequest joinGameRequest) {
 
-        Map<Integer, GameData> games = dataAccess.getGames();
+        final Map<Integer, GameData> games = this.dataAccess.getGames();
         GameData gameData = games.get(joinGameRequest.gameID());
-        if (joinGameRequest.playerColor() == null){
+        if (null == joinGameRequest.playerColor()) {
             throw new BadRequestException("Not a valid player color");
         }
-        if (authService.getAuth(joinGameRequest.authToken()) != null) {
-            if (gameData != null) {
-                if (joinGameRequest.playerColor() == ChessGame.TeamColor.WHITE) {
-                    if (gameData.whiteUsername() == null) {
+        if (null != authService.getAuth(joinGameRequest.authToken())) {
+            if (null != gameData) {
+                if (ChessGame.TeamColor.WHITE == joinGameRequest.playerColor()) {
+                    if (null == gameData.whiteUsername()) {
                         gameData = new GameData(
                                 gameData.gameID(),
-                                authService.getAuth(joinGameRequest.authToken()).username(),
+                                this.authService.getAuth(joinGameRequest.authToken()).username(),
                                 gameData.blackUsername(),
                                 gameData.gameName(),
                                 gameData.game());
-                        dataAccess.updateGame(gameData);
-                    }
-                    else {
+                        this.dataAccess.updateGame(gameData);
+                    } else {
                         throw new AlreadyTakenException("That player is already taken");
                     }
-                }
-                else if (joinGameRequest.playerColor() == ChessGame.TeamColor.BLACK) {
-                    if (gameData.blackUsername() == null) {
+                } else if (ChessGame.TeamColor.BLACK == joinGameRequest.playerColor()) {
+                    if (null == gameData.blackUsername()) {
                         gameData = new GameData(
                                 gameData.gameID(),
                                 gameData.whiteUsername(),
-                                authService.getAuth(joinGameRequest.authToken()).username(),
+                                this.authService.getAuth(joinGameRequest.authToken()).username(),
                                 gameData.gameName(),
                                 gameData.game());
-                        dataAccess.updateGame(gameData);
-                    }
-                    else {
+                        this.dataAccess.updateGame(gameData);
+                    } else {
                         throw new AlreadyTakenException("That player is already taken");
                     }
                 }
@@ -90,12 +86,12 @@ public class GameService {
             } else {
                 throw new BadRequestException("There is no game with that ID");
             }
-        }
-        else {
+        } else {
             throw new UnauthorizedException("AuthToken not found");
         }
     }
-    public void clear(){
-        dataAccess.clear();
+
+    public void clear() {
+        this.dataAccess.clear();
     }
 }

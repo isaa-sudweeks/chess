@@ -9,22 +9,22 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class AuthServiceTests {
     @Test
-    public void TestAddAuthPass(){
-        MemoryAuthDAO memoryAuthDAO = new MemoryAuthDAO();
-        AuthService authService = new AuthService(memoryAuthDAO);
+    public void TestAddAuthPass() {
+        final MemoryAuthDAO memoryAuthDAO = new MemoryAuthDAO();
+        final AuthService authService = new AuthService(memoryAuthDAO);
 
         //Get authToken
-        String authToken = authService.addAuthData("Isaac");
+        final String authToken = authService.addAuthData("Isaac");
 
         //See if it was added
-        AuthData data = memoryAuthDAO.getAuth(authToken);
+        final AuthData data = memoryAuthDAO.getAuth(authToken);
         assertEquals("Isaac", data.username());
     }
 
     @Test
-    public void TestRemoveAuthData(){
-        MemoryAuthDAO memoryAuthDAO = new MemoryAuthDAO();
-        AuthService authService = new AuthService(memoryAuthDAO);
+    public void TestRemoveAuthData() {
+        final MemoryAuthDAO memoryAuthDAO = new MemoryAuthDAO();
+        final AuthService authService = new AuthService(memoryAuthDAO);
 
         //manually add authToken
         memoryAuthDAO.addAuth(new AuthData("Isaac", "Sudweeks"));
@@ -36,9 +36,9 @@ public class AuthServiceTests {
     }
 
     @Test
-    public void TestClear(){
-        MemoryAuthDAO memoryAuthDAO = new MemoryAuthDAO();
-        AuthService authService = new AuthService(memoryAuthDAO);
+    public void TestClear() {
+        final MemoryAuthDAO memoryAuthDAO = new MemoryAuthDAO();
+        final AuthService authService = new AuthService(memoryAuthDAO);
 
         //manually add authToken
         memoryAuthDAO.addAuth(new AuthData("Isaac", "Sudweeks"));

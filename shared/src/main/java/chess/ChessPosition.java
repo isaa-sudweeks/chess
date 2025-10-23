@@ -9,9 +9,10 @@ import java.util.Objects;
  * signature of the existing methods.
  */
 public class ChessPosition {
-    private int row;
-    private int col;
-    public ChessPosition(int row, int col) {
+    private final int row;
+    private final int col;
+
+    public ChessPosition(final int row, final int col) {
         this.row = row;
         this.col = col;
     }
@@ -21,7 +22,7 @@ public class ChessPosition {
      * 1 codes for the bottom row
      */
     public int getRow() {
-        return row;
+        return this.row;
     }
 
     /**
@@ -29,29 +30,28 @@ public class ChessPosition {
      * 1 codes for the left row
      */
     public int getColumn() {
-        return col;
+        return this.col;
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (!(o instanceof ChessPosition that)) {
+    public boolean equals(final Object o) {
+        if (!(o instanceof final ChessPosition that)) {
             return false;
         }
-        return getRow() == that.getRow() && col == that.col;
+        return this.row == that.row && this.col == that.col;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getRow(), col);
+        return Objects.hash(this.row, this.col);
     }
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(" Col: ");
-        sb.append(getColumn());
-        sb.append(" Row: ");
-        sb.append(getRow());
-        return  sb.toString();
+        String sb = " Col: " +
+                this.col +
+                " Row: " +
+                this.row;
+        return sb;
     }
 }

@@ -5,9 +5,10 @@ package chess;
  */
 public class InvalidMoveException extends Exception {
 
-    public InvalidMoveException() {}
+    public InvalidMoveException() {
+    }
 
-    public InvalidMoveException(String message) {
+    public InvalidMoveException(final String message) {
         super(message);
     }
 }

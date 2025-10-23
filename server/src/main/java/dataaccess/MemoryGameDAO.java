@@ -1,31 +1,30 @@
 package dataaccess;
 
 import model.GameData;
-import model.UserData;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-public class MemoryGameDAO implements GameDAO{
-    private Map<Integer, GameData> games = new HashMap<>();
+public class MemoryGameDAO implements GameDAO {
+    private final Map<Integer, GameData> games = new HashMap<>();
+
     @Override
     public Map<Integer, GameData> getGames() {
-        return games;
+        return this.games;
     }
 
     @Override
-    public void addGame(GameData gameData) { //Consider checking to see if the name has been used for.
-         games.put(gameData.gameID(),gameData);
+    public void addGame(final GameData gameData) { //Consider checking to see if the name has been used for.
+        this.games.put(gameData.gameID(), gameData);
     }
 
     @Override
-    public void updateGame(GameData gameData) {
-        games.replace(gameData.gameID(), gameData);
+    public void updateGame(final GameData gameData) {
+        this.games.replace(gameData.gameID(), gameData);
     }
 
     @Override
     public void clear() {
-        games.clear();
+        this.games.clear();
     }
 }

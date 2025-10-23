@@ -1,34 +1,39 @@
 package service;
 
-import model.AuthData;
 import dataaccess.MemoryAuthDAO;
+import model.AuthData;
+
 import java.util.UUID;
 
 public class AuthService {
     private MemoryAuthDAO authDAO = new MemoryAuthDAO();
 
-    public AuthService(MemoryAuthDAO authDAO){
+    public AuthService(final MemoryAuthDAO authDAO) {
         this.authDAO = authDAO;
     }
 
-    public AuthService(){}
+    public AuthService() {
+    }
 
     private static String generateToken() {
         return UUID.randomUUID().toString();
     }
-    public String addAuthData(String userName){
-        String authToken = generateToken();
-        authDAO.addAuth(new AuthData(authToken, userName));
+
+    public String addAuthData(final String userName) {
+        final String authToken = AuthService.generateToken();
+        this.authDAO.addAuth(new AuthData(authToken, userName));
         return authToken;
     }
-    public AuthData removeAuthData(String authToken) {
-        return authDAO.removeAuth(authToken);
-    }
-    public AuthData getAuth(String authToken){
-        return authDAO.getAuth(authToken);
+
+    public AuthData removeAuthData(final String authToken) {
+        return this.authDAO.removeAuth(authToken);
     }
 
-    public void clear(){
-        authDAO.clear();
+    public AuthData getAuth(final String authToken) {
+        return this.authDAO.getAuth(authToken);
+    }
+
+    public void clear() {
+        this.authDAO.clear();
     }
 }

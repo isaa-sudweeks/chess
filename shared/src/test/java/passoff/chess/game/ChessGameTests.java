@@ -22,16 +22,16 @@ public class ChessGameTests extends EqualsTestingUtility<ChessGame> {
 
     @Override
     protected Collection<ChessGame> buildAllDifferent() {
-        Collection<ChessGame> differentGames = new ArrayList<>();
+        final Collection<ChessGame> differentGames = new ArrayList<>();
 
         try {
             // Different team turn
-            ChessGame game1 = new ChessGame();
+            final ChessGame game1 = new ChessGame();
             game1.setTeamTurn(ChessGame.TeamColor.BLACK);
             differentGames.add(game1);
 
             // Move pawn
-            ChessGame game2 = new ChessGame();
+            final ChessGame game2 = new ChessGame();
             game2.makeMove(new ChessMove(
                     new ChessPosition(2, 5),
                     new ChessPosition(4, 5),
@@ -39,7 +39,7 @@ public class ChessGameTests extends EqualsTestingUtility<ChessGame> {
             differentGames.add(game2);
 
             // Move knight
-            ChessGame game3 = new ChessGame();
+            final ChessGame game3 = new ChessGame();
             game3.makeMove(new ChessMove(
                     new ChessPosition(1, 7),
                     new ChessPosition(3, 6),
@@ -47,7 +47,7 @@ public class ChessGameTests extends EqualsTestingUtility<ChessGame> {
             differentGames.add(game3);
 
             // Set board
-            ChessGame game4 = new ChessGame();
+            final ChessGame game4 = new ChessGame();
             game4.setBoard(TestUtilities.loadBoard("""
                     | | | |R| | | | |
                     | | | | | | | | |
@@ -60,7 +60,7 @@ public class ChessGameTests extends EqualsTestingUtility<ChessGame> {
                     """));
             differentGames.add(game4);
 
-        } catch (InvalidMoveException e) {
+        } catch (final InvalidMoveException e) {
             throw new RuntimeException("All moves in ChessGameTests are valid and should be allowed.", e);
         }
 
