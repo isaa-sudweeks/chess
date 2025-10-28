@@ -1,14 +1,14 @@
 package service;
 
-import dataaccess.MemoryAuthDAO;
+import dataaccess.AuthDAO;
 import model.AuthData;
 
 import java.util.UUID;
 
 public class AuthService {
-    private MemoryAuthDAO authDAO = new MemoryAuthDAO();
+    private AuthDAO authDAO;
 
-    public AuthService(final MemoryAuthDAO authDAO) {
+    public AuthService(final AuthDAO authDAO) {
         this.authDAO = authDAO;
     }
 

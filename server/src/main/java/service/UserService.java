@@ -2,24 +2,25 @@ package service;
 
 import dataaccess.DataAccessException;
 import dataaccess.MemoryUserDAO;
+import dataaccess.UserDAO;
 import model.UserData;
 
 import java.util.Objects;
 
 public class UserService {
-    private MemoryUserDAO dataAccess = new MemoryUserDAO();
+    private UserDAO dataAccess = new MemoryUserDAO();
     private AuthService authService = new AuthService();
 
-    public UserService(final MemoryUserDAO memoryUserDAO) {
-        dataAccess = memoryUserDAO;
+    public UserService(final UserDAO userDAO) {
+        dataAccess = userDAO;
     }
 
     public UserService() {
     }
 
-    public UserService(final AuthService authService, final MemoryUserDAO memoryUserDAO) {
+    public UserService(final AuthService authService, final UserDAO userDAO) {
         this.authService = authService;
-        dataAccess = memoryUserDAO;
+        dataAccess = userDAO;
     }
 
     public RegisterLoginResult register(final RegisterRequest registerRequest) throws DataAccessException {

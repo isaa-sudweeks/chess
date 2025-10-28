@@ -1,7 +1,7 @@
 package service;
 
 import chess.ChessGame;
-import dataaccess.MemoryGameDAO;
+import dataaccess.GameDAO;
 import model.GameData;
 
 import java.util.ArrayList;
@@ -9,18 +9,18 @@ import java.util.List;
 import java.util.Map;
 
 public class GameService {
-    private MemoryGameDAO dataAccess = new MemoryGameDAO();
+    private GameDAO dataAccess;
     private AuthService authService = new AuthService();
 
     public GameService() {
     }
 
-    public GameService(final MemoryGameDAO memoryGameDAO) {
-        dataAccess = memoryGameDAO;
+    public GameService(final GameDAO gameDAO) {
+        dataAccess = gameDAO;
     }
 
-    public GameService(final MemoryGameDAO memoryGameDAO, final AuthService authService) {
-        dataAccess = memoryGameDAO;
+    public GameService(final GameDAO gameDAO, final AuthService authService) {
+        dataAccess = gameDAO;
         this.authService = authService;
     }
 
