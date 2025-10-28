@@ -1,7 +1,7 @@
 package server.handlers;
 
 import dataaccess.DataAccessException;
-import dataaccess.MemoryUserDAO;
+import dataaccess.UserDAO;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 import service.*;
@@ -9,16 +9,16 @@ import service.*;
 import java.util.Map;
 
 public class UserHandler {
-    private UserService service = new UserService();
+    private UserService service;
 
-    public void registerRoutes(final Javalin app, final AuthService authService, final MemoryUserDAO memoryUserDAO) {
-        service = new UserService(authService, memoryUserDAO);
+    public void registerRoutes(final Javalin app, final AuthService authService, final UserDAO userDAO) {
+        this.service = new UserService(authService, userDAO);
         app.post("/user", this::register);
         app.post("/session", this::login);
         app.delete("/session", this::logout);
     }
 
-    public void register(final Context ctx) throws DataAccessException {
+    public void register(final Context ctx) {
         final RegisterRequest request = ctx.bodyAsClass(RegisterRequest.class);
         try {
             final RegisterLoginResult result = this.service.register(request);

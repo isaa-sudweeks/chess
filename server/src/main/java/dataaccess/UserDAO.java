@@ -7,7 +7,7 @@ import java.sql.SQLException;
 public interface UserDAO {
     UserData getUser(String username) throws DataAccessException, SQLException;
 
-    void addUser(UserData userData) throws DataAccessException;
+    void addUser(UserData userData) throws DataAccessException, SQLException;
 
-    void clear();
+    void clear() throws SQLException, DataAccessException;
 }

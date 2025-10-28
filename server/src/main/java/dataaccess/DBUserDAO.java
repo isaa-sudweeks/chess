@@ -8,13 +8,16 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import static java.sql.Statement.RETURN_GENERATED_KEYS;
+import static java.sql.Types.NULL;
+
 public class DBUserDAO implements UserDAO {
     public DBUserDAO() throws SQLException, DataAccessException {
         configureDatabase();
     }
 
     @Override
-    public UserData getUser(String username) throws DataAccessException, SQLException {
+    public UserData getUser(String username) throws SQLException, DataAccessException {
         try (Connection conn = DatabaseManager.getConnection()) {
             var statement = "SELECT username, json FROM users WHERE username=?";
             try (PreparedStatement ps = conn.prepareStatement(statement)) {
@@ -23,7 +26,7 @@ public class DBUserDAO implements UserDAO {
                     if (rs.next()) {
                         return readUser(rs);
                     } else {
-                        throw new DataAccessException("Username Not Found");
+                        return null;
                     }
                 }
             }
@@ -39,13 +42,37 @@ public class DBUserDAO implements UserDAO {
     }
 
     @Override
-    public void addUser(UserData userData) throws DataAccessException {
+    public void addUser(UserData userData) throws DataAccessException, SQLException {
+        var statement = "INSERT INTO users (username, json) VALUES(?,?)";
+        String jsonString = new Gson().toJson(userData);
+        String username = userData.username();
+        executeUpdate(statement, username, jsonString);
+    }
 
+    private void executeUpdate(String statement, Object... params) throws DataAccessException, SQLException {
+        try (Connection conn = DatabaseManager.getConnection()) {
+            try (PreparedStatement ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
+                for (int i = 0; i < params.length; i++) {
+                    Object param = params[i];
+                    if (param instanceof String p) {
+                        ps.setString(i + 1, p);
+                    } else if (param instanceof Integer p) {
+                        ps.setInt(i + 1, p);
+                    } else if (param == null) {
+                        ps.setNull(i + 1, NULL);
+                    }
+                }
+                ps.executeUpdate();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     @Override
-    public void clear() {
-
+    public void clear() throws SQLException, DataAccessException {
+        var statement = "TRUNCATE users";
+        executeUpdate(statement);
     }
 
     private void configureDatabase() throws DataAccessException, SQLException {
@@ -57,7 +84,7 @@ public class DBUserDAO implements UserDAO {
                     CREATE TABLE IF NOT EXISTS  users (
                                   `username` varchar(256) NOT NULL,
                                   `json` JSON NOT NULL,
-                                  PRIMARY KEY (`username`),
+                                  PRIMARY KEY (`username`)
                                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
                     """
             };

@@ -4,8 +4,9 @@ import dataaccess.DataAccessException;
 import dataaccess.MemoryUserDAO;
 import dataaccess.UserDAO;
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 
-import java.util.Objects;
+import java.sql.SQLException;
 
 public class UserService {
     private UserDAO dataAccess = new MemoryUserDAO();
@@ -23,15 +24,21 @@ public class UserService {
         dataAccess = userDAO;
     }
 
-    public RegisterLoginResult register(final RegisterRequest registerRequest) throws DataAccessException {
+    String hashedPassword(String clearTextPassword) {
+        String hashedPassword = BCrypt.hashpw(clearTextPassword, BCrypt.gensalt());
 
+        // write the hashed password in database along with the user's other information
+        return hashedPassword;
+    }
+
+    public RegisterLoginResult register(final RegisterRequest registerRequest) throws DataAccessException, SQLException {
         //Check if the password or username are null
         if (null == registerRequest.password() || null == registerRequest.username()) {
             throw new BadRequestException("The user needs a password/username");
         }
 
         if (null == dataAccess.getUser(registerRequest.username())) {
-            this.dataAccess.addUser(new UserData(registerRequest.username(), registerRequest.password(), registerRequest.email()));
+            this.dataAccess.addUser(new UserData(registerRequest.username(), hashedPassword(registerRequest.password()), registerRequest.email()));
             final String authToken = this.authService.addAuthData(registerRequest.username());
             return new RegisterLoginResult(registerRequest.username(), authToken);
         } else {
@@ -39,7 +46,12 @@ public class UserService {
         }
     }
 
-    public RegisterLoginResult login(final LoginRequest loginRequest) throws DataAccessException {
+    private boolean passwordsEqual(UserData userData, LoginRequest loginRequest) {
+        return BCrypt.checkpw(loginRequest.password(), userData.password());
+    }
+
+
+    public RegisterLoginResult login(final LoginRequest loginRequest) throws DataAccessException, SQLException {
         final UserData userData = this.dataAccess.getUser(loginRequest.username());
 
         if (null == loginRequest.password() || null == loginRequest.username()) {
@@ -47,7 +59,7 @@ public class UserService {
         }
 
         if ((null != dataAccess.getUser(loginRequest.username()))) {
-            if ((Objects.equals(userData.password(), loginRequest.password()))) {
+            if (passwordsEqual(userData, loginRequest)) {
                 final String authToken = this.authService.addAuthData(loginRequest.username());
                 return new RegisterLoginResult(loginRequest.username(), authToken);
             } else {
@@ -66,7 +78,7 @@ public class UserService {
         return null;
     }
 
-    public void clear() {
+    public void clear() throws SQLException, DataAccessException {
         this.dataAccess.clear();
     }
 }
