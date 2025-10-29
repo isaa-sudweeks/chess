@@ -1,9 +1,11 @@
 package service;
 
 import chess.ChessGame;
+import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import model.GameData;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +26,7 @@ public class GameService {
         this.authService = authService;
     }
 
-    public ListResult listGames(final String authToken) throws UnauthorizedException {
+    public ListResult listGames(final String authToken) throws UnauthorizedException, SQLException, DataAccessException {
         //First, make sure it is authorized.
         if (null != authService.getAuth(authToken)) {
             final List<GameData> games = new ArrayList<>(this.dataAccess.getGames().values());
@@ -34,7 +36,7 @@ public class GameService {
         }
     }
 
-    public int createGame(final CreateGameRequest createGameRequest) {
+    public int createGame(final CreateGameRequest createGameRequest) throws SQLException, DataAccessException {
         if (null == createGameRequest.gameName()) {
             throw new BadRequestException("The game name is null");
         }
@@ -48,7 +50,7 @@ public class GameService {
     }
 
     @SuppressWarnings("SameReturnValue")
-    public Object joinGame(final JoinGameRequest joinGameRequest) {
+    public Object joinGame(final JoinGameRequest joinGameRequest) throws SQLException, DataAccessException {
 
         final Map<Integer, GameData> games = this.dataAccess.getGames();
         GameData gameData = games.get(joinGameRequest.gameID());
@@ -92,7 +94,7 @@ public class GameService {
         }
     }
 
-    public void clear() {
+    public void clear() throws SQLException, DataAccessException {
         this.dataAccess.clear();
     }
 }

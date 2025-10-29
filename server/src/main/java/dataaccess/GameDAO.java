@@ -10,7 +10,7 @@ public interface GameDAO {
 
     void addGame(GameData gameData) throws SQLException, DataAccessException;
 
-    void updateGame(GameData gameData);
+    void updateGame(GameData gameData) throws SQLException, DataAccessException;
 
-    void clear();
+    void clear() throws SQLException, DataAccessException;
 }

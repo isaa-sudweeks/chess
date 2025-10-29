@@ -13,8 +13,6 @@ import java.sql.SQLException;
 public class Server {
 
     private final Javalin javalin;
-    AuthService authService = new AuthService(new MemoryAuthDAO());
-
 
     public Server() {
         this.javalin = Javalin.create(config -> {
@@ -24,13 +22,18 @@ public class Server {
         });
 
         //Handlers
-        MemoryUserDAO memoryUserDAO = new MemoryUserDAO();
+
         try {
             UserDAO userDAO = new DBUserDAO();
-            new UserHandler().registerRoutes(this.javalin, this.authService, userDAO);
-            MemoryGameDAO memoryGameDAO = new MemoryGameDAO();
-            new GameHandler().registerRoutes(this.javalin, this.authService, memoryGameDAO);
-            new DataBaseHandler().registerRoutes(this.javalin, this.authService, memoryUserDAO, memoryGameDAO);
+            AuthService authService = new AuthService(new DBAuthDAO());
+            GameDAO gameDAO = new DBGameDAO();
+
+            new UserHandler().registerRoutes(this.javalin, authService, userDAO);
+
+
+            new GameHandler().registerRoutes(this.javalin, authService, gameDAO);
+
+            new DataBaseHandler().registerRoutes(this.javalin, authService, userDAO, gameDAO);
         } catch (SQLException | DataAccessException e) {
             System.out.println("There was an error on the startup of the server");
         }

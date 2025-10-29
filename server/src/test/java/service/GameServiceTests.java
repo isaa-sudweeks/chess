@@ -1,10 +1,12 @@
 package service;
 
 import chess.ChessGame;
+import dataaccess.DataAccessException;
 import dataaccess.MemoryGameDAO;
 import model.GameData;
 import org.junit.jupiter.api.Test;
 
+import java.sql.SQLException;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -12,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class GameServiceTests {
     @Test
-    public void listGamesPass() {
+    public void listGamesPass() throws SQLException, DataAccessException {
         final MemoryGameDAO memoryGameDAO = new MemoryGameDAO();
         final AuthService authService = new AuthService();
         final GameService service = new GameService(memoryGameDAO, authService);
@@ -37,7 +39,7 @@ public class GameServiceTests {
     }
 
     @Test
-    public void listGamesFail() {
+    public void listGamesFail() throws SQLException, DataAccessException {
         final MemoryGameDAO memoryGameDAO = new MemoryGameDAO();
         final AuthService authService = new AuthService();
         final GameService service = new GameService(memoryGameDAO, authService);
@@ -58,7 +60,7 @@ public class GameServiceTests {
     }
 
     @Test
-    public void createGamePass() {
+    public void createGamePass() throws SQLException, DataAccessException {
         final MemoryGameDAO memoryGameDAO = new MemoryGameDAO();
         final AuthService authService = new AuthService();
         final GameService service = new GameService(memoryGameDAO, authService);
@@ -79,7 +81,7 @@ public class GameServiceTests {
     }
 
     @Test
-    public void createGameFail() {
+    public void createGameFail() throws SQLException, DataAccessException {
         final MemoryGameDAO memoryGameDAO = new MemoryGameDAO();
         final AuthService authService = new AuthService();
         final GameService service = new GameService(memoryGameDAO, authService);
@@ -93,7 +95,7 @@ public class GameServiceTests {
     }
 
     @Test
-    public void joinGamePass() {
+    public void joinGamePass() throws SQLException, DataAccessException {
         final MemoryGameDAO memoryGameDAO = new MemoryGameDAO();
         final AuthService authService = new AuthService();
         final GameService service = new GameService(memoryGameDAO, authService);
@@ -125,7 +127,7 @@ public class GameServiceTests {
     }
 
     @Test
-    public void joinGameFail() {
+    public void joinGameFail() throws SQLException, DataAccessException {
         final MemoryGameDAO memoryGameDAO = new MemoryGameDAO();
         final AuthService authService = new AuthService();
         final GameService service = new GameService(memoryGameDAO, authService);
@@ -146,7 +148,7 @@ public class GameServiceTests {
     }
 
     @Test
-    public void testClear() {
+    public void testClear() throws SQLException, DataAccessException {
         final MemoryGameDAO memoryGameDAO = new MemoryGameDAO();
         final AuthService authService = new AuthService();
         final GameService service = new GameService(memoryGameDAO, authService);

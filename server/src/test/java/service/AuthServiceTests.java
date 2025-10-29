@@ -1,15 +1,18 @@
 package service;
 
+import dataaccess.DataAccessException;
 import dataaccess.MemoryAuthDAO;
 import model.AuthData;
 import org.junit.jupiter.api.Test;
+
+import java.sql.SQLException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class AuthServiceTests {
     @Test
-    public void testAddAuthPass() {
+    public void testAddAuthPass() throws SQLException, DataAccessException {
         final MemoryAuthDAO memoryAuthDAO = new MemoryAuthDAO();
         final AuthService authService = new AuthService(memoryAuthDAO);
 
@@ -22,7 +25,7 @@ public class AuthServiceTests {
     }
 
     @Test
-    public void testRemoveAuthData() {
+    public void testRemoveAuthData() throws SQLException, DataAccessException {
         final MemoryAuthDAO memoryAuthDAO = new MemoryAuthDAO();
         final AuthService authService = new AuthService(memoryAuthDAO);
 
@@ -36,7 +39,7 @@ public class AuthServiceTests {
     }
 
     @Test
-    public void testClear() {
+    public void testClear() throws SQLException, DataAccessException {
         final MemoryAuthDAO memoryAuthDAO = new MemoryAuthDAO();
         final AuthService authService = new AuthService(memoryAuthDAO);
 

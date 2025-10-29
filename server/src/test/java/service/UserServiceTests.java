@@ -7,6 +7,8 @@ import model.AuthData;
 import model.UserData;
 import org.junit.jupiter.api.Test;
 
+import java.sql.SQLException;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class UserServiceTests {
@@ -55,7 +57,7 @@ public class UserServiceTests {
     }
 
     @Test
-    void testLogoutPass() throws DataAccessException {
+    void testLogoutPass() throws DataAccessException, SQLException {
         final MemoryAuthDAO memoryAuthDAO = new MemoryAuthDAO();
         final AuthService authService = new AuthService(memoryAuthDAO);
         final MemoryUserDAO memoryUserDAO = new MemoryUserDAO();
@@ -67,7 +69,7 @@ public class UserServiceTests {
     }
 
     @Test
-    void testLogoutFail() throws DataAccessException {
+    void testLogoutFail() throws DataAccessException, SQLException {
         final MemoryAuthDAO memoryAuthDAO = new MemoryAuthDAO();
         final AuthService authService = new AuthService(memoryAuthDAO);
         final MemoryUserDAO memoryUserDAO = new MemoryUserDAO();

@@ -1,7 +1,7 @@
 package dataaccess;
 
 import com.google.gson.Gson;
-import model.UserData;
+import model.AuthData;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,20 +11,29 @@ import java.sql.SQLException;
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import static java.sql.Types.NULL;
 
-public class DBUserDAO implements UserDAO {
-    public DBUserDAO() throws SQLException, DataAccessException {
+public class DBAuthDAO implements AuthDAO {
+
+    public DBAuthDAO() throws SQLException, DataAccessException {
         configureDatabase();
     }
 
     @Override
-    public UserData getUser(String username) throws SQLException, DataAccessException {
+    public void addAuth(AuthData authData) throws SQLException, DataAccessException {
+        var statement = "INSERT INTO auths (authToken, json) VALUES(?,?)";
+        String jsonString = new Gson().toJson(authData);
+        String authToken = authData.authToken();
+        executeUpdate(statement, authToken, jsonString);
+    }
+
+    @Override
+    public AuthData getAuth(String authToken) throws DataAccessException, SQLException {
         try (Connection conn = DatabaseManager.getConnection()) {
-            var statement = "SELECT username, json FROM users WHERE username=?";
+            var statement = "SELECT authToken, json FROM auths WHERE authToken=?";
             try (PreparedStatement ps = conn.prepareStatement(statement)) {
-                ps.setString(1, username);
+                ps.setString(1, authToken);
                 try (ResultSet rs = ps.executeQuery()) {
                     if (rs.next()) {
-                        return readUser(rs);
+                        return readAuth(rs);
                     } else {
                         return null;
                     }
@@ -33,19 +42,24 @@ public class DBUserDAO implements UserDAO {
         }
     }
 
-    private UserData readUser(ResultSet rs) throws SQLException {
-        String jsonString = rs.getString("json");
-        Gson gson = new Gson();
-        UserData userData = gson.fromJson(jsonString, UserData.class);
-        return userData;
+    @Override
+    public AuthData removeAuth(String authToken) throws SQLException, DataAccessException {
+        AuthData authData = getAuth(authToken);
+        var statement = "DELETE FROM auths WHERE authToken=?";
+        executeUpdate(statement, authToken);
+        return authData;
     }
 
     @Override
-    public void addUser(UserData userData) throws DataAccessException, SQLException {
-        var statement = "INSERT INTO users (username, json) VALUES(?,?)";
-        String jsonString = new Gson().toJson(userData);
-        String username = userData.username();
-        executeUpdate(statement, username, jsonString);
+    public void clear() throws SQLException, DataAccessException {
+        var statement = "TRUNCATE users";
+        executeUpdate(statement);
+    }
+
+    private AuthData readAuth(ResultSet rs) throws SQLException {
+        String jsonString = rs.getString("json");
+        Gson gson = new Gson();
+        return gson.fromJson(jsonString, AuthData.class);
     }
 
     private void executeUpdate(String statement, Object... params) throws DataAccessException, SQLException {
@@ -68,22 +82,16 @@ public class DBUserDAO implements UserDAO {
         }
     }
 
-    @Override
-    public void clear() throws SQLException, DataAccessException {
-        var statement = "TRUNCATE users";
-        executeUpdate(statement);
-    }
-
     private void configureDatabase() throws DataAccessException, SQLException {
         DatabaseManager.createDatabase();
 
         try (Connection conn = DatabaseManager.getConnection()) {
             String[] createStatements = {
                     """
-                    CREATE TABLE IF NOT EXISTS  users (
-                                  `username` varchar(256) NOT NULL,
+                    CREATE TABLE IF NOT EXISTS  auths (
+                                  `authToken` varchar(256) NOT NULL,
                                   `json` JSON NOT NULL,
-                                  PRIMARY KEY (`username`)
+                                  PRIMARY KEY (`authToken`)
                                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
                     """
             };
@@ -97,4 +105,3 @@ public class DBUserDAO implements UserDAO {
         }
     }
 }
-

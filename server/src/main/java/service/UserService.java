@@ -26,8 +26,6 @@ public class UserService {
 
     String hashedPassword(String clearTextPassword) {
         String hashedPassword = BCrypt.hashpw(clearTextPassword, BCrypt.gensalt());
-
-        // write the hashed password in database along with the user's other information
         return hashedPassword;
     }
 
@@ -71,7 +69,7 @@ public class UserService {
     }
 
     @SuppressWarnings("SameReturnValue")
-    public Object logout(final String authToken) throws DataAccessException {
+    public Object logout(final String authToken) throws DataAccessException, SQLException {
         if (null == authService.removeAuthData(authToken)) {
             throw new UnauthorizedException("User is not logged in");
         }

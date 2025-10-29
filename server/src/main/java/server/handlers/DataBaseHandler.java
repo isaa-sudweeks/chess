@@ -1,8 +1,8 @@
 package server.handlers;
 
 import dataaccess.DataAccessException;
-import dataaccess.MemoryGameDAO;
-import dataaccess.MemoryUserDAO;
+import dataaccess.GameDAO;
+import dataaccess.UserDAO;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 import service.AuthService;
@@ -19,11 +19,11 @@ public class DataBaseHandler {
 
     public void registerRoutes(final Javalin app,
                                final AuthService authService,
-                               final MemoryUserDAO memoryUserDAO,
-                               final MemoryGameDAO memoryGameDAO) {
+                               final UserDAO userDAO,
+                               final GameDAO gameDAO) {
         this.authService = authService;
-        userService = new UserService(authService, memoryUserDAO);
-        gameService = new GameService(memoryGameDAO, authService);
+        userService = new UserService(authService, userDAO);
+        gameService = new GameService(gameDAO, authService);
         app.delete("/db", this::clear);
     }
 

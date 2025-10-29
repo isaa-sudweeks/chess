@@ -1,6 +1,7 @@
 package dataaccess;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import model.GameData;
 
 import java.sql.Connection;
@@ -14,6 +15,7 @@ import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import static java.sql.Types.NULL;
 
 public class DBGameDAO implements GameDAO {
+    private static final Gson GSON = new GsonBuilder().enableComplexMapKeySerialization().create();
 
     public DBGameDAO() throws SQLException, DataAccessException {
         configureDatabase();
@@ -39,19 +41,21 @@ public class DBGameDAO implements GameDAO {
     @Override
     public void addGame(GameData gameData) throws SQLException, DataAccessException {
         var statement = "INSERT INTO games (id, json) VALUES(?,?)";
-        String jsonString = new Gson().toJson(gameData);
+        String jsonString = GSON.toJson(gameData);
         int id = gameData.gameID();
         executeUpdate(statement, id, jsonString);
     }
 
     @Override
-    public void updateGame(GameData gameData) {
-
+    public void updateGame(GameData gameData) throws SQLException, DataAccessException {
+        String statement = "UPDATE games SET json = ? WHERE id = ?";
+        executeUpdate(statement, GSON.toJson(gameData), gameData.gameID());
     }
 
     @Override
-    public void clear() {
-
+    public void clear() throws SQLException, DataAccessException {
+        var statement = "TRUNCATE games";
+        executeUpdate(statement);
     }
 
     private void configureDatabase() throws DataAccessException, SQLException {
@@ -61,9 +65,9 @@ public class DBGameDAO implements GameDAO {
             String[] createStatements = {
                     """
                     CREATE TABLE IF NOT EXISTS  games (
-                                  'id' int NOT NULL AUTO_INCREMENT,
+                                  `id` int NOT NULL AUTO_INCREMENT,
                                   `json` JSON NOT NULL,
-                                  PRIMARY KEY (`id`)
+                                   PRIMARY KEY (`id`)
                                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
                     """
             };
@@ -100,6 +104,6 @@ public class DBGameDAO implements GameDAO {
     private GameData readGame(ResultSet rs) throws SQLException {
         var id = rs.getInt("id");
         var json = rs.getString("json");
-        return new Gson().fromJson(json, GameData.class);
+        return GSON.fromJson(json, GameData.class);
     }
 }

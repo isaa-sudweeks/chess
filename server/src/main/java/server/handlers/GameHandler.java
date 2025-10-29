@@ -1,6 +1,6 @@
 package server.handlers;
 
-import dataaccess.MemoryGameDAO;
+import dataaccess.GameDAO;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 import service.*;
@@ -10,8 +10,8 @@ import java.util.Map;
 public class GameHandler {
     private GameService service = new GameService();
 
-    public void registerRoutes(final Javalin app, final AuthService authService, final MemoryGameDAO memoryGameDAO) {
-        service = new GameService(memoryGameDAO, authService);
+    public void registerRoutes(final Javalin app, final AuthService authService, final GameDAO gameDAO) {
+        service = new GameService(gameDAO, authService);
         app.get("/game", this::listGames);
         app.post("/game", this::createGame);
         app.put("/game", this::joinGame);
