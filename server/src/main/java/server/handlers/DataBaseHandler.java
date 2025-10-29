@@ -28,9 +28,13 @@ public class DataBaseHandler {
     }
 
     public void clear(final Context ctx) throws SQLException, DataAccessException {
-        this.authService.clear();
-        this.userService.clear();
-        this.gameService.clear();
-        ctx.json(Map.of());
+        try {
+            this.authService.clear();
+            this.userService.clear();
+            this.gameService.clear();
+            ctx.json(Map.of());
+        } catch (Exception e) {
+            ctx.status(500).json(Map.of("message", "Error has occurred"));
+        }
     }
 }

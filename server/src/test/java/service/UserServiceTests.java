@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class UserServiceTests {
     @Test
-    void testRegisterPass() throws DataAccessException {
+    void testRegisterPass() throws DataAccessException, SQLException {
         final MemoryUserDAO dataAccess = new MemoryUserDAO();
         final UserService service = new UserService(dataAccess);
         service.register(new RegisterRequest("Isaac", "Sudweeks", "isuds@byu.edu"));
@@ -32,7 +32,7 @@ public class UserServiceTests {
     }
 
     @Test
-    void testLoginPass() throws DataAccessException {
+    void testLoginPass() throws DataAccessException, SQLException {
         final MemoryAuthDAO memoryAuthDAO = new MemoryAuthDAO();
         final AuthService authService = new AuthService(memoryAuthDAO);
         final MemoryUserDAO memoryUserDAO = new MemoryUserDAO();
@@ -88,7 +88,7 @@ public class UserServiceTests {
     }
 
     @Test
-    void testClear() {
+    void testClear() throws SQLException, DataAccessException {
         final MemoryAuthDAO memoryAuthDAO = new MemoryAuthDAO();
         final AuthService authService = new AuthService(memoryAuthDAO);
         final MemoryUserDAO memoryUserDAO = new MemoryUserDAO();

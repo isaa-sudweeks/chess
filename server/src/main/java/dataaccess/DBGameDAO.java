@@ -15,7 +15,7 @@ import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import static java.sql.Types.NULL;
 
 public class DBGameDAO implements GameDAO {
-    private static final Gson GSON = new GsonBuilder().enableComplexMapKeySerialization().create();
+    static final Gson GSON = new GsonBuilder().enableComplexMapKeySerialization().create();
 
     public DBGameDAO() throws SQLException, DataAccessException {
         configureDatabase();
