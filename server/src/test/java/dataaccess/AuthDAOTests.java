@@ -13,32 +13,11 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static java.sql.Statement.RETURN_GENERATED_KEYS;
-import static java.sql.Types.NULL;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class AuthDAOTests {
     static final Gson GSON = new GsonBuilder().enableComplexMapKeySerialization().create();
-
-    private void executeUpdate(String statement, Object... params) throws DataAccessException, SQLException {
-        try (Connection conn = DatabaseManager.getConnection()) {
-            try (PreparedStatement ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
-                for (int i = 0; i < params.length; i++) {
-                    Object param = params[i];
-                    if (param instanceof String p) {
-                        ps.setString(i + 1, p);
-                    } else if (param instanceof Integer p) {
-                        ps.setInt(i + 1, p);
-                    } else if (param == null) {
-                        ps.setNull(i + 1, NULL);
-                    }
-                }
-                ps.executeUpdate();
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }
+    DatabaseHelper helper = new DatabaseHelper();
 
     private AuthData readAuth(ResultSet rs) throws SQLException {
         var json = rs.getString("json");
@@ -49,7 +28,7 @@ public class AuthDAOTests {
         var statement = "INSERT INTO auths (authToken, json) VALUES(?,?)";
         String jsonString = new Gson().toJson(authData);
         String authToken = authData.authToken();
-        executeUpdate(statement, authToken, jsonString);
+        helper.executeUpdate(statement, authToken, jsonString);
     }
 
 
@@ -72,11 +51,11 @@ public class AuthDAOTests {
     @BeforeEach
     public void clearAll() throws SQLException, DataAccessException {
         var statement = "TRUNCATE users";
-        executeUpdate(statement);
+        helper.executeUpdate(statement);
         statement = "TRUNCATE auths";
-        executeUpdate(statement);
+        helper.executeUpdate(statement);
         statement = "TRUNCATE games";
-        executeUpdate(statement);
+        helper.executeUpdate(statement);
     }
 
     @Test
