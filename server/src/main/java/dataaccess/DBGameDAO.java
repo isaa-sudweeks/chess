@@ -11,14 +11,19 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static java.sql.Statement.RETURN_GENERATED_KEYS;
-import static java.sql.Types.NULL;
-
 public class DBGameDAO implements GameDAO {
     static final Gson GSON = new GsonBuilder().enableComplexMapKeySerialization().create();
+    DatabaseHelper helper = new DatabaseHelper();
 
     public DBGameDAO() throws SQLException, DataAccessException {
-        configureDatabase();
+        String[] createString = {"""
+                    CREATE TABLE IF NOT EXISTS  games (
+                                  `id` int NOT NULL AUTO_INCREMENT,
+                                  `json` JSON NOT NULL,
+                                   PRIMARY KEY (`id`)
+                                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+                    """};
+        helper.configureDatabase(createString);
     }
 
     @Override
@@ -43,63 +48,21 @@ public class DBGameDAO implements GameDAO {
         var statement = "INSERT INTO games (id, json) VALUES(?,?)";
         String jsonString = GSON.toJson(gameData);
         int id = gameData.gameID();
-        executeUpdate(statement, id, jsonString);
+        helper.executeUpdate(statement, id, jsonString);
     }
 
     @Override
     public void updateGame(GameData gameData) throws SQLException, DataAccessException {
         String statement = "UPDATE games SET json = ? WHERE id = ?";
-        executeUpdate(statement, GSON.toJson(gameData), gameData.gameID());
+        helper.executeUpdate(statement, GSON.toJson(gameData), gameData.gameID());
     }
 
     @Override
     public void clear() throws SQLException, DataAccessException {
         var statement = "TRUNCATE games";
-        executeUpdate(statement);
+        helper.executeUpdate(statement);
     }
 
-    private void configureDatabase() throws DataAccessException, SQLException {
-        DatabaseManager.createDatabase();
-
-        try (Connection conn = DatabaseManager.getConnection()) {
-            String[] createStatements = {
-                    """
-                    CREATE TABLE IF NOT EXISTS  games (
-                                  `id` int NOT NULL AUTO_INCREMENT,
-                                  `json` JSON NOT NULL,
-                                   PRIMARY KEY (`id`)
-                                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
-                    """
-            };
-            for (String statement : createStatements) {
-                try (var preparedStatement = conn.prepareStatement(statement)) {
-                    preparedStatement.executeUpdate();
-                }
-            }
-        } catch (SQLException ex) {
-            throw new DataAccessException(String.format("Unable to configure database: %s", ex.getMessage()));
-        }
-    }
-
-    private void executeUpdate(String statement, Object... params) throws DataAccessException, SQLException {
-        try (Connection conn = DatabaseManager.getConnection()) {
-            try (PreparedStatement ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
-                for (int i = 0; i < params.length; i++) {
-                    Object param = params[i];
-                    if (param instanceof String p) {
-                        ps.setString(i + 1, p);
-                    } else if (param instanceof Integer p) {
-                        ps.setInt(i + 1, p);
-                    } else if (param == null) {
-                        ps.setNull(i + 1, NULL);
-                    }
-                }
-                ps.executeUpdate();
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }
 
     private GameData readGame(ResultSet rs) throws SQLException {
         var json = rs.getString("json");
