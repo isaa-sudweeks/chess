@@ -102,7 +102,6 @@ public class DBGameDAO implements GameDAO {
     }
 
     private GameData readGame(ResultSet rs) throws SQLException {
-        var id = rs.getInt("id");
         var json = rs.getString("json");
         return GSON.fromJson(json, GameData.class);
     }
