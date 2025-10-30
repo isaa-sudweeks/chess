@@ -24,14 +24,6 @@ public class AuthDAOTests {
         return GSON.fromJson(json, AuthData.class);
     }
 
-    private void addAuth(AuthData authData) throws SQLException, DataAccessException {
-        var statement = "INSERT INTO auths (authToken, json) VALUES(?,?)";
-        String jsonString = new Gson().toJson(authData);
-        String authToken = authData.authToken();
-        helper.executeUpdate(statement, authToken, jsonString);
-    }
-
-
     private Map<String, AuthData> listAuths() throws SQLException, DataAccessException {
         Map<String, AuthData> result = new HashMap<>();
         try (Connection conn = DatabaseManager.getConnection()) {
@@ -50,21 +42,14 @@ public class AuthDAOTests {
 
     @BeforeEach
     public void clearAll() throws SQLException, DataAccessException {
-        var statement = "TRUNCATE users";
-        helper.executeUpdate(statement);
-        statement = "TRUNCATE auths";
-        helper.executeUpdate(statement);
-        statement = "TRUNCATE games";
-        helper.executeUpdate(statement);
+        helper.clearAll();
     }
 
     @Test
     public void addAuthPositive() throws SQLException, DataAccessException {
         AuthDAO authDAO = new DBAuthDAO();
-
         //Try adding an auth
         authDAO.addAuth(new AuthData("token", "username"));
-
         //Get all AuthData
         Map<String, AuthData> data = listAuths();
         assertEquals(new AuthData("token", "username"), data.get("token"));
@@ -75,7 +60,7 @@ public class AuthDAOTests {
         AuthDAO authDAO = new DBAuthDAO();
 
         //Add auth manually
-        addAuth(new AuthData("token", "username"));
+        authDAO.addAuth(new AuthData("token", "username"));
 
         assertThrows(RuntimeException.class, () ->
                 authDAO.addAuth(new AuthData("token", "username")));
@@ -86,7 +71,7 @@ public class AuthDAOTests {
         AuthDAO authDAO = new DBAuthDAO();
 
         //Add auth manually
-        addAuth(new AuthData("token", "username"));
+        authDAO.addAuth(new AuthData("token", "username"));
 
         assertEquals(new AuthData("token", "username"), authDAO.getAuth("token"));
 
@@ -105,7 +90,7 @@ public class AuthDAOTests {
     public void removeAuthPositive() throws SQLException, DataAccessException {
         AuthDAO authDAO = new DBAuthDAO();
 
-        addAuth(new AuthData("token", "username"));
+        authDAO.addAuth(new AuthData("token", "username"));
 
         authDAO.removeAuth("token");
         var data = listAuths();
@@ -128,8 +113,8 @@ public class AuthDAOTests {
         AuthDAO authDAO = new DBAuthDAO();
 
         //add some stuff
-        addAuth(new AuthData("token", "username"));
-        addAuth(new AuthData("token2", "username2"));
+        authDAO.addAuth(new AuthData("token", "username"));
+        authDAO.addAuth(new AuthData("token2", "username2"));
 
         authDAO.clear();
 

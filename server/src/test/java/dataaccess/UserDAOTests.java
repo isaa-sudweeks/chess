@@ -41,12 +41,12 @@ public class UserDAOTests {
 
         //Lets make some user data 
         UserData userData1 = new UserData("isaac", "jay", "sudweeks");
-        addUser(userData1);
+        userDAO.addUser(userData1);
 
         //Lets make another user 
         UserData userData2 = new UserData("isc", "jy", "sudweeks");
         //Insert it
-        addUser(userData2);
+        userDAO.addUser(userData2);
 
         //Lets clear it now:
         userDAO.clear();
@@ -75,7 +75,7 @@ public class UserDAOTests {
         UserDAO userDAO = new DBUserDAO();
 
         //Lets make some user data
-        addUser(new UserData("isaac", "jay", "sudweeks"));
+        userDAO.addUser(new UserData("isaac", "jay", "sudweeks"));
 
         assertThrows(RuntimeException.class, () ->
                 userDAO.addUser(new UserData("isaac", "jay", "sudweeks")));
@@ -87,7 +87,7 @@ public class UserDAOTests {
         UserDAO userDAO = new DBUserDAO();
 
         //Add a user
-        addUser(new UserData("username", "password", "email"));
+        userDAO.addUser(new UserData("username", "password", "email"));
 
         assertEquals(new UserData("username", "password", "email"), userDAO.getUser("username"));
 
@@ -100,15 +100,6 @@ public class UserDAOTests {
         //No user is added
         assertNull(userDAO.getUser("username"));
     }
-
-
-    private void addUser(UserData userData) throws SQLException, DataAccessException {
-        var statement = "INSERT INTO users (username, json) VALUES(?,?)";
-        String jsonString = new Gson().toJson(userData);
-        String username = userData.username();
-        helper.executeUpdate(statement, username, jsonString);
-    }
-
 
     private Map<String, UserData> listUsers() throws SQLException, DataAccessException {
         Map<String, UserData> result = new HashMap<>();

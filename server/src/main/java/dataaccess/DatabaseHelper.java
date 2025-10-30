@@ -41,4 +41,13 @@ public class DatabaseHelper {
             }
         }
     }
+
+    public void clearAll() throws SQLException, DataAccessException {
+        var statement = "TRUNCATE users";
+        executeUpdate(statement);
+        statement = "TRUNCATE auths";
+        executeUpdate(statement);
+        statement = "TRUNCATE games";
+        executeUpdate(statement);
+    }
 }
