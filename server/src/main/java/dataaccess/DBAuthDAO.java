@@ -46,13 +46,16 @@ public class DBAuthDAO implements AuthDAO {
     public AuthData removeAuth(String authToken) throws SQLException, DataAccessException {
         AuthData authData = getAuth(authToken);
         var statement = "DELETE FROM auths WHERE authToken=?";
-        executeUpdate(statement, authToken);
+        int affected = executeUpdate(statement, authToken);
+        if (affected == 0) {
+            throw new DataAccessException("No authdata affected");
+        }
         return authData;
     }
 
     @Override
     public void clear() throws SQLException, DataAccessException {
-        var statement = "TRUNCATE users";
+        var statement = "TRUNCATE auths";
         executeUpdate(statement);
     }
 
@@ -62,7 +65,7 @@ public class DBAuthDAO implements AuthDAO {
         return gson.fromJson(jsonString, AuthData.class);
     }
 
-    private void executeUpdate(String statement, Object... params) throws DataAccessException, SQLException {
+    private int executeUpdate(String statement, Object... params) throws DataAccessException, SQLException {
         try (Connection conn = DatabaseManager.getConnection()) {
             try (PreparedStatement ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
                 for (int i = 0; i < params.length; i++) {
@@ -75,7 +78,7 @@ public class DBAuthDAO implements AuthDAO {
                         ps.setNull(i + 1, NULL);
                     }
                 }
-                ps.executeUpdate();
+                return ps.executeUpdate();
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }

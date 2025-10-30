@@ -124,7 +124,7 @@ public class UserDAOTests {
     }
 
 
-    public void addUser(UserData userData) throws SQLException, DataAccessException {
+    private void addUser(UserData userData) throws SQLException, DataAccessException {
         var statement = "INSERT INTO users (username, json) VALUES(?,?)";
         String jsonString = new Gson().toJson(userData);
         String username = userData.username();

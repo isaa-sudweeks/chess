@@ -2,13 +2,14 @@ package service;
 
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
+import dataaccess.MemoryAuthDAO;
 import model.AuthData;
 
 import java.sql.SQLException;
 import java.util.UUID;
 
 public class AuthService {
-    private AuthDAO authDAO;
+    private AuthDAO authDAO = new MemoryAuthDAO();
 
     public AuthService(final AuthDAO authDAO) {
         this.authDAO = authDAO;

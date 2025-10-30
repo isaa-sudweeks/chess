@@ -6,19 +6,28 @@ import dataaccess.MemoryUserDAO;
 import model.AuthData;
 import model.UserData;
 import org.junit.jupiter.api.Test;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.SQLException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class UserServiceTests {
+
+    private String hashedPassword(String clearTextPassword) {
+        String hashedPassword = BCrypt.hashpw(clearTextPassword, BCrypt.gensalt());
+        return hashedPassword;
+    }
+
     @Test
     void testRegisterPass() throws DataAccessException, SQLException {
         final MemoryUserDAO dataAccess = new MemoryUserDAO();
         final UserService service = new UserService(dataAccess);
         service.register(new RegisterRequest("Isaac", "Sudweeks", "isuds@byu.edu"));
         final UserData data = dataAccess.getUser("Isaac");
-        assertEquals(new UserData("Isaac", "Sudweeks", "isuds@byu.edu"), data);
+
+        assertEquals(new UserData("Isaac", "Sudweeks", "isuds@byu.edu").username(), data.username());
+        assertEquals(new UserData("Isaac", "Sudweeks", "isuds@byu.edu").email(), data.email());
     }
 
     @Test
@@ -37,8 +46,8 @@ public class UserServiceTests {
         final AuthService authService = new AuthService(memoryAuthDAO);
         final MemoryUserDAO memoryUserDAO = new MemoryUserDAO();
         final UserService service = new UserService(authService, memoryUserDAO);
-
-        memoryUserDAO.addUser(new UserData("Isaac", "Sudweeks", "isuds@byu.edu"));
+        var password = hashedPassword("Sudweeks");
+        memoryUserDAO.addUser(new UserData("Isaac", password, "isuds@byu.edu"));
 
         final RegisterLoginResult actual = service.login(new LoginRequest("Isaac", "Sudweeks"));
         final AuthData data = memoryAuthDAO.getAuth(actual.authToken());
@@ -51,7 +60,8 @@ public class UserServiceTests {
         final AuthService authService = new AuthService(memoryAuthDAO);
         final MemoryUserDAO memoryUserDAO = new MemoryUserDAO();
         final UserService service = new UserService(authService, memoryUserDAO);
-        memoryUserDAO.addUser(new UserData("Isaac", "Sudweeks", "isuds@byu.edu"));
+        var password = hashedPassword("Sudweeks");
+        memoryUserDAO.addUser(new UserData("Isaac", password, "isuds@byu.edu"));
         assertThrows(UnauthorizedException.class, () ->
                 service.login(new LoginRequest("Isaac", "Sudweek"))); //Bad password
     }
@@ -62,7 +72,8 @@ public class UserServiceTests {
         final AuthService authService = new AuthService(memoryAuthDAO);
         final MemoryUserDAO memoryUserDAO = new MemoryUserDAO();
         final UserService service = new UserService(authService, memoryUserDAO);
-        memoryUserDAO.addUser(new UserData("Isaac", "Sudweeks", "isuds@byu.edu"));
+        var password = hashedPassword("Sudweeks");
+        memoryUserDAO.addUser(new UserData("Isaac", password, "isuds@byu.edu"));
         final RegisterLoginResult result = service.login(new LoginRequest("Isaac", "Sudweeks")); //See if I can figure out how to do this another way
 
         assertNull(service.logout(result.authToken()));
@@ -75,9 +86,9 @@ public class UserServiceTests {
         final MemoryUserDAO memoryUserDAO = new MemoryUserDAO();
 
         final UserService service = new UserService(authService, memoryUserDAO);
-
+        var password = hashedPassword("Sudweeks");
         //Add a user
-        memoryUserDAO.addUser(new UserData("Isaac", "Sudweeks", "isuds@byu.edu"));
+        memoryUserDAO.addUser(new UserData("Isaac", password, "isuds@byu.edu"));
 
         final RegisterLoginResult result = service.login(new LoginRequest("Isaac", "Sudweeks"));
 

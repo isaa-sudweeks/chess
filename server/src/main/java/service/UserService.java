@@ -70,10 +70,14 @@ public class UserService {
 
     @SuppressWarnings("SameReturnValue")
     public Object logout(final String authToken) throws DataAccessException, SQLException {
-        if (null == authService.removeAuthData(authToken)) {
+        var data = authService.getAuth(authToken);
+        if (data == null) {
             throw new UnauthorizedException("User is not logged in");
+        } else {
+            authService.removeAuthData(authToken);
+            return null;
         }
-        return null;
+
     }
 
     public void clear() throws SQLException, DataAccessException {
