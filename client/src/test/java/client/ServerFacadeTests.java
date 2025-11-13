@@ -8,6 +8,8 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import server.Server;
+import service.CreateGameRequest;
+import service.CreateGameResult;
 import service.LoginRequest;
 import service.RegisterRequest;
 
@@ -85,5 +87,17 @@ public class ServerFacadeTests {
                 serverFacade.logout("autToken"));
     }
 
+    @Test
+    public void createGamesPositive() throws ResponseException {
+        var authData = serverFacade.register(new RegisterRequest("player1", "password", "p1@email.com"));
+        CreateGameResult gameResult = serverFacade.createGame(new CreateGameRequest(authData.authToken(), "game1"));
+        assertTrue(gameResult.gameID() > 0);
+    }
 
+    @Test
+    public void createGamesNegative() throws ResponseException {
+        var authData = serverFacade.register(new RegisterRequest("player1", "password", "p1@email.com"));
+        assertThrows(ResponseException.class, () ->
+                serverFacade.createGame(new CreateGameRequest("badAuthToken", "game1")));
+    }
 }
