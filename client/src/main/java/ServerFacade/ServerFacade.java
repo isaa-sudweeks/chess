@@ -1,6 +1,7 @@
 package ServerFacade;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import exception.ResponseException;
 import service.*;
 
@@ -10,6 +11,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 public class ServerFacade {
+    static final Gson GSON = new GsonBuilder().enableComplexMapKeySerialization().create();
     private final HttpClient client = HttpClient.newHttpClient();
     private final String serverUrl;
 
@@ -102,7 +104,7 @@ public class ServerFacade {
         }
 
         if (responseClass != null) {
-            return new Gson().fromJson(response.body(), responseClass);
+            return GSON.fromJson(response.body(), responseClass);
         }
 
         return null;

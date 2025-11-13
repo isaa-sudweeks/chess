@@ -1,5 +1,7 @@
 package server.handlers;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import dataaccess.GameDAO;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
@@ -8,6 +10,7 @@ import service.*;
 import java.util.Map;
 
 public class GameHandler {
+    static final Gson GSON = new GsonBuilder().enableComplexMapKeySerialization().create();
     private GameService service = new GameService();
 
     public void registerRoutes(final Javalin app, final AuthService authService, final GameDAO gameDAO) {

@@ -7,6 +7,7 @@ import dataaccess.DatabaseHelper;
 import exception.ResponseException;
 import model.GameData;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import server.Server;
@@ -20,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 public class ServerFacadeTests {
-    static DatabaseHelper helper = new DatabaseHelper();
+    static DatabaseHelper helper;
     static ServerFacade serverFacade;
     private static Server server;
 
@@ -29,13 +30,20 @@ public class ServerFacadeTests {
         server = new Server();
         var port = server.run(0);
         System.out.println("Started test HTTP server on " + port);
+        helper = new DatabaseHelper();
         helper.clearAll();
         serverFacade = new ServerFacade("http://localhost:" + port);
     }
 
     @AfterAll
-    static void stopServer() {
+    static void stopServer() throws SQLException, DataAccessException {
+        helper.clearAll();
         server.stop();
+    }
+
+    @AfterEach
+    void clear() throws SQLException, DataAccessException {
+        helper.clearAll();
     }
 
 
@@ -113,5 +121,10 @@ public class ServerFacadeTests {
         games.add(new GameData(2, null, null, "game2", new ChessGame()));
         ListResult expected = new ListResult(games);
         assertEquals(expected, list);
+    }
+
+    @Test
+    public void listGamesNegatic() throws ResponseException {
+
     }
 }

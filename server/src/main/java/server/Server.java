@@ -1,5 +1,7 @@
 package server;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import dataaccess.*;
 import io.javalin.Javalin;
 import io.javalin.json.JavalinGson;
@@ -15,10 +17,12 @@ public class Server {
     private final Javalin javalin;
 
     public Server() {
+        Gson GSON = new GsonBuilder().enableComplexMapKeySerialization().create();
         this.javalin = Javalin.create(config -> {
             config.staticFiles.add("web");
             //Set up a global JSON mapper, so I do not need to GSON all the time
-            config.jsonMapper(new JavalinGson());
+
+            config.jsonMapper(new JavalinGson(GSON, false));
         });
 
         //Handlers
