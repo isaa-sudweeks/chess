@@ -8,12 +8,12 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import server.Server;
+import service.LoginRequest;
 import service.RegisterRequest;
 
 import java.sql.SQLException;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class ServerFacadeTests {
@@ -48,6 +48,19 @@ public class ServerFacadeTests {
         var authData = serverFacade.register(new RegisterRequest("player1", "password", "p1@email.com"));
         assertThrows(ResponseException.class, () ->
                 serverFacade.register(new RegisterRequest("player1", "password", "p1@email.com")));
+    }
+
+    @Test
+    public void testLoginPositive() throws ResponseException {
+        var authData = serverFacade.register(new RegisterRequest("player1", "password", "p1@email.com"));
+        var authData2 = serverFacade.login(new LoginRequest("player1", "password"));
+        assertNotEquals(authData, authData2);
+    }
+
+    @Test
+    public void testLoginFail() throws ResponseException {
+        assertThrows(ResponseException.class, () ->
+                serverFacade.login(new LoginRequest("nousername", "nopassword")));
     }
 
 
