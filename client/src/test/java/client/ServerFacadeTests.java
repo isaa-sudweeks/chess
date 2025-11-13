@@ -1,19 +1,20 @@
 package client;
 
 import ServerFacade.ServerFacade;
+import chess.ChessGame;
 import dataaccess.DataAccessException;
 import dataaccess.DatabaseHelper;
 import exception.ResponseException;
+import model.GameData;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import server.Server;
-import service.CreateGameRequest;
-import service.CreateGameResult;
-import service.LoginRequest;
-import service.RegisterRequest;
+import service.*;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -99,5 +100,18 @@ public class ServerFacadeTests {
         var authData = serverFacade.register(new RegisterRequest("player1", "password", "p1@email.com"));
         assertThrows(ResponseException.class, () ->
                 serverFacade.createGame(new CreateGameRequest("badAuthToken", "game1")));
+    }
+
+    @Test
+    public void listGamesPositive() throws ResponseException {
+        var authData = serverFacade.register(new RegisterRequest("player1", "password", "p1@email.com"));
+        CreateGameResult gameResult = serverFacade.createGame(new CreateGameRequest(authData.authToken(), "game1"));
+        CreateGameResult gameResult2 = serverFacade.createGame(new CreateGameRequest(authData.authToken(), "game2"));
+        var list = serverFacade.listGames(authData.authToken());
+        List<GameData> games = new ArrayList<>();
+        games.add(new GameData(1, null, null, "game1", new ChessGame()));
+        games.add(new GameData(2, null, null, "game2", new ChessGame()));
+        ListResult expected = new ListResult(games);
+        assertEquals(expected, list);
     }
 }
