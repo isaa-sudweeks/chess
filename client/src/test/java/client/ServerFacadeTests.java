@@ -125,6 +125,33 @@ public class ServerFacadeTests {
 
     @Test
     public void listGamesNegatic() throws ResponseException {
+        //No games to list
+        var authData = serverFacade.register(new RegisterRequest("player1", "password", "p1@email.com"));
+        assertEquals(serverFacade.listGames(authData.authToken()), new ListResult(new ArrayList<>()));
+    }
 
+    @Test
+    public void joinGamePositive() throws ResponseException {
+        var authData = serverFacade.register(new RegisterRequest("player1", "password", "p1@email.com"));
+        var gameData = serverFacade.createGame(new CreateGameRequest(authData.authToken(), "game1"));
+
+        serverFacade.joinGame(new JoinGameRequest(ChessGame.TeamColor.WHITE, gameData.gameID(), authData.authToken()));
+        var game = new GameData(gameData.gameID(), "player1", null, "game1", new ChessGame());
+        var games = new ArrayList<GameData>();
+        games.add(game);
+        ListResult result = new ListResult(games);
+        assertEquals(result, serverFacade.listGames(authData.authToken()));
+    }
+
+    @Test
+    public void joinGameNegative() throws ResponseException {
+        var authData = serverFacade.register(new RegisterRequest("player1", "password", "p1@email.com"));
+        var gameData = serverFacade.createGame(new CreateGameRequest(authData.authToken(), "game1"));
+        serverFacade.joinGame(new JoinGameRequest(ChessGame.TeamColor.WHITE, gameData.gameID(), authData.authToken()));
+
+        //Lets try to join again:
+        assertThrows(ResponseException.class, () ->
+                serverFacade.joinGame(
+                        new JoinGameRequest(ChessGame.TeamColor.WHITE, gameData.gameID(), authData.authToken())));
     }
 }
