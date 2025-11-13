@@ -63,5 +63,27 @@ public class ServerFacadeTests {
                 serverFacade.login(new LoginRequest("nousername", "nopassword")));
     }
 
+    @Test
+    public void testClear() throws ResponseException {
+        var authData = serverFacade.register(new RegisterRequest("player1", "password", "p1@email.com"));
+        serverFacade.clear();
+        assertThrows(ResponseException.class, () ->
+                serverFacade.login(new LoginRequest("player1", "password")));
+
+    }
+
+    @Test
+    public void logoutTestPositive() throws ResponseException {
+        var authData = serverFacade.register(new RegisterRequest("player1", "password", "p1@email.com"));
+        serverFacade.logout(authData.authToken());
+        assertTrue(true);
+    }
+
+    @Test
+    public void logoutTestNegative() throws ResponseException {
+        assertThrows(ResponseException.class, () ->
+                serverFacade.logout("autToken"));
+    }
+
 
 }
