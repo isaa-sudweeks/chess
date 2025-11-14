@@ -1,9 +1,9 @@
 package ui;
 
-import ServerFacade.ServerFacade;
 import chess.ChessGame;
 import exception.ResponseException;
 import model.*;
+import serverFacade.ServerFacade;
 
 import static ui.EscapeSequences.*;
 import static ui.OftenPrinted.*;

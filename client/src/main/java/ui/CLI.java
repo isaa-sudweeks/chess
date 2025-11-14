@@ -1,14 +1,10 @@
 package ui;
 
-import ServerFacade.ServerFacade;
+import serverFacade.ServerFacade;
 
 import java.util.Scanner;
 
-import static ui.EscapeSequences.ERASE_SCREEN;
-import static ui.EscapeSequences.RESET_ALL_FORMATTING;
-import static ui.EscapeSequences.SET_TEXT_BOLD;
-import static ui.EscapeSequences.SET_TEXT_COLOR_BLUE;
-import static ui.EscapeSequences.SET_TEXT_COLOR_LIGHT_GREY;
+import static ui.EscapeSequences.*;
 import static ui.OftenPrinted.LOGGEDOUT_HEADER;
 
 public class CLI {
@@ -28,8 +24,8 @@ public class CLI {
                 RESET_ALL_FORMATTING);
         System.out.println(
                 SET_TEXT_COLOR_LIGHT_GREY +
-                "Type help at any time to see the available commands." +
-                RESET_ALL_FORMATTING);
+                        "Type help at any time to see the available commands." +
+                        RESET_ALL_FORMATTING);
         Scanner scanner = new Scanner(System.in);
         var exit = false;
         System.out.print(LOGGEDOUT_HEADER);

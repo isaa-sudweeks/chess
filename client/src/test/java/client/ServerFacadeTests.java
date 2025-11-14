@@ -1,6 +1,5 @@
 package client;
 
-import ServerFacade.ServerFacade;
 import chess.ChessGame;
 import dataaccess.DataAccessException;
 import dataaccess.DatabaseHelper;
@@ -11,6 +10,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import server.Server;
+import serverFacade.ServerFacade;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
