@@ -3,7 +3,7 @@ package ui;
 import chess.ChessGame;
 import exception.ResponseException;
 import model.*;
-import serverFacade.ServerFacade;
+import serverfacade.ServerFacade;
 
 import static ui.EscapeSequences.*;
 import static ui.OftenPrinted.*;

@@ -1,4 +1,4 @@
-import serverFacade.ServerFacade;
+import serverfacade.ServerFacade;
 import ui.CLI;
 
 public class Main {
