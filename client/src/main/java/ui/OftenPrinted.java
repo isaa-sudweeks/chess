@@ -1,5 +1,7 @@
 package ui;
 
+import chess.ChessGame;
+
 public class OftenPrinted {
     public static String PRELOGINHELP =
             "help - List possible commands\n" +
@@ -17,4 +19,8 @@ public class OftenPrinted {
                     "quit - quite the program";
     public static String LOGGEDOUT_HEADER = "[LOGGED_OUT]>>> ";
     public static String LOGGEDIN_HEADER = "[LOGGED_IN]>>> ";
+
+    public String renderChessBoard(ChessGame game) {
+        return "game"; //TODO: Change this to actually work
+    }
 }

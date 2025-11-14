@@ -4,6 +4,7 @@ import ServerFacade.ServerFacade;
 
 import java.util.Scanner;
 
+import static ui.EscapeSequences.ERASE_SCREEN;
 import static ui.OftenPrinted.LOGGEDOUT_HEADER;
 
 public class CLI {
@@ -16,7 +17,7 @@ public class CLI {
     }
 
     public void run() {
-        System.out.println("Welcome to CS240 Chess");
+        System.out.println(ERASE_SCREEN + "Welcome to CS240 Chess");
         System.out.println("Enter help to get started");
         Scanner scanner = new Scanner(System.in);
         var exit = false;

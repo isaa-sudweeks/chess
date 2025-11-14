@@ -1,11 +1,9 @@
 package ui;
 
 import ServerFacade.ServerFacade;
+import chess.ChessGame;
 import exception.ResponseException;
-import model.CreateGameRequest;
-import model.LoginRequest;
-import model.RegisterLoginResult;
-import model.RegisterRequest;
+import model.*;
 
 import static ui.EscapeSequences.ERASE_SCREEN;
 import static ui.OftenPrinted.*;
@@ -14,6 +12,7 @@ public class CommandHelper {
     private ServerFacade serverFacade;
     private int state = 0;
     private String authToken;
+    private OftenPrinted op = new OftenPrinted();
 
     public CommandHelper(ServerFacade serverFacade) {
         this.serverFacade = serverFacade;
@@ -57,8 +56,38 @@ public class CommandHelper {
             return "exit";
         } else if (command.equalsIgnoreCase("list")) {
             return getAndListGames();
+        } else if (command.contains("join")) {
+            String[] parts = command.split(" ");
+            if (parts.length != 3) {
+                return "Command incorrect: " + command + " Proper usage is join <ID> [WHITE|BLACK]\n" + LOGGEDIN_HEADER;
+            }
+            return joinGame(parts[1], parts[2]);
         } else {
             return "The command " + command + " is unknown type help to get a list of commands\n" + LOGGEDIN_HEADER;
+        }
+    }
+
+    private String joinGame(String num, String color) {
+        try {
+            int i = Integer.parseInt(num);
+            var games = serverFacade.listGames(this.authToken);
+            var listOfGames = games.games();
+            int ID = listOfGames.get(i + 1).gameID();
+            ChessGame.TeamColor pColor;
+            if (color.equalsIgnoreCase("white")) {
+                pColor = ChessGame.TeamColor.WHITE;
+            } else if (color.equalsIgnoreCase("black")) {
+                pColor = ChessGame.TeamColor.BLACK;
+            } else {
+                return "The color " + color + " is unrecognized\n" + LOGGEDIN_HEADER;
+            }
+            serverFacade.joinGame(new JoinGameRequest(pColor, ID, this.authToken));
+            var gamesUpdated = serverFacade.listGames(this.authToken);
+            var listOfUpdatedGames = gamesUpdated.games();
+            return op.renderChessBoard(listOfUpdatedGames.get(i + 1).game());
+
+        } catch (ResponseException e) {
+            return "There was an error: " + e.getMessage() + "\n" + LOGGEDIN_HEADER;
         }
     }
 
@@ -76,6 +105,7 @@ public class CommandHelper {
                 sb.append(", Black Username: ");
                 sb.append(game.blackUsername());
                 sb.append("\n");
+                num++;
             }
             sb.append(LOGGEDIN_HEADER);
             return sb.toString();
