@@ -3,25 +3,98 @@ package ui;
 import chess.ChessPosition;
 import model.GameData;
 
-import static ui.EscapeSequences.ERASE_SCREEN;
+import static ui.EscapeSequences.*;
 
 public class OftenPrinted {
-    public static String PRELOGINHELP =
-            "help - List possible commands\n" +
-                    "quit - Exits the program\n" +
-                    "login <username> <password> - Login to play chess\n" +
-                    "register <username> <password> <email> - to register for an account";
+    private static final String INFO_COLOR = SET_TEXT_COLOR_LIGHT_GREY;
+    private static final String ACCENT_COLOR = SET_TEXT_COLOR_BLUE;
+    public static final String LOGGEDOUT_HEADER = buildPrompt("LOGGED_OUT", ACCENT_COLOR);
+    private static final String SUCCESS_COLOR = SET_TEXT_COLOR_GREEN;
+    public static final String LOGGEDIN_HEADER = buildPrompt("LOGGED_IN", SUCCESS_COLOR);
+    private static final String COMMAND_COLOR = SET_TEXT_COLOR_MAGENTA;
+    private static final String BOARD_EDGE_COLOR = SET_TEXT_COLOR_DARK_GREY;
+    public static final String PRELOGINHELP = buildPreloginHelp();
+    public static final String LOGINHELP = buildLoginHelp();
 
-    public static String LOGINHELP =
-            "help - List possible commands\n" +
-                    "logout - logout of chess\n" +
-                    "create <NAME> - Create a game with the given name\n" +
-                    "list - list the games\n" +
-                    "join <ID> [WHITE|BLACK] - join game <ID> on a certain side\n" +
-                    "observe <ID> - Watch game <ID>\n" +
-                    "quit - quit the program";
-    public static String LOGGEDOUT_HEADER = "[LOGGED_OUT]>>> ";
-    public static String LOGGEDIN_HEADER = "[LOGGED_IN]>>> ";
+    private static String buildPreloginHelp() {
+        var sb = new StringBuilder();
+        sb.append(sectionTitle("Commands (Not Logged In)")).append("\n");
+        sb.append(divider());
+        sb.append(bullet("help", "List possible commands"));
+        sb.append(bullet("quit", "Exit the program"));
+        sb.append(bullet("login <username> <password>", "Login to play chess"));
+        sb.append(bullet("register <username> <password> <email>", "Create a new account"));
+        return sb.toString().stripTrailing();
+    }
+
+    private static String buildLoginHelp() {
+        var sb = new StringBuilder();
+        sb.append(sectionTitle("Commands (Logged In)")).append("\n");
+        sb.append(divider());
+        sb.append(bullet("help", "List possible commands"));
+        sb.append(bullet("logout", "Logout of chess"));
+        sb.append(bullet("create <NAME>", "Create a game with the given name"));
+        sb.append(bullet("list", "List games you can join"));
+        sb.append(bullet("join <ID> [WHITE|BLACK]", "Join game <ID> on a team"));
+        sb.append(bullet("observe <ID>", "Watch game <ID>"));
+        sb.append(bullet("quit", "Quit the program"));
+        return sb.toString().stripTrailing();
+    }
+
+    private static String buildPrompt(String label, String color) {
+        return color +
+                SET_TEXT_BOLD +
+                "[" +
+                label +
+                "]" +
+                RESET_ALL_FORMATTING +
+                " " +
+                INFO_COLOR +
+                ">>> " +
+                RESET_ALL_FORMATTING;
+    }
+
+    private static String bullet(String command, String description) {
+        return "  " +
+                commandChip(command) +
+                INFO_COLOR +
+                " - " +
+                description +
+                RESET_ALL_FORMATTING +
+                "\n";
+    }
+
+    private static String sectionTitle(String title) {
+        return ACCENT_COLOR +
+                SET_TEXT_BOLD +
+                title +
+                RESET_ALL_FORMATTING;
+    }
+
+    private static String divider() {
+        return BOARD_EDGE_COLOR +
+                "-".repeat(36) +
+                RESET_ALL_FORMATTING +
+                "\n";
+    }
+
+    private static String commandChip(String command) {
+        return COMMAND_COLOR +
+                SET_TEXT_BOLD +
+                command +
+                RESET_ALL_FORMATTING;
+    }
+
+    private static String infoLine(String text) {
+        return INFO_COLOR +
+                text +
+                RESET_ALL_FORMATTING +
+                "\n";
+    }
+
+    private static String defaultName(String name) {
+        return name == null ? "-" : name;
+    }
 
     public String renderChessBoard(GameData gameData, String color) {
         if (gameData == null || gameData.game() == null) {
@@ -39,17 +112,22 @@ public class OftenPrinted {
 
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(ERASE_SCREEN);
+        stringBuilder.append(sectionTitle("Game: " + (gameData.gameName() == null ? "Untitled" : gameData.gameName())));
         stringBuilder.append("\n");
+        stringBuilder.append(infoLine("White: " + defaultName(gameData.whiteUsername()) +
+                "  |  Black: " + defaultName(gameData.blackUsername()) +
+                "  |  Perspective: " + (whitePerspective ? "White" : "Black")));
+        stringBuilder.append(divider());
 
-        stringBuilder.append("   ");
+        stringBuilder.append(INFO_COLOR).append("   ");
         for (int col : cols) {
             stringBuilder.append(String.format(" %d ", col));
         }
-        stringBuilder.append("\n");
+        stringBuilder.append(RESET_ALL_FORMATTING).append("\n");
 
         for (int rowValue : rows) {
             char rowLabel = (char) ('A' + rowValue - 1);
-            stringBuilder.append(" ").append(rowLabel).append(" ");
+            stringBuilder.append(INFO_COLOR).append(" ").append(rowLabel).append(" ").append(RESET_ALL_FORMATTING);
             for (int colValue : cols) {
                 var piece = board.getPiece(new ChessPosition(rowValue, colValue));
                 boolean whiteSquare = (rowValue + colValue) % 2 == 1;
@@ -95,15 +173,17 @@ public class OftenPrinted {
                 stringBuilder.append(EscapeSequences.RESET_TEXT_COLOR);
                 stringBuilder.append(EscapeSequences.RESET_BG_COLOR);
             }
-            stringBuilder.append(" ").append(rowLabel).append("\n");
+            stringBuilder.append(INFO_COLOR).append(" ").append(rowLabel).append(RESET_ALL_FORMATTING).append("\n");
         }
 
-        stringBuilder.append("   ");
+        stringBuilder.append(INFO_COLOR).append("   ");
         for (int col : cols) {
             stringBuilder.append(String.format(" %d ", col));
         }
-        stringBuilder.append("\n");
-        stringBuilder.append("The user can still use commands type help for a list of commands");
+        stringBuilder.append(RESET_ALL_FORMATTING).append("\n");
+        stringBuilder.append(divider());
+        stringBuilder.append(infoLine("You can still issue commands - type help to see them all."));
+        stringBuilder.append(LOGGEDIN_HEADER);
 
         return stringBuilder.toString();
     }

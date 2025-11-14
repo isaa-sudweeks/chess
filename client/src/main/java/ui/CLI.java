@@ -5,6 +5,10 @@ import ServerFacade.ServerFacade;
 import java.util.Scanner;
 
 import static ui.EscapeSequences.ERASE_SCREEN;
+import static ui.EscapeSequences.RESET_ALL_FORMATTING;
+import static ui.EscapeSequences.SET_TEXT_BOLD;
+import static ui.EscapeSequences.SET_TEXT_COLOR_BLUE;
+import static ui.EscapeSequences.SET_TEXT_COLOR_LIGHT_GREY;
 import static ui.OftenPrinted.LOGGEDOUT_HEADER;
 
 public class CLI {
@@ -17,8 +21,15 @@ public class CLI {
     }
 
     public void run() {
-        System.out.println(ERASE_SCREEN + "Welcome to CS240 Chess");
-        System.out.println("Enter help to get started");
+        System.out.println(ERASE_SCREEN +
+                SET_TEXT_BOLD +
+                SET_TEXT_COLOR_BLUE +
+                "♚ Welcome to CS240 Chess ♚" +
+                RESET_ALL_FORMATTING);
+        System.out.println(
+                SET_TEXT_COLOR_LIGHT_GREY +
+                "Type help at any time to see the available commands." +
+                RESET_ALL_FORMATTING);
         Scanner scanner = new Scanner(System.in);
         var exit = false;
         System.out.print(LOGGEDOUT_HEADER);

@@ -36,6 +36,13 @@ public class EscapeSequences {
     public static final String RESET_TEXT_BLINKING = UNICODE_ESCAPE + "[25m";
     public static final String RESET_TEXT_COLOR = UNICODE_ESCAPE + "[39m";
     public static final String RESET_BG_COLOR = UNICODE_ESCAPE + "[49m";
+    public static final String RESET_ALL_FORMATTING =
+            RESET_TEXT_COLOR +
+            RESET_BG_COLOR +
+            RESET_TEXT_BOLD_FAINT +
+            RESET_TEXT_ITALIC +
+            RESET_TEXT_UNDERLINE +
+            RESET_TEXT_BLINKING;
     private static final String ANSI_ESCAPE = "\033";
     private static final String SET_TEXT_COLOR = UNICODE_ESCAPE + "[38;5;";
     public static final String SET_TEXT_COLOR_BLACK = SET_TEXT_COLOR + "0m";
