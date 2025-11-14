@@ -27,7 +27,7 @@ public class CLI {
             if (output.equalsIgnoreCase("exit")) {
                 break;
             }
-            System.out.println(output);
+            System.out.print(output);
         }
     }
 }

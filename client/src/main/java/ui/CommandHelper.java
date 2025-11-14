@@ -2,6 +2,7 @@ package ui;
 
 import ServerFacade.ServerFacade;
 import exception.ResponseException;
+import model.CreateGameRequest;
 import model.LoginRequest;
 import model.RegisterLoginResult;
 import model.RegisterRequest;
@@ -31,7 +32,29 @@ public class CommandHelper {
 
     private String postLogin(String command) {
         if (command.equalsIgnoreCase("help")) {
-            return LOGINHELP;
+            return LOGINHELP + "\n" + LOGGEDIN_HEADER;
+        } else if (command.contains("create")) {
+            try {
+                String[] parts = command.split(" ");
+                if (parts.length < 2) {
+                    return "Command incorrect: " + command + " Proper usage is create <ID>\n" + LOGGEDIN_HEADER;
+                }
+                var result = serverFacade.createGame(new CreateGameRequest(this.authToken, parts[1]));
+                return "You have created a new game called: " + parts[1] + "\n" + LOGGEDIN_HEADER;
+            } catch (ResponseException e) {
+                return "There was an error: " + e.getMessage() + "\n" + LOGGEDIN_HEADER;
+            }
+        } else if (command.equalsIgnoreCase("logout")) {
+            try {
+                serverFacade.logout(this.authToken);
+                this.authToken = "";
+                this.state = 0;
+                return "The user has been logged out" + "\n" + LOGGEDOUT_HEADER;
+            } catch (ResponseException e) {
+                return "There was an error: " + e.getMessage() + "\n" + LOGGEDIN_HEADER;
+            }
+        } else if (command.equalsIgnoreCase("quit")) {
+            return "exit";
         } else {
             return "The command " + command + " is unknown type help to get a list of commands\n" + LOGGEDIN_HEADER;
         }
@@ -39,7 +62,7 @@ public class CommandHelper {
 
     private String preLogin(String command) {
         if (command.equalsIgnoreCase("help")) {
-            return PRELOGINHELP;
+            return PRELOGINHELP + "\n" + LOGGEDOUT_HEADER;
         }
         if (command.equalsIgnoreCase("quit")) {
             return "exit";
@@ -50,7 +73,7 @@ public class CommandHelper {
                 RegisterLoginResult result = serverFacade.register(new RegisterRequest(parts[1], parts[2], parts[3]));
                 this.authToken = result.authToken();
                 state = 1;
-                return ERASE_SCREEN + "\n Welcome to chess " + result.username();
+                return ERASE_SCREEN + "\n Welcome to chess " + result.username() + "\n" + LOGGEDIN_HEADER;
             } catch (ResponseException e) {
                 return "There was an error: " + e.getMessage() + "\n" + LOGGEDOUT_HEADER;
             }
