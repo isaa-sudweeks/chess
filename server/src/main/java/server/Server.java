@@ -17,12 +17,12 @@ public class Server {
     private final Javalin javalin;
 
     public Server() {
-        Gson GSON = new GsonBuilder().enableComplexMapKeySerialization().create();
+        Gson gson = new GsonBuilder().enableComplexMapKeySerialization().create();
         this.javalin = Javalin.create(config -> {
             config.staticFiles.add("web");
             //Set up a global JSON mapper, so I do not need to GSON all the time
 
-            config.jsonMapper(new JavalinGson(GSON, false));
+            config.jsonMapper(new JavalinGson(gson, false));
         });
 
         //Handlers
