@@ -108,7 +108,7 @@ public class CommandHelper {
     private String joinGame(String num, String color) {
         try {
             int i = Integer.parseInt(num);
-            int ID = getGameData(i).gameID();
+            int id = getGameData(i).gameID();
 
             ChessGame.TeamColor pColor;
             if (color.equalsIgnoreCase("white")) {
@@ -118,7 +118,7 @@ public class CommandHelper {
             } else {
                 return withHeader(warn("The color " + color + " is unrecognized"), LOGGEDIN_HEADER);
             }
-            serverFacade.joinGame(new JoinGameRequest(pColor, ID, this.authToken));
+            serverFacade.joinGame(new JoinGameRequest(pColor, id, this.authToken));
             return op.renderChessBoard(getGameData(i), color);
 
         } catch (ResponseException e) {
