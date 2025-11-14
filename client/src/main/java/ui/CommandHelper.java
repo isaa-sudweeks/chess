@@ -62,17 +62,37 @@ public class CommandHelper {
                 return "Command incorrect: " + command + " Proper usage is join <ID> [WHITE|BLACK]\n" + LOGGEDIN_HEADER;
             }
             return joinGame(parts[1], parts[2]);
+        } else if (command.contains("observe")) {
+            String[] parts = command.split(" ");
+            if (parts.length != 2) {
+                return "Command incorrect: " + command + " Proper usage is observe <ID>\n" + LOGGEDIN_HEADER;
+            }
+            return observe(parts[1]);
         } else {
             return "The command " + command + " is unknown type help to get a list of commands\n" + LOGGEDIN_HEADER;
         }
     }
 
+    private String observe(String num) {
+        try {
+            int i = Integer.parseInt(num);
+            return op.renderChessBoard(getGameData(i), "white");
+        } catch (ResponseException e) {
+            return "There was an error: " + e.getMessage() + "\n" + LOGGEDIN_HEADER;
+        }
+    }
+
+    private GameData getGameData(int i) throws ResponseException {
+        var games = serverFacade.listGames(this.authToken);
+        var listOfGames = games.games();
+        return listOfGames.get(i - 1);
+    }
+
     private String joinGame(String num, String color) {
         try {
             int i = Integer.parseInt(num);
-            var games = serverFacade.listGames(this.authToken);
-            var listOfGames = games.games();
-            int ID = listOfGames.get(i + 1).gameID();
+            int ID = getGameData(i).gameID();
+
             ChessGame.TeamColor pColor;
             if (color.equalsIgnoreCase("white")) {
                 pColor = ChessGame.TeamColor.WHITE;
@@ -82,9 +102,7 @@ public class CommandHelper {
                 return "The color " + color + " is unrecognized\n" + LOGGEDIN_HEADER;
             }
             serverFacade.joinGame(new JoinGameRequest(pColor, ID, this.authToken));
-            var gamesUpdated = serverFacade.listGames(this.authToken);
-            var listOfUpdatedGames = gamesUpdated.games();
-            return op.renderChessBoard(listOfUpdatedGames.get(i + 1).game());
+            return op.renderChessBoard(getGameData(i), color);
 
         } catch (ResponseException e) {
             return "There was an error: " + e.getMessage() + "\n" + LOGGEDIN_HEADER;
