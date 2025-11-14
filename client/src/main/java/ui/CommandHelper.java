@@ -55,8 +55,32 @@ public class CommandHelper {
             }
         } else if (command.equalsIgnoreCase("quit")) {
             return "exit";
+        } else if (command.equalsIgnoreCase("list")) {
+            return getAndListGames();
         } else {
             return "The command " + command + " is unknown type help to get a list of commands\n" + LOGGEDIN_HEADER;
+        }
+    }
+
+    private String getAndListGames() {
+        try {
+            var games = serverFacade.listGames(this.authToken);
+            int num = 1;
+            StringBuilder sb = new StringBuilder();
+            for (var game : games.games()) {
+                sb.append(num);
+                sb.append(" - Game Name: ");
+                sb.append(game.gameName());
+                sb.append(", White Username: ");
+                sb.append(game.whiteUsername());
+                sb.append(", Black Username: ");
+                sb.append(game.blackUsername());
+                sb.append("\n");
+            }
+            sb.append(LOGGEDIN_HEADER);
+            return sb.toString();
+        } catch (ResponseException e) {
+            return "There was an error: " + e.getMessage() + "\n" + LOGGEDIN_HEADER;
         }
     }
 
