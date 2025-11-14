@@ -3,7 +3,6 @@ package exception;
 import com.google.gson.Gson;
 
 import java.util.HashMap;
-import java.util.Map;
 
 public class ResponseException extends Exception {
 
@@ -27,21 +26,6 @@ public class ResponseException extends Exception {
             case 403 -> Code.ClientError;
             case 401 -> Code.ClientError;
             default -> throw new IllegalArgumentException("Unknown HTTP status code: " + httpStatusCode);
-        };
-    }
-
-    public String toJson() {
-        return new Gson().toJson(Map.of("message", getMessage(), "status", code));
-    }
-
-    public Code code() {
-        return code;
-    }
-
-    public int toHttpStatusCode() {
-        return switch (code) {
-            case ServerError -> 500;
-            case ClientError -> 400;
         };
     }
 
