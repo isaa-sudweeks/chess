@@ -141,6 +141,9 @@ public class CommandHelper {
         }
         if (command.contains("register")) {
             String[] parts = command.split(" ");
+            if (parts.length != 4) {
+                return "The proper way to use the command is register <USERNAME> <PASSWORD> <EMAIL>\n" + LOGGEDOUT_HEADER;
+            }
             try {
                 RegisterLoginResult result = serverFacade.register(new RegisterRequest(parts[1], parts[2], parts[3]));
                 this.authToken = result.authToken();
@@ -152,6 +155,9 @@ public class CommandHelper {
         }
         if (command.contains("login")) {
             String[] parts = command.split(" ");
+            if (parts.length != 3) {
+                return "The proper way to use the command is login <USERNAME> <PASSWORD>\n" + LOGGEDOUT_HEADER;
+            }
             try {
                 RegisterLoginResult result = serverFacade.login(new LoginRequest(parts[1], parts[2]));
                 this.authToken = result.authToken();

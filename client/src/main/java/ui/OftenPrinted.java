@@ -103,6 +103,7 @@ public class OftenPrinted {
             stringBuilder.append(String.format(" %d ", col));
         }
         stringBuilder.append("\n");
+        stringBuilder.append("The user can still use commands type help for a list of commands");
 
         return stringBuilder.toString();
     }
