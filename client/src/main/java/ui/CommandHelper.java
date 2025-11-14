@@ -7,7 +7,7 @@ import model.RegisterLoginResult;
 import model.RegisterRequest;
 
 import static ui.EscapeSequences.ERASE_SCREEN;
-import static ui.OftenPrinted.PREGAMEHELP;
+import static ui.OftenPrinted.*;
 
 public class CommandHelper {
     private ServerFacade serverFacade;
@@ -30,12 +30,16 @@ public class CommandHelper {
     }
 
     private String postLogin(String command) {
-        return "";
+        if (command.equalsIgnoreCase("help")) {
+            return LOGINHELP;
+        } else {
+            return "The command " + command + " is unknown type help to get a list of commands\n" + LOGGEDIN_HEADER;
+        }
     }
 
     private String preLogin(String command) {
         if (command.equalsIgnoreCase("help")) {
-            return PREGAMEHELP;
+            return PRELOGINHELP;
         }
         if (command.equalsIgnoreCase("quit")) {
             return "exit";
@@ -46,9 +50,9 @@ public class CommandHelper {
                 RegisterLoginResult result = serverFacade.register(new RegisterRequest(parts[1], parts[2], parts[3]));
                 this.authToken = result.authToken();
                 state = 1;
-                return ERASE_SCREEN + "\n Welcome to chess" + result.username();
+                return ERASE_SCREEN + "\n Welcome to chess " + result.username();
             } catch (ResponseException e) {
-                return "There was an error: " + e.getMessage();
+                return "There was an error: " + e.getMessage() + "\n" + LOGGEDOUT_HEADER;
             }
         }
         if (command.contains("login")) {
@@ -57,10 +61,11 @@ public class CommandHelper {
                 RegisterLoginResult result = serverFacade.login(new LoginRequest(parts[1], parts[2]));
                 this.authToken = result.authToken();
                 state = 1;
+                return ERASE_SCREEN + "\n Welcome to chess " + result.username() + "\n" + LOGGEDIN_HEADER;
             } catch (ResponseException e) {
-                return "There was an error: " + e.getMessage();
+                return "There was an error: " + e.getMessage() + "\n" + LOGGEDOUT_HEADER;
             }
         }
-        return "";
+        return "The command " + command + " was not recognized type help to get a list of commands\n" + LOGGEDOUT_HEADER;
     }
 }

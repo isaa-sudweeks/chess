@@ -4,6 +4,8 @@ import ServerFacade.ServerFacade;
 
 import java.util.Scanner;
 
+import static ui.OftenPrinted.LOGGEDOUT_HEADER;
+
 public class CLI {
     private ServerFacade serverFacade;
     private CommandHelper helper;
@@ -18,13 +20,11 @@ public class CLI {
         System.out.println("Enter help to get started");
         Scanner scanner = new Scanner(System.in);
         var exit = false;
+        System.out.print(LOGGEDOUT_HEADER);
         while (!exit) {
-            System.out.print("> ");
-
             String command = scanner.nextLine();
             String output = helper.commandHelper(command);
             if (output.equalsIgnoreCase("exit")) {
-                exit = true;
                 break;
             }
             System.out.println(output);
