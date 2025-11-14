@@ -3,6 +3,9 @@ package service;
 import dataaccess.DataAccessException;
 import dataaccess.MemoryUserDAO;
 import dataaccess.UserDAO;
+import model.LoginRequest;
+import model.RegisterLoginResult;
+import model.RegisterRequest;
 import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
 

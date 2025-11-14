@@ -5,13 +5,12 @@ import chess.ChessGame;
 import dataaccess.DataAccessException;
 import dataaccess.DatabaseHelper;
 import exception.ResponseException;
-import model.GameData;
+import model.*;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import server.Server;
-import service.*;
 
 import java.sql.SQLException;
 import java.util.ArrayList;

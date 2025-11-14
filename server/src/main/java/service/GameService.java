@@ -3,7 +3,10 @@ package service;
 import chess.ChessGame;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
+import model.CreateGameRequest;
 import model.GameData;
+import model.JoinGameRequest;
+import model.ListResult;
 
 import java.sql.SQLException;
 import java.util.ArrayList;

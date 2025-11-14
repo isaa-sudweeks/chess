@@ -4,6 +4,9 @@ import dataaccess.DataAccessException;
 import dataaccess.UserDAO;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
+import model.LoginRequest;
+import model.RegisterLoginResult;
+import model.RegisterRequest;
 import service.*;
 
 import java.util.Map;

@@ -5,6 +5,9 @@ import com.google.gson.GsonBuilder;
 import dataaccess.GameDAO;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
+import model.CreateGameRequest;
+import model.JoinGameRequest;
+import model.ListResult;
 import service.*;
 
 import java.util.Map;

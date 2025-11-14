@@ -3,7 +3,7 @@ package ServerFacade;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import exception.ResponseException;
-import service.*;
+import model.*;
 
 import java.net.URI;
 import java.net.http.HttpClient;
