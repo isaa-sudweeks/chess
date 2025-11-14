@@ -19,7 +19,10 @@ public class EscapeSequences {
     public static final String BLACK_PAWN = " ♟ ";
     public static final String EMPTY = " \u2003 ";
     public static final String CURSOR_HOME = "\u001B[H";
+    ;
     private static final String UNICODE_ESCAPE = "\u001b";
+    public static final String RETURN_CURSER = UNICODE_ESCAPE + "[u";
+    public static final String SAVE_CURSER = UNICODE_ESCAPE + "[s";
     public static final String ERASE_SCREEN = UNICODE_ESCAPE + "[H" + UNICODE_ESCAPE + "[2J";
     public static final String ERASE_LINE = UNICODE_ESCAPE + "[2K";
     public static final String SET_TEXT_BOLD = UNICODE_ESCAPE + "[1m";

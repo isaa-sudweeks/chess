@@ -1,18 +1,14 @@
-import static ui.AsciiAnimations.FRAMES;
-
+import ServerFacade.ServerFacade;
+import ui.CLI;
 
 public class Main {
+    private static volatile boolean animating = true;
+
     public static void main(final String[] args) throws InterruptedException {
-        System.out.print("Welcome to CS240 Chess");
-        Thread.sleep(800);
+        String serverUrl = "http://localhost:8080";
+        ServerFacade serverFacade = new ServerFacade(serverUrl);
+        CLI cli = new CLI(serverFacade);
+        cli.run();
 
-        int frame = 0;
-
-        while (true) {
-            System.out.print("\rWelcome to CS240 Chess" + FRAMES[frame]);
-            System.out.flush();
-            frame = (frame + 1) % FRAMES.length;
-            Thread.sleep(120);
-        }
     }
 }
