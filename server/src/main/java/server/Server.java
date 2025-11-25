@@ -26,17 +26,12 @@ public class Server {
         });
 
         //Handlers
-
         try {
             UserDAO userDAO = new DBUserDAO();
             AuthService authService = new AuthService(new DBAuthDAO());
             GameDAO gameDAO = new DBGameDAO();
-
             new UserHandler().registerRoutes(this.javalin, authService, userDAO);
-
-
             new GameHandler().registerRoutes(this.javalin, authService, gameDAO);
-
             new DataBaseHandler().registerRoutes(this.javalin, authService, userDAO, gameDAO);
         } catch (SQLException | DataAccessException e) {
             System.out.println("There was an error on the startup of the server");
