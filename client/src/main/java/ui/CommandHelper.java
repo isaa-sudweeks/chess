@@ -4,11 +4,14 @@ import chess.ChessGame;
 import exception.ResponseException;
 import model.*;
 import serverfacade.ServerFacade;
+import websocket.NotificationHandler;
+import websocket.WebSocketFacade;
+import websocket.messages.ServerMessage;
 
 import static ui.EscapeSequences.*;
 import static ui.OftenPrinted.*;
 
-public class CommandHelper {
+public class CommandHelper implements NotificationHandler {
     private static final String DIVIDER_LINE = "-".repeat(36);
     private static final String LISTING_DIVIDER =
             SET_TEXT_COLOR_LIGHT_GREY +
@@ -19,9 +22,11 @@ public class CommandHelper {
     private int state = 0;
     private String authToken;
     private OftenPrinted op = new OftenPrinted();
+    private WebSocketFacade webSocketFacade;
 
-    public CommandHelper(ServerFacade serverFacade) {
+    public CommandHelper(ServerFacade serverFacade, String serverURL) throws ResponseException {
         this.serverFacade = serverFacade;
+        this.webSocketFacade = new WebSocketFacade(serverURL, this);
     }
 
     public String commandHelper(String command) {
@@ -239,5 +244,10 @@ public class CommandHelper {
 
     private String withHeader(String message, String header) {
         return message + "\n" + header;
+    }
+
+    @Override
+    public void notify(ServerMessage message) {
+        info(message.toString());
     }
 }

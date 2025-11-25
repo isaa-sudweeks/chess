@@ -1,4 +1,3 @@
-import serverfacade.ServerFacade;
 import ui.CLI;
 
 public class Main {
@@ -6,8 +5,7 @@ public class Main {
 
     public static void main(final String[] args) throws InterruptedException {
         String serverUrl = "http://localhost:8080";
-        ServerFacade serverFacade = new ServerFacade(serverUrl);
-        CLI cli = new CLI(serverFacade);
+        CLI cli = new CLI(serverUrl);
         cli.run();
 
     }

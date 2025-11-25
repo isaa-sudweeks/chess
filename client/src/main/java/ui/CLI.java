@@ -1,5 +1,6 @@
 package ui;
 
+import exception.ResponseException;
 import serverfacade.ServerFacade;
 
 import java.util.Scanner;
@@ -11,9 +12,14 @@ public class CLI {
     private ServerFacade serverFacade;
     private CommandHelper helper;
 
-    public CLI(ServerFacade serverFacade) {
-        this.serverFacade = serverFacade;
-        this.helper = new CommandHelper(serverFacade);
+    public CLI(String serverURL) {
+
+        this.serverFacade = new ServerFacade(serverURL);
+        try {
+            this.helper = new CommandHelper(serverFacade, serverURL);
+        } catch (ResponseException e) {
+            System.out.println("There was an error setting up the server");
+        }
     }
 
     public void run() {
