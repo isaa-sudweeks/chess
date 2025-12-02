@@ -1,5 +1,7 @@
 package websocket.messages;
 
+import model.GameData;
+
 import java.util.Objects;
 
 /**
@@ -11,11 +13,17 @@ import java.util.Objects;
 public class ServerMessage {
     ServerMessageType serverMessageType;
     private String message;
+    private GameData game;
 
     public ServerMessage(ServerMessageType type, String message) {
 
         this.serverMessageType = type;
         this.message = message;
+    }
+
+    public ServerMessage(ServerMessageType type, GameData game) {
+        this.serverMessageType = type;
+        this.game = game;
     }
 
     public ServerMessageType getServerMessageType() {
@@ -25,6 +33,11 @@ public class ServerMessage {
     public String getMessage() {
         return this.message;
     }
+
+    public GameData getGame() {
+        return this.game;
+    }
+
 
     @Override
     public boolean equals(Object o) {

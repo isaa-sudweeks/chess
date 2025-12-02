@@ -34,7 +34,7 @@ public class Server {
             new UserHandler().registerRoutes(this.javalin, authService, userDAO);
             new GameHandler().registerRoutes(this.javalin, authService, gameDAO);
             new DataBaseHandler().registerRoutes(this.javalin, authService, userDAO, gameDAO);
-            new WebSocketHandler().registerRoutes(this.javalin);
+            new WebSocketHandler(authService).registerRoutes(this.javalin);
         } catch (SQLException | DataAccessException e) {
             System.out.println("There was an error on the startup of the server");
         }

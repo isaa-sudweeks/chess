@@ -56,6 +56,8 @@ public class CommandHelper implements NotificationHandler {
         if (command.equalsIgnoreCase("leave")) {
             try {
                 webSocketFacade.leaveGame(this.authToken, getGameData(i).gameID());
+                state = 1;
+                return withHeader("", LOGGEDIN_HEADER);
             } catch (ResponseException e) {
                 return withHeader(error("There was an error: " + e.getMessage()), LOGGEDIN_HEADER);
             }
@@ -148,7 +150,7 @@ public class CommandHelper implements NotificationHandler {
                 return withHeader(warn("The color " + color + " is unrecognized"), LOGGEDIN_HEADER);
             }
             serverFacade.joinGame(new JoinGameRequest(pColor, id, this.authToken));
-            webSocketFacade.joinGame(this.authToken, id);
+            webSocketFacade.joinGame(this.authToken, id, color);
             this.i = i;
             this.color = pColor;
             state = 3;
@@ -276,6 +278,14 @@ public class CommandHelper implements NotificationHandler {
 
     @Override
     public void notify(ServerMessage message) {
-        System.out.println(info(message.getMessage()));
+        if (message.getServerMessageType() == ServerMessage.ServerMessageType.NOTIFICATION) {
+            System.out.print(withHeader(info("\n" + message.getMessage()), LOGGEDIN_HEADER));
+        }
+        if (message.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME) {
+            //TODO: Figure out how to do the load game stuff
+        }
+        if (message.getServerMessageType() == ServerMessage.ServerMessageType.ERROR) {
+            System.out.println(error(message.getMessage()));
+        }
     }
 }
