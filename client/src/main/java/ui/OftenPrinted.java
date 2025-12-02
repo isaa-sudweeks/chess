@@ -137,13 +137,13 @@ public class OftenPrinted {
 
         stringBuilder.append(INFO_COLOR).append("   ");
         for (int col : cols) {
-            stringBuilder.append(String.format(" %d ", col));
+            char colLabel = (char) ('A' + col - 1);
+            stringBuilder.append(INFO_COLOR).append(" ").append(colLabel).append(" ").append(RESET_ALL_FORMATTING);
         }
         stringBuilder.append(RESET_ALL_FORMATTING).append("\n");
 
         for (int rowValue : rows) {
-            char rowLabel = (char) ('A' + rowValue - 1);
-            stringBuilder.append(INFO_COLOR).append(" ").append(rowLabel).append(" ").append(RESET_ALL_FORMATTING);
+            stringBuilder.append(String.format(" %d ", rowValue));
             for (int colValue : cols) {
                 var piece = board.getPiece(new ChessPosition(rowValue, colValue));
                 boolean whiteSquare = (rowValue + colValue) % 2 == 1;
@@ -189,12 +189,13 @@ public class OftenPrinted {
                 stringBuilder.append(EscapeSequences.RESET_TEXT_COLOR);
                 stringBuilder.append(EscapeSequences.RESET_BG_COLOR);
             }
-            stringBuilder.append(INFO_COLOR).append(" ").append(rowLabel).append(RESET_ALL_FORMATTING).append("\n");
+            stringBuilder.append(String.format(" %d ", rowValue)).append("\n");
         }
 
         stringBuilder.append(INFO_COLOR).append("   ");
         for (int col : cols) {
-            stringBuilder.append(String.format(" %d ", col));
+            char colLabel = (char) ('A' + col - 1);
+            stringBuilder.append(INFO_COLOR).append(" ").append(colLabel).append(" ").append(RESET_ALL_FORMATTING);
         }
         stringBuilder.append(RESET_ALL_FORMATTING).append("\n");
         stringBuilder.append(divider());
