@@ -10,19 +10,20 @@ import java.util.Objects;
  */
 public class ServerMessage {
     ServerMessageType serverMessageType;
+    private String message;
 
-    public enum ServerMessageType {
-        LOAD_GAME,
-        ERROR,
-        NOTIFICATION
-    }
+    public ServerMessage(ServerMessageType type, String message) {
 
-    public ServerMessage(ServerMessageType type) {
         this.serverMessageType = type;
+        this.message = message;
     }
 
     public ServerMessageType getServerMessageType() {
         return this.serverMessageType;
+    }
+
+    public String getMessage() {
+        return this.message;
     }
 
     @Override
@@ -39,5 +40,11 @@ public class ServerMessage {
     @Override
     public int hashCode() {
         return Objects.hash(getServerMessageType());
+    }
+
+    public enum ServerMessageType {
+        LOAD_GAME,
+        ERROR,
+        NOTIFICATION
     }
 }

@@ -22,13 +22,6 @@ public class WebSocketFacade extends Endpoint {
 
             WebSocketContainer webSocketContainer = ContainerProvider.getWebSocketContainer();
             this.session = webSocketContainer.connectToServer(this, socketURI);
-            this.session.addMessageHandler(new MessageHandler.Whole<String>() {
-                @Override
-                public void onMessage(String s) {
-                    ServerMessage message = new Gson().fromJson(s, ServerMessage.class);
-                    notificationHandler.notify(message);
-                }
-            });
 
         } catch (URISyntaxException | DeploymentException | IOException e) {
             throw new ResponseException(ResponseException.Code.ServerError, e.getMessage());
@@ -37,7 +30,20 @@ public class WebSocketFacade extends Endpoint {
 
     @Override
     public void onOpen(Session session, EndpointConfig endpointConfig) {
-
+        System.out.println("Client WS OPEN: " + session.getId());
+        // Attach the handler to *this* session
+        session.addMessageHandler(String.class, s -> {
+            System.out.println("CLIENT WS RAW MESSAGE: " + s);
+            try {
+                ServerMessage message = new Gson().fromJson(s, ServerMessage.class);
+                System.out.println("CLIENT WS PARSED: " +
+                        message.getServerMessageType() + " - " + message.getMessage());
+                notificationHandler.notify(message);
+            } catch (Exception e) {
+                System.out.println("CLIENT WS FAILED TO PARSE:");
+                e.printStackTrace();
+            }
+        });
     }
 
     public void leaveGame(String authToken, int gameID) throws ResponseException {
@@ -48,4 +54,14 @@ public class WebSocketFacade extends Endpoint {
             throw new ResponseException(ResponseException.Code.ServerError, e.getMessage());
         }
     }
+
+    public void joinGame(String authToken, int gameID) throws ResponseException {
+        try {
+            var userGameCommand = new UserGameCommand(websocket.commands.UserGameCommand.CommandType.CONNECT, authToken, gameID);
+            this.session.getBasicRemote().sendText(new Gson().toJson(userGameCommand));
+        } catch (IOException e) {
+            throw new ResponseException(ResponseException.Code.ServerError, e.getMessage());
+        }
+    }
+
 }

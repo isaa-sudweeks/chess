@@ -124,6 +124,7 @@ public class CommandHelper implements NotificationHandler {
                 return withHeader(warn("The color " + color + " is unrecognized"), LOGGEDIN_HEADER);
             }
             serverFacade.joinGame(new JoinGameRequest(pColor, id, this.authToken));
+            webSocketFacade.joinGame(this.authToken, id);
             return op.renderChessBoard(getGameData(i), color);
 
         } catch (ResponseException e) {
@@ -248,6 +249,6 @@ public class CommandHelper implements NotificationHandler {
 
     @Override
     public void notify(ServerMessage message) {
-        info(message.toString());
+        System.out.println(info(message.getMessage()));
     }
 }
