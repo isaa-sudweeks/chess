@@ -24,6 +24,9 @@ public class CommandHelper implements NotificationHandler {
     private OftenPrinted op = new OftenPrinted();
     private WebSocketFacade webSocketFacade;
 
+    private ChessGame.TeamColor color;
+    private int i;
+
     public CommandHelper(ServerFacade serverFacade, String serverURL) throws ResponseException {
         this.serverFacade = serverFacade;
         this.webSocketFacade = new WebSocketFacade(serverURL, this);
@@ -35,8 +38,29 @@ public class CommandHelper implements NotificationHandler {
                 return preLogin(command);
             case 1:
                 return postLogin(command);
+            case 3:
+                return gamePlayUI(command);
             default:
                 return "";
+        }
+    }
+
+    private String gamePlayUI(String command) {
+        if (command.equalsIgnoreCase("redraw chess board")) {
+            try {
+                return op.renderChessBoard(getGameData(this.i), this.color.name());
+            } catch (ResponseException e) {
+                return withHeader(error("There was an error: " + e.getMessage()), LOGGEDIN_HEADER);
+            }
+        }
+        if (command.equalsIgnoreCase("leave")) {
+            try {
+                webSocketFacade.leaveGame(this.authToken, getGameData(i).gameID());
+            } catch (ResponseException e) {
+                return withHeader(error("There was an error: " + e.getMessage()), LOGGEDIN_HEADER);
+            }
+        } else {
+            return withHeader(warn("Command: " + command + "Was not recognized"), LOGGEDIN_HEADER);
         }
     }
 
@@ -125,7 +149,10 @@ public class CommandHelper implements NotificationHandler {
             }
             serverFacade.joinGame(new JoinGameRequest(pColor, id, this.authToken));
             webSocketFacade.joinGame(this.authToken, id);
-            return op.renderChessBoard(getGameData(i), color);
+            this.i = i;
+            this.color = pColor;
+            state = 3;
+            return gamePlayUI("redraw chess board");
 
         } catch (ResponseException e) {
             return withHeader(error("There was an error: " + e.getMessage()), LOGGEDIN_HEADER);

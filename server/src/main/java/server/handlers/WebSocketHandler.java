@@ -26,7 +26,12 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         switch (userGameCommand.getCommandType()) {
             case CONNECT ->
                     connect(userGameCommand.getAuthToken(), userGameCommand.getGameID(), wsMessageContext.session);
+            case LEAVE -> leave(userGameCommand.getAuthToken(), userGameCommand.getGameID(), wsMessageContext.session);
         }
+    }
+
+    private void leave(String authToken, Integer gameID, Session session) {
+        connections.remove(gameID, session);
     }
 
     @Override

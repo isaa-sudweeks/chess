@@ -30,14 +30,9 @@ public class WebSocketFacade extends Endpoint {
 
     @Override
     public void onOpen(Session session, EndpointConfig endpointConfig) {
-        System.out.println("Client WS OPEN: " + session.getId());
-        // Attach the handler to *this* session
         session.addMessageHandler(String.class, s -> {
-            System.out.println("CLIENT WS RAW MESSAGE: " + s);
             try {
                 ServerMessage message = new Gson().fromJson(s, ServerMessage.class);
-                System.out.println("CLIENT WS PARSED: " +
-                        message.getServerMessageType() + " - " + message.getMessage());
                 notificationHandler.notify(message);
             } catch (Exception e) {
                 System.out.println("CLIENT WS FAILED TO PARSE:");
