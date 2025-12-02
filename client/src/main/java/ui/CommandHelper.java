@@ -25,7 +25,7 @@ public class CommandHelper implements NotificationHandler {
     private WebSocketFacade webSocketFacade;
 
     private ChessGame.TeamColor color;
-    private int i;
+    private GameData gameData;
 
     public CommandHelper(ServerFacade serverFacade, String serverURL) throws ResponseException {
         this.serverFacade = serverFacade;
@@ -46,16 +46,14 @@ public class CommandHelper implements NotificationHandler {
     }
 
     private String gamePlayUI(String command) {
-        if (command.equalsIgnoreCase("redraw chess board")) {
+        if (command.equalsIgnoreCase("help")) {
+            return withHeader(GAMEPLAYUIHELP, LOGGEDIN_HEADER);
+        } else if (command.equalsIgnoreCase("redraw chess board")) {
+            return op.renderChessBoard(gameData, this.color.name());
+
+        } else if (command.equalsIgnoreCase("leave")) {
             try {
-                return op.renderChessBoard(getGameData(this.i), this.color.name());
-            } catch (ResponseException e) {
-                return withHeader(error("There was an error: " + e.getMessage()), LOGGEDIN_HEADER);
-            }
-        }
-        if (command.equalsIgnoreCase("leave")) {
-            try {
-                webSocketFacade.leaveGame(this.authToken, getGameData(i).gameID());
+                webSocketFacade.leaveGame(this.authToken, gameData.gameID());
                 state = 1;
                 return withHeader("", LOGGEDIN_HEADER);
             } catch (ResponseException e) {
@@ -151,7 +149,7 @@ public class CommandHelper implements NotificationHandler {
             }
             serverFacade.joinGame(new JoinGameRequest(pColor, id, this.authToken));
             webSocketFacade.joinGame(this.authToken, id, color);
-            this.i = i;
+            this.gameData = getGameData(i);
             this.color = pColor;
             state = 3;
             return gamePlayUI("redraw chess board");
@@ -282,7 +280,8 @@ public class CommandHelper implements NotificationHandler {
             System.out.print(withHeader(info("\n" + message.getMessage()), LOGGEDIN_HEADER));
         }
         if (message.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME) {
-            //TODO: Figure out how to do the load game stuff
+            this.gameData = message.getGame();
+            System.out.print(commandHelper("redraw chess board"));
         }
         if (message.getServerMessageType() == ServerMessage.ServerMessageType.ERROR) {
             System.out.println(error(message.getMessage()));

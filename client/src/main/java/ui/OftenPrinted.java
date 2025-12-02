@@ -15,6 +15,22 @@ public class OftenPrinted {
     private static final String BOARD_EDGE_COLOR = SET_TEXT_COLOR_DARK_GREY;
     public static final String PRELOGINHELP = buildPreloginHelp();
     public static final String LOGINHELP = buildLoginHelp();
+    public static final String GAMEPLAYUIHELP = buildGamePlayUIHelp();
+
+
+    private static String buildGamePlayUIHelp() {
+        var sb = new StringBuilder();
+        sb.append(sectionTitle("Commands (Gameplay UI)")).append("\n");
+        sb.append(divider());
+        sb.append(bullet("help", "List possible commands"));
+        sb.append(bullet("redraw chess board", "Redraws the chess board"));
+        sb.append(bullet("leave", "Leave the game"));
+        sb.append(bullet("make move <Start Location> <End Location>", "Make a move"));
+        sb.append(bullet("resign", "Resign the game"));
+        sb.append(bullet("highlight legal move <Piece Location>",
+                "Highlights the legal moves for the selected piece"));
+        return sb.toString().stripTrailing();
+    }
 
     private static String buildPreloginHelp() {
         var sb = new StringBuilder();
