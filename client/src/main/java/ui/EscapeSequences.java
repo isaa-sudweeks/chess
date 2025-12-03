@@ -38,11 +38,11 @@ public class EscapeSequences {
     public static final String RESET_BG_COLOR = UNICODE_ESCAPE + "[49m";
     public static final String RESET_ALL_FORMATTING =
             RESET_TEXT_COLOR +
-            RESET_BG_COLOR +
-            RESET_TEXT_BOLD_FAINT +
-            RESET_TEXT_ITALIC +
-            RESET_TEXT_UNDERLINE +
-            RESET_TEXT_BLINKING;
+                    RESET_BG_COLOR +
+                    RESET_TEXT_BOLD_FAINT +
+                    RESET_TEXT_ITALIC +
+                    RESET_TEXT_UNDERLINE +
+                    RESET_TEXT_BLINKING;
     private static final String ANSI_ESCAPE = "\033";
     private static final String SET_TEXT_COLOR = UNICODE_ESCAPE + "[38;5;";
     public static final String SET_TEXT_COLOR_BLACK = SET_TEXT_COLOR + "0m";
@@ -62,6 +62,7 @@ public class EscapeSequences {
     public static final String SET_BG_COLOR_GREEN = SET_BG_COLOR + "46m";
     public static final String SET_BG_COLOR_DARK_GREEN = SET_BG_COLOR + "22m";
     public static final String SET_BG_COLOR_YELLOW = SET_BG_COLOR + "226m";
+    public static final String SET_BG_COLOR_DARK_YELLOW = SET_BG_COLOR + "3m";
     public static final String SET_BG_COLOR_BLUE = SET_BG_COLOR + "12m";
     public static final String SET_BG_COLOR_MAGENTA = SET_BG_COLOR + "5m";
     public static final String SET_BG_COLOR_WHITE = SET_BG_COLOR + "15m";

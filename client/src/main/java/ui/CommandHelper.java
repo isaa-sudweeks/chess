@@ -106,6 +106,27 @@ public class CommandHelper implements NotificationHandler {
             } catch (ResponseException e) {
                 return withHeader(error("There was an error: " + e.getMessage()), LOGGEDIN_HEADER);
             }
+        } else if (command.contains("highlight legal moves")) {
+            String[] parts = command.split(" ");
+            if (parts.length != 4) {
+                return withHeader(
+                        warn(
+                                "Command incorrect " +
+                                        command +
+                                        " Proper usage is make move <Start Location>"),
+                        LOGGEDIN_HEADER);
+            }
+            String from = parts[3].toLowerCase();
+            if (!validSquare(from)) {
+                return withHeader(
+                        warn("Invalid square(s). Use algebraic like e2 e4."),
+                        LOGGEDIN_HEADER);
+            }
+            int fromCol = from.charAt(0) - 'a' + 1;
+            int fromRow = from.charAt(1) - '0';
+
+
+            return withHeader(op.highlightLegalMoves(this.gameData, this.color.name(), new ChessPosition(fromRow, fromCol)), LOGGEDIN_HEADER);
         } else {
             return withHeader(warn("Command: " + command + "Was not recognized"), LOGGEDIN_HEADER);
         }
