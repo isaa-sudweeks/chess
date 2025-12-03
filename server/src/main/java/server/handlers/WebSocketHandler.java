@@ -101,9 +101,21 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                                     ServerMessage.ServerMessageType.NOTIFICATION,
                                     authData.username() +
                                             " moved" + move.getStartPosition() + " to " + move.getEndPosition()));
+                    ChessGame.TeamColor checkColor = null;
+                    String checkUsername = null;
+                    if (turn == ChessGame.TeamColor.WHITE) {
+                        checkColor = ChessGame.TeamColor.BLACK;
+                        checkUsername = gameData.blackUsername();
+                    } else if (turn == ChessGame.TeamColor.BLACK) {
+                        checkColor = ChessGame.TeamColor.WHITE;
+                        checkUsername = gameData.whiteUsername();
+                    }
+                    if (gameData.game().isInCheck(checkColor)) {
+                        connections.broadcast_game(gameID, new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, checkUsername + " is in check"));
+                    }
                 }
+                //TODO: Do checkmate stuff and test the check.
 
-                //TODO: Check for check and checkmate
             }
 
         } catch (SQLException | DataAccessException e) {

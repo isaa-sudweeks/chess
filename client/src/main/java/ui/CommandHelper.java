@@ -87,7 +87,6 @@ public class CommandHelper implements NotificationHandler {
                     int toCol = to.charAt(0) - 'a' + 1;
                     int toRow = to.charAt(1) - '0';
 
-                    //TODO: There seems to be a lot more checking that I need to do on this side.
                     ChessMove move = new ChessMove(new ChessPosition(fromRow, fromCol), new ChessPosition(toRow, toCol), null);
                     webSocketFacade.makeMove(this.authToken, gameData, move);
                     return withHeader("", LOGGEDIN_HEADER);
