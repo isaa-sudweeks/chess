@@ -363,7 +363,7 @@ public class CommandHelper implements NotificationHandler {
             System.out.print(commandHelper("redraw chess board"));
         }
         if (message.getServerMessageType() == ServerMessage.ServerMessageType.ERROR) {
-            System.out.println(error(message.getErrorMessage()));
+            System.out.println(withHeader(error(message.getErrorMessage()), LOGGEDIN_HEADER));
         }
     }
 }
