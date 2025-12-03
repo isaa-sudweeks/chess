@@ -64,7 +64,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                 authorized(session, "You can not resign as an observer");
             } else {
                 gameService.finishGame(gameData);
-                connections.broadcast_game(gameData.gameID(),
+                connections.broadcastGame(gameData.gameID(),
                         new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
                                 authService.getAuth(authToken).username() + " resigned the game "));
             }
@@ -95,8 +95,8 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
                 } else {
                     gameService.updateGame(gameData, move);
-                    connections.broadcast_game(gameID, new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, gameData));
-                    connections.broadcast_all(session, gameID,
+                    connections.broadcastGame(gameID, new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, gameData));
+                    connections.broadcastAll(session, gameID,
                             new ServerMessage(
                                     ServerMessage.ServerMessageType.NOTIFICATION,
                                     authData.username() +
@@ -112,19 +112,19 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                     }
                     if (gameData.game().isInCheckmate(checkColor)) {
                         gameService.finishGame(gameData);
-                        connections.broadcast_game(
+                        connections.broadcastGame(
                                 gameID,
                                 new ServerMessage(
                                         ServerMessage.ServerMessageType.NOTIFICATION,
                                         checkUsername + " is in checkmate the game is over"));
                     } else if (gameData.game().isInStalemate(checkColor)) {
                         gameService.finishGame(gameData);
-                        connections.broadcast_game(
+                        connections.broadcastGame(
                                 gameID,
                                 new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
                                         "The game is in stalemate"));
                     } else if (gameData.game().isInCheck(checkColor)) {
-                        connections.broadcast_game(
+                        connections.broadcastGame(
                                 gameID,
                                 new ServerMessage(
                                         ServerMessage.ServerMessageType.NOTIFICATION,
@@ -142,8 +142,9 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         }
     }
 
-    private void authorized(Session session, String Not_Autherized) throws IOException {
-        session.getRemote().sendString(new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.ERROR, Not_Autherized)));
+    private void authorized(Session session, String notAuthorized) throws IOException {
+        session.getRemote().sendString(
+                new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.ERROR, notAuthorized)));
     }
 
     private void sendOne(Session session, GameData gameData) throws IOException {
@@ -169,7 +170,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                 if (color != null) {
                     gameService.playerLeaves(getGame(gameID, authToken), color);
                 }
-                connections.broadcast_game(
+                connections.broadcastGame(
                         gameID,
                         new ServerMessage(
                                 ServerMessage.ServerMessageType.NOTIFICATION,
@@ -203,7 +204,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                 if (gameData == null) {
                     authorized(session, "Not a valid gameID");
                 } else {
-                    connections.broadcast_game(gameID,
+                    connections.broadcastGame(gameID,
                             new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, sb.toString()));
                     connections.add(gameID, session);
                     sendOne(session, getGame(gameID, authToken));

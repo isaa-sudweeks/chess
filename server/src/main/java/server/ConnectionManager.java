@@ -33,7 +33,7 @@ public class ConnectionManager {
         connections.replace(gameID, currentList);
     }
 
-    public void broadcast_all(Session excludeSession, Integer gameID, ServerMessage message) throws IOException {
+    public void broadcastAll(Session excludeSession, Integer gameID, ServerMessage message) throws IOException {
         var sessions = connections.get(gameID);
         String msg = GSON.toJson(message);
         for (Session c : sessions) {
@@ -46,7 +46,7 @@ public class ConnectionManager {
 
     }
 
-    public void broadcast_game(int gameID, ServerMessage message) throws IOException {
+    public void broadcastGame(int gameID, ServerMessage message) throws IOException {
         var sessions = connections.get(gameID);
         // Use a Gson instance that supports complex map keys so ChessPosition keys deserialize on the client
         String msg = GSON.toJson(message);
