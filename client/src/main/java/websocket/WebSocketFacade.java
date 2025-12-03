@@ -72,9 +72,18 @@ public class WebSocketFacade extends Endpoint {
         }
     }
 
-    public void observeGame(String authToken, int gameID) throws ResponseException { //TODO:Implement this as well
+    public void observeGame(String authToken, int gameID) throws ResponseException {
         try {
             var userGameCommand = new UserGameCommand(websocket.commands.UserGameCommand.CommandType.CONNECT, authToken, gameID);
+            this.session.getBasicRemote().sendText(new Gson().toJson(userGameCommand));
+        } catch (IOException e) {
+            throw new ResponseException(ResponseException.Code.ServerError, e.getMessage());
+        }
+    }
+
+    public void resign(String authToken, int gameID) throws ResponseException {
+        var userGameCommand = new UserGameCommand(UserGameCommand.CommandType.RESIGN, authToken, gameID);
+        try {
             this.session.getBasicRemote().sendText(new Gson().toJson(userGameCommand));
         } catch (IOException e) {
             throw new ResponseException(ResponseException.Code.ServerError, e.getMessage());

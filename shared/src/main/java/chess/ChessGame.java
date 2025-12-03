@@ -14,6 +14,7 @@ import java.util.Objects;
 public class ChessGame {
     private TeamColor team;
     private ChessBoard board = new ChessBoard();
+    private Boolean isDone = false;
 
     public ChessGame() {
         this.team = TeamColor.WHITE;
@@ -48,6 +49,14 @@ public class ChessGame {
      */
     public void setTeamTurn(final TeamColor team) {
         this.team = team;
+    }
+
+    public Boolean getIsDone() {
+        return isDone;
+    }
+
+    public void setIsDone(boolean isDone) {
+        this.isDone = isDone;
     }
 
     /**

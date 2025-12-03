@@ -48,6 +48,21 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             case LEAVE -> leave(userGameCommand.getAuthToken(), userGameCommand.getGameID(), wsMessageContext.session);
             case MAKE_MOVE ->
                     makeMove(userGameCommand.getAuthToken(), userGameCommand.getGameID(), userGameCommand.getMove(), wsMessageContext.session);
+            case RESIGN ->
+                    resign(userGameCommand.getAuthToken(), userGameCommand.getGameID(), wsMessageContext.session);
+        }
+    }
+
+    private void resign(String authToken, Integer gameID, Session session) throws IOException {
+        try {
+            var games = gameService.listGames(authToken);
+            GameData gameData = games.games().get(gameID - 1);
+            gameService.finishGame(gameData);
+            connections.broadcast_game(gameData.gameID(),
+                    new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
+                            authService.getAuth(authToken).username() + " resigned the game "));
+        } catch (SQLException | DataAccessException e) {
+            authorized(session, "There was an error" + e.getMessage());
         }
     }
 
@@ -57,11 +72,19 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             if (authData == null) {
                 authorized(session, "Not Authorized");
             } else {
-                var games = gameService.listGames(authToken);
-                GameData gameData = games.games().get(gameID - 1); //TODO:Change this so it is more robust to the actual thing
-                gameService.updateGame(gameData, move);
-                connections.broadcast_game(gameData.gameID(), new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, gameData));
-                connections.broadcast_game(gameData.gameID(), new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, authData.username() + " moved" + move.getStartPosition() + " to " + move.getEndPosition()));
+                GameData gameData = getGame(gameID, authToken);
+                if (gameData.game().getIsDone()) {
+                    authorized(session, "You can not make a move on a finished game");
+                } else {
+                    gameService.updateGame(gameData, move);
+                    connections.broadcast_game(gameID, new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, gameData));
+                    connections.broadcast_game(gameID,
+                            new ServerMessage(
+                                    ServerMessage.ServerMessageType.NOTIFICATION,
+                                    authData.username() +
+                                            " moved" + move.getStartPosition() + " to " + move.getEndPosition()));
+                }
+
                 //TODO: Check for check and checkmate
             }
 
@@ -116,11 +139,21 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                 }
                 connections.broadcast_game(gameID, new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, sb.toString()));
                 var games = gameService.listGames(authToken);
-                connections.broadcast_game(gameID, new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, games.games().get(gameID)));
+                connections.broadcast_game(gameID, new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, getGame(gameID, authToken)));
             }
         } catch (IOException | SQLException | DataAccessException e) {
             authorized(session, "There was an error" + e.getMessage());
         }
+    }
+
+    public GameData getGame(Integer gameID, String authToken) throws SQLException, DataAccessException {
+        var games = gameService.listGames(authToken);
+        for (var game : games.games()) {
+            if (game.gameID() == gameID) {
+                return game;
+            }
+        }
+        return null;
     }
 
     public void registerRoutes(final Javalin app) {

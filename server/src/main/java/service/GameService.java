@@ -59,6 +59,11 @@ public class GameService {
         dataAccess.updateGame(gameData);
     }
 
+    public void finishGame(GameData gameData) throws SQLException, DataAccessException {
+        gameData.game().setIsDone(true);
+        dataAccess.updateGame(gameData);
+    }
+
     @SuppressWarnings("SameReturnValue")
     public Object joinGame(final JoinGameRequest joinGameRequest) throws SQLException, DataAccessException {
 

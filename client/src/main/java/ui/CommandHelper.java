@@ -98,6 +98,14 @@ public class CommandHelper implements NotificationHandler {
             } catch (ResponseException e) {
                 return withHeader(error("There was an error: " + e.getMessage()), LOGGEDIN_HEADER);
             }
+        } else if (command.equalsIgnoreCase("resign")) {
+            try {
+                webSocketFacade.resign(this.authToken, this.gameData.gameID());
+                state = 1;
+                return withHeader(ERASE_SCREEN, LOGGEDIN_HEADER);
+            } catch (ResponseException e) {
+                return withHeader(error("There was an error: " + e.getMessage()), LOGGEDIN_HEADER);
+            }
         } else {
             return withHeader(warn("Command: " + command + "Was not recognized"), LOGGEDIN_HEADER);
         }
