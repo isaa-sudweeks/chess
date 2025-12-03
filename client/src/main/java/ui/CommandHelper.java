@@ -165,7 +165,10 @@ public class CommandHelper implements NotificationHandler {
     private String observe(String num) {
         try {
             int i = Integer.parseInt(num);
-            return op.renderChessBoard(getGameData(i), "white");
+            webSocketFacade.observeGame(this.authToken, getGameData(i).gameID());
+            state = 3;
+            this.color = ChessGame.TeamColor.WHITE;
+            return ERASE_SCREEN;
         } catch (ResponseException e) {
             return withHeader(error("There was an error: " + e.getMessage()), LOGGEDIN_HEADER);
         }
@@ -327,7 +330,6 @@ public class CommandHelper implements NotificationHandler {
         }
         if (message.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME) {
             this.gameData = message.getGame();
-            System.out.println(info(message.getMessage()));
             System.out.print(commandHelper("redraw chess board"));
         }
         if (message.getServerMessageType() == ServerMessage.ServerMessageType.ERROR) {

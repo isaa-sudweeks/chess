@@ -60,7 +60,9 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                 var games = gameService.listGames(authToken);
                 GameData gameData = games.games().get(gameID - 1); //TODO:Change this so it is more robust to the actual thing
                 gameService.updateGame(gameData, move);
-                connections.broadcast_game(gameData.gameID(), new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, gameData, authData.username() + " moved " + move.getStartPosition()));
+                connections.broadcast_game(gameData.gameID(), new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, gameData));
+                connections.broadcast_game(gameData.gameID(), new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, authData.username() + " moved" + move.getStartPosition() + " to " + move.getEndPosition()));
+                //TODO: Check for check and checkmate
             }
 
         } catch (SQLException | DataAccessException e) {
@@ -113,6 +115,8 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                     sb.append(color);
                 }
                 connections.broadcast_game(gameID, new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, sb.toString()));
+                var games = gameService.listGames(authToken);
+                connections.broadcast_game(gameID, new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, games.games().get(gameID)));
             }
         } catch (IOException | SQLException | DataAccessException e) {
             authorized(session, "There was an error" + e.getMessage());
