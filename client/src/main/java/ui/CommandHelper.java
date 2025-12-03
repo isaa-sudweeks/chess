@@ -94,10 +94,17 @@ public class CommandHelper implements NotificationHandler {
                     ChessPiece.PieceType promotion = null;
                     try {
                         var piece = gameData.game().getBoard().getPiece(new ChessPosition(fromRow, fromCol));
-                        if (piece.equals(ChessPiece.PieceType.PAWN)) {
+                        if (piece.getPieceType() == ChessPiece.PieceType.PAWN) {
                             if (color.equals(ChessGame.TeamColor.WHITE)) {
                                 if (toRow == 8) {
-                                    withHeader("What would you like to promote to?", LOGGEDIN_HEADER);
+                                    System.out.print(withHeader("What would you like to promote to?", LOGGEDIN_HEADER));
+
+                                    promotion = promote();
+                                }
+                            }
+                            if (color.equals(ChessGame.TeamColor.BLACK)) {
+                                if (toRow == 1) {
+                                    System.out.print(withHeader("What would you like to promote to?", LOGGEDIN_HEADER));
                                     promotion = promote();
                                 }
                             }
