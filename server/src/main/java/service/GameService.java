@@ -61,6 +61,10 @@ public class GameService {
             GameData newGameData = new GameData(gameData.gameID(), null, gameData.blackUsername(), gameData.gameName(), gameData.game());
             dataAccess.updateGame(newGameData);
         }
+        if (teamColor == ChessGame.TeamColor.BLACK) {
+            GameData newGameData = new GameData(gameData.gameID(), gameData.whiteUsername(), null, gameData.gameName(), gameData.game());
+            dataAccess.updateGame(newGameData);
+        }
     }
 
     public void finishGame(GameData gameData) throws SQLException, DataAccessException {
@@ -80,8 +84,7 @@ public class GameService {
         if (null != authData) {
             if (null != gameData) {
                 if (ChessGame.TeamColor.WHITE == joinGameRequest.playerColor()) {
-                    if (null == gameData.whiteUsername() ||
-                            authData.username().equalsIgnoreCase(gameData.whiteUsername())) {
+                    if (null == gameData.whiteUsername()) {
 
                         gameData = new GameData(
                                 gameData.gameID(),
@@ -93,8 +96,7 @@ public class GameService {
                     } else {
                         throw new AlreadyTakenException("That player is already taken");
                     }
-                } else if (ChessGame.TeamColor.BLACK == joinGameRequest.playerColor() ||
-                        authData.username().equalsIgnoreCase(gameData.blackUsername())) {
+                } else if (ChessGame.TeamColor.BLACK == joinGameRequest.playerColor()) {
                     if (null == gameData.blackUsername()) {
                         gameData = new GameData(
                                 gameData.gameID(),

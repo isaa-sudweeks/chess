@@ -100,7 +100,6 @@ public class CommandHelper implements NotificationHandler {
         } else if (command.equalsIgnoreCase("resign")) {
             try {
                 webSocketFacade.resign(this.authToken, this.gameData.gameID());
-                state = 1;
                 return withHeader(ERASE_SCREEN, LOGGEDIN_HEADER);
             } catch (ResponseException e) {
                 return withHeader(error("There was an error: " + e.getMessage()), LOGGEDIN_HEADER);
@@ -356,14 +355,14 @@ public class CommandHelper implements NotificationHandler {
     @Override
     public void notify(ServerMessage message) {
         if (message.getServerMessageType() == ServerMessage.ServerMessageType.NOTIFICATION) {
-            System.out.print(withHeader(info("\n" + message.getMessage()), LOGGEDIN_HEADER));
+            System.out.print(withHeader(ERASE_LINE + info("\n" + message.getMessage()), LOGGEDIN_HEADER));
         }
         if (message.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME) {
             this.gameData = message.getGame();
             System.out.print(commandHelper("redraw chess board"));
         }
         if (message.getServerMessageType() == ServerMessage.ServerMessageType.ERROR) {
-            System.out.println(withHeader(error(message.getErrorMessage()), LOGGEDIN_HEADER));
+            System.out.print(withHeader(ERASE_LINE + error(message.getErrorMessage()), LOGGEDIN_HEADER));
         }
     }
 }

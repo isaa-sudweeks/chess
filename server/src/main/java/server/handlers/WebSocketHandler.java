@@ -36,7 +36,6 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
     @Override
     public void handleConnect(@NotNull WsConnectContext wsConnectContext) throws Exception {
-        System.out.println("Websocket Connected");
         wsConnectContext.enableAutomaticPings();
     }
 
@@ -89,10 +88,11 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                 if (turn == ChessGame.TeamColor.WHITE) {
                     testUsername = gameData.whiteUsername();
                 }
-                if (!(testUsername.equalsIgnoreCase(authData.username()))) {
-                    authorized(session, "It isn't your turn");
-                } else if (gameData.game().getIsDone()) {
+                if (gameData.game().getIsDone()) {
                     authorized(session, "You can not make a move on a finished game");
+                } else if (testUsername == null || !(testUsername.equalsIgnoreCase(authData.username()))) {
+                    authorized(session, "It isn't your turn");
+
                 } else {
                     gameService.updateGame(gameData, move);
                     connections.broadcast_game(gameID, new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, gameData));
@@ -110,11 +110,18 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                         checkColor = ChessGame.TeamColor.WHITE;
                         checkUsername = gameData.whiteUsername();
                     }
-                    if (gameData.game().isInCheck(checkColor)) {
+                    if (gameData.game().isInCheckmate(checkColor)) {
+                        gameService.finishGame(gameData);
+                        connections.broadcast_game(
+                                gameID,
+                                new ServerMessage(
+                                        ServerMessage.ServerMessageType.NOTIFICATION,
+                                        checkUsername + " is in checkmate the game is over"));
+                    } else if (gameData.game().isInCheck(checkColor)) {
                         connections.broadcast_game(gameID, new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, checkUsername + " is in check"));
                     }
                 }
-                //TODO: Do checkmate stuff and test the check.
+
 
             }
 
@@ -165,7 +172,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
     @Override
     public void handleClose(@NotNull WsCloseContext wsCloseContext) throws Exception {
-        System.out.println("Websocket Closed");
+        //System.out.println("Websocket Closed");
 
     }
 

@@ -51,21 +51,14 @@ public class ConnectionManager {
         // Use a Gson instance that supports complex map keys so ChessPosition keys deserialize on the client
         String msg = GSON.toJson(message);
 
-        System.out.println("broadcast_game: gameID=" + gameID);
-        System.out.println("broadcast_game: json=" + msg);
-
         if (sessions == null || sessions.isEmpty()) {
-            System.out.println("broadcast_game: no sessions for game " + gameID);
+
             return;
         }
-
-        System.out.println("broadcast_game: sending to " + sessions.size() + " sessions");
         for (Session c : sessions) {
             if (c.isOpen()) {
-                System.out.println("broadcast_game: sending to " + c.getRemoteAddress());
                 c.getRemote().sendString(msg);
             } else {
-                System.out.println("broadcast_game: session closed: " + c.getRemoteAddress());
             }
         }
     }
