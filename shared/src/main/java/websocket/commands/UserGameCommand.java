@@ -76,6 +76,11 @@ public class UserGameCommand {
         return Objects.hash(getCommandType(), getAuthToken(), getGameID());
     }
 
+    public ChessMove getMove() {
+        return this.move;
+    }
+
+
     public enum CommandType {
         CONNECT,
         MAKE_MOVE,

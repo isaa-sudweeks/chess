@@ -1,6 +1,8 @@
 package ui;
 
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPosition;
 import exception.ResponseException;
 import model.*;
 import serverfacade.ServerFacade;
@@ -59,9 +61,53 @@ public class CommandHelper implements NotificationHandler {
             } catch (ResponseException e) {
                 return withHeader(error("There was an error: " + e.getMessage()), LOGGEDIN_HEADER);
             }
+        } else if (command.contains("make move")) {
+            try {
+                String[] parts = command.split(" ");
+                if (parts.length != 4) {
+                    return withHeader(
+                            warn(
+                                    "Command incorrect " +
+                                            command +
+                                            " Proper usage is make move <Start Location> <End Location>"),
+                            LOGGEDIN_HEADER);
+                } else {
+                    String from = parts[2].toLowerCase();
+                    String to = parts[3].toLowerCase();
+
+                    if (!validSquare(from) || !validSquare(to)) {
+                        return withHeader(
+                                warn("Invalid square(s). Use algebraic like e2 e4."),
+                                LOGGEDIN_HEADER);
+                    }
+
+                    int fromCol = from.charAt(0) - 'a' + 1;
+                    int fromRow = from.charAt(1) - '0';
+
+                    int toCol = to.charAt(0) - 'a' + 1;
+                    int toRow = to.charAt(1) - '0';
+
+                    //TODO: There seems to be a lot more checking that I need to do on this side.
+                    ChessMove move = new ChessMove(new ChessPosition(fromRow, fromCol), new ChessPosition(toRow, toCol), null);
+                    webSocketFacade.makeMove(this.authToken, gameData, move);
+                    return withHeader("", LOGGEDIN_HEADER);
+
+                }
+
+
+            } catch (ResponseException e) {
+                return withHeader(error("There was an error: " + e.getMessage()), LOGGEDIN_HEADER);
+            }
         } else {
             return withHeader(warn("Command: " + command + "Was not recognized"), LOGGEDIN_HEADER);
         }
+    }
+
+    private boolean validSquare(String s) { //TODO: Make this so it deals with bad input like 55
+        return s.length() == 2 &&
+                s.charAt(0) >= 'a' && s.charAt(0) <= 'h' &&
+                s.charAt(1) >= '1' && s.charAt(1) <= '8';
+
     }
 
     private String postLogin(String command) {
@@ -281,6 +327,7 @@ public class CommandHelper implements NotificationHandler {
         }
         if (message.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME) {
             this.gameData = message.getGame();
+            System.out.println(info(message.getMessage()));
             System.out.print(commandHelper("redraw chess board"));
         }
         if (message.getServerMessageType() == ServerMessage.ServerMessageType.ERROR) {

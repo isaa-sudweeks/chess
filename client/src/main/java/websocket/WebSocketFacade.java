@@ -1,8 +1,11 @@
 package websocket;
 
+import chess.ChessMove;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import exception.ResponseException;
 import jakarta.websocket.*;
+import model.GameData;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
 
@@ -11,6 +14,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 public class WebSocketFacade extends Endpoint {
+    static final Gson GSON = new GsonBuilder().enableComplexMapKeySerialization().create();
     Session session;
     NotificationHandler notificationHandler;
 
@@ -32,7 +36,7 @@ public class WebSocketFacade extends Endpoint {
     public void onOpen(Session session, EndpointConfig endpointConfig) {
         session.addMessageHandler(String.class, s -> {
             try {
-                ServerMessage message = new Gson().fromJson(s, ServerMessage.class);
+                ServerMessage message = GSON.fromJson(s, ServerMessage.class);
                 notificationHandler.notify(message);
             } catch (Exception e) {
                 System.out.println("CLIENT WS FAILED TO PARSE:");
@@ -59,7 +63,16 @@ public class WebSocketFacade extends Endpoint {
         }
     }
 
-    public void observeGame(String authToken, int gameID) throws ResponseException {
+    public void makeMove(String authToken, GameData gameData, ChessMove move) throws ResponseException {
+        try {
+            var userGameCommand = new UserGameCommand(UserGameCommand.CommandType.MAKE_MOVE, authToken, gameData.gameID(), move);
+            this.session.getBasicRemote().sendText(GSON.toJson(userGameCommand));
+        } catch (IOException e) {
+            throw new ResponseException(ResponseException.Code.ServerError, e.getMessage());
+        }
+    }
+
+    public void observeGame(String authToken, int gameID) throws ResponseException { //TODO:Implement this as well
         try {
             var userGameCommand = new UserGameCommand(websocket.commands.UserGameCommand.CommandType.CONNECT, authToken, gameID);
             this.session.getBasicRemote().sendText(new Gson().toJson(userGameCommand));

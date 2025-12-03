@@ -1,6 +1,8 @@
 package service;
 
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.InvalidMoveException;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import model.CreateGameRequest;
@@ -15,7 +17,7 @@ import java.util.Map;
 
 public class GameService {
     private GameDAO dataAccess;
-    private AuthService authService = new AuthService();
+    private AuthService authService;
 
     public GameService() {
     }
@@ -50,6 +52,11 @@ public class GameService {
         } else {
             throw new UnauthorizedException("Auth Token not found");
         }
+    }
+
+    public void updateGame(GameData gameData, ChessMove move) throws InvalidMoveException, SQLException, DataAccessException {
+        gameData.game().makeMove(move);
+        dataAccess.updateGame(gameData);
     }
 
     @SuppressWarnings("SameReturnValue")

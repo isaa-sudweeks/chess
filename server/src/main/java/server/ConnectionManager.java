@@ -1,6 +1,7 @@
 package server;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.eclipse.jetty.websocket.api.Session;
 import websocket.messages.ServerMessage;
 
@@ -11,6 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class ConnectionManager {
     public final ConcurrentHashMap<Integer, List<Session>> connections = new ConcurrentHashMap<>();
+    private static final Gson GSON = new GsonBuilder().enableComplexMapKeySerialization().create();
 
     public void add(int gameID, Session session) {
         var currentList = connections.get(gameID);
@@ -48,7 +50,8 @@ public class ConnectionManager {
 
     public void broadcast_game(int gameID, ServerMessage message) throws IOException {
         var sessions = connections.get(gameID);
-        String msg = new Gson().toJson(message);
+        // Use a Gson instance that supports complex map keys so ChessPosition keys deserialize on the client
+        String msg = GSON.toJson(message);
 
         System.out.println("broadcast_game: gameID=" + gameID);
         System.out.println("broadcast_game: json=" + msg);
