@@ -14,11 +14,18 @@ public class ServerMessage {
     ServerMessageType serverMessageType;
     private String message;
     private GameData game;
+    private String errorMessage;
 
     public ServerMessage(ServerMessageType type, String message) {
 
         this.serverMessageType = type;
-        this.message = message;
+
+        if (type == ServerMessageType.ERROR) {
+            this.errorMessage = message;
+        } else {
+            this.message = message;
+        }
+
     }
 
     public ServerMessage(ServerMessageType type, GameData game) {
@@ -28,6 +35,10 @@ public class ServerMessage {
 
     public ServerMessageType getServerMessageType() {
         return this.serverMessageType;
+    }
+
+    public String getErrorMessage() {
+        return errorMessage;
     }
 
     public String getMessage() {

@@ -5,10 +5,7 @@ import chess.ChessMove;
 import chess.InvalidMoveException;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
-import model.CreateGameRequest;
-import model.GameData;
-import model.JoinGameRequest;
-import model.ListResult;
+import model.*;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -59,6 +56,13 @@ public class GameService {
         dataAccess.updateGame(gameData);
     }
 
+    public void playerLeaves(GameData gameData, ChessGame.TeamColor teamColor) throws SQLException, DataAccessException {
+        if (teamColor == ChessGame.TeamColor.WHITE) {
+            GameData newGameData = new GameData(gameData.gameID(), null, gameData.blackUsername(), gameData.gameName(), gameData.game());
+            dataAccess.updateGame(newGameData);
+        }
+    }
+
     public void finishGame(GameData gameData) throws SQLException, DataAccessException {
         gameData.game().setIsDone(true);
         dataAccess.updateGame(gameData);
@@ -72,10 +76,13 @@ public class GameService {
         if (null == joinGameRequest.playerColor()) {
             throw new BadRequestException("Not a valid player color");
         }
-        if (null != authService.getAuth(joinGameRequest.authToken())) {
+        AuthData authData = authService.getAuth(joinGameRequest.authToken());
+        if (null != authData) {
             if (null != gameData) {
                 if (ChessGame.TeamColor.WHITE == joinGameRequest.playerColor()) {
-                    if (null == gameData.whiteUsername()) {
+                    if (null == gameData.whiteUsername() ||
+                            authData.username().equalsIgnoreCase(gameData.whiteUsername())) {
+
                         gameData = new GameData(
                                 gameData.gameID(),
                                 this.authService.getAuth(joinGameRequest.authToken()).username(),
@@ -86,7 +93,8 @@ public class GameService {
                     } else {
                         throw new AlreadyTakenException("That player is already taken");
                     }
-                } else if (ChessGame.TeamColor.BLACK == joinGameRequest.playerColor()) {
+                } else if (ChessGame.TeamColor.BLACK == joinGameRequest.playerColor() ||
+                        authData.username().equalsIgnoreCase(gameData.blackUsername())) {
                     if (null == gameData.blackUsername()) {
                         gameData = new GameData(
                                 gameData.gameID(),

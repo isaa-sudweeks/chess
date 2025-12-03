@@ -11,8 +11,8 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ConnectionManager {
-    public final ConcurrentHashMap<Integer, List<Session>> connections = new ConcurrentHashMap<>();
     private static final Gson GSON = new GsonBuilder().enableComplexMapKeySerialization().create();
+    public final ConcurrentHashMap<Integer, List<Session>> connections = new ConcurrentHashMap<>();
 
     public void add(int gameID, Session session) {
         var currentList = connections.get(gameID);
@@ -33,15 +33,13 @@ public class ConnectionManager {
         connections.replace(gameID, currentList);
     }
 
-    public void broadcast_all(Session excludeSession, ServerMessage message) throws IOException {
-        String msg = message.toString();
-        var sessions = connections.values();
-        for (List<Session> session : sessions) {
-            for (Session c : session) {
+    public void broadcast_all(Session excludeSession, Integer gameID, ServerMessage message) throws IOException {
+        var sessions = connections.get(gameID);
+        String msg = GSON.toJson(message);
+        for (Session c : sessions) {
+            if (c != excludeSession) {
                 if (c.isOpen()) {
-                    if (!c.equals(excludeSession)) {
-                        c.getRemote().sendString(msg);
-                    }
+                    c.getRemote().sendString(msg);
                 }
             }
         }

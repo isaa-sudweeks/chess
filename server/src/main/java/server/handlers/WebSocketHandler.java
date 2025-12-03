@@ -1,5 +1,6 @@
 package server.handlers;
 
+import chess.ChessGame;
 import chess.ChessMove;
 import chess.InvalidMoveException;
 import com.google.gson.Gson;
@@ -55,12 +56,19 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
     private void resign(String authToken, Integer gameID, Session session) throws IOException {
         try {
-            var games = gameService.listGames(authToken);
-            GameData gameData = games.games().get(gameID - 1);
-            gameService.finishGame(gameData);
-            connections.broadcast_game(gameData.gameID(),
-                    new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
-                            authService.getAuth(authToken).username() + " resigned the game "));
+            AuthData authData = authService.getAuth(authToken);
+            GameData gameData = getGame(gameID, authToken);
+            if (gameData.game().getIsDone()) {
+                authorized(session, "You can not resign more than once");
+            } else if (!(authData.username().equalsIgnoreCase(gameData.blackUsername())) &&
+                    !(authData.username().equalsIgnoreCase(gameData.whiteUsername()))) {
+                authorized(session, "You can not resign as an observer");
+            } else {
+                gameService.finishGame(gameData);
+                connections.broadcast_game(gameData.gameID(),
+                        new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
+                                authService.getAuth(authToken).username() + " resigned the game "));
+            }
         } catch (SQLException | DataAccessException e) {
             authorized(session, "There was an error" + e.getMessage());
         }
@@ -73,12 +81,22 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                 authorized(session, "Not Authorized");
             } else {
                 GameData gameData = getGame(gameID, authToken);
-                if (gameData.game().getIsDone()) {
+                ChessGame.TeamColor turn = gameData.game().getTeamTurn();
+                String testUsername = "";
+                if (turn == ChessGame.TeamColor.BLACK) {
+                    testUsername = gameData.blackUsername();
+                }
+                if (turn == ChessGame.TeamColor.WHITE) {
+                    testUsername = gameData.whiteUsername();
+                }
+                if (!(testUsername.equalsIgnoreCase(authData.username()))) {
+                    authorized(session, "It isn't your turn");
+                } else if (gameData.game().getIsDone()) {
                     authorized(session, "You can not make a move on a finished game");
                 } else {
                     gameService.updateGame(gameData, move);
                     connections.broadcast_game(gameID, new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, gameData));
-                    connections.broadcast_game(gameID,
+                    connections.broadcast_all(session, gameID,
                             new ServerMessage(
                                     ServerMessage.ServerMessageType.NOTIFICATION,
                                     authData.username() +
@@ -99,6 +117,11 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         session.getRemote().sendString(new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.ERROR, Not_Autherized)));
     }
 
+    private void sendOne(Session session, GameData gameData) throws IOException {
+        session.getRemote().sendString(GSON.toJson(
+                new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, gameData)));
+    }
+
     private void leave(String authToken, Integer gameID, Session session) throws IOException {
         try {
             AuthData authData = authService.getAuth(authToken);
@@ -106,6 +129,17 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                 authorized(session, "Not Authorized");
             } else {
                 connections.remove(gameID, session);
+                ChessGame.TeamColor color = null;
+                GameData gameData = getGame(gameID, authToken);
+                if (authData.username().equalsIgnoreCase(gameData.whiteUsername())) {
+                    color = ChessGame.TeamColor.WHITE;
+                }
+                if (authData.username().equalsIgnoreCase(gameData.blackUsername())) {
+                    color = ChessGame.TeamColor.BLACK;
+                }
+                if (color != null) {
+                    gameService.playerLeaves(getGame(gameID, authToken), color);
+                }
                 connections.broadcast_game(
                         gameID,
                         new ServerMessage(
@@ -129,7 +163,6 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             if (authData == null) {
                 authorized(session, "Not Authorized");
             } else {
-                connections.add(gameID, session);
                 StringBuilder sb = new StringBuilder();
                 sb.append(authData.username());
                 sb.append(" has joined");
@@ -137,9 +170,15 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                     sb.append(" playing as ");
                     sb.append(color);
                 }
-                connections.broadcast_game(gameID, new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, sb.toString()));
-                var games = gameService.listGames(authToken);
-                connections.broadcast_game(gameID, new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, getGame(gameID, authToken)));
+                var gameData = getGame(gameID, authToken);
+                if (gameData == null) {
+                    authorized(session, "Not a valid gameID");
+                } else {
+                    connections.broadcast_game(gameID,
+                            new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, sb.toString()));
+                    connections.add(gameID, session);
+                    sendOne(session, getGame(gameID, authToken));
+                }
             }
         } catch (IOException | SQLException | DataAccessException e) {
             authorized(session, "There was an error" + e.getMessage());

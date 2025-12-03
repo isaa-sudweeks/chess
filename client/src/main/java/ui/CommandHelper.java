@@ -132,8 +132,10 @@ public class CommandHelper implements NotificationHandler {
         }
     }
 
-    private boolean validSquare(String s) { //TODO: Make this so it deals with bad input like 55
+    private boolean validSquare(String s) {
         return s.length() == 2 &&
+                Character.isLetter(s.charAt(0)) &&
+                Character.isDigit(s.charAt(1)) &&
                 s.charAt(0) >= 'a' && s.charAt(0) <= 'h' &&
                 s.charAt(1) >= '1' && s.charAt(1) <= '8';
 
@@ -362,7 +364,7 @@ public class CommandHelper implements NotificationHandler {
             System.out.print(commandHelper("redraw chess board"));
         }
         if (message.getServerMessageType() == ServerMessage.ServerMessageType.ERROR) {
-            System.out.println(error(message.getMessage()));
+            System.out.println(error(message.getErrorMessage()));
         }
     }
 }
