@@ -119,12 +119,16 @@ public class OftenPrinted {
         var board = gameData.game().getBoard();
         List<Integer> movesRow = new ArrayList<>();
         List<Integer> movesCol = new ArrayList<>();
-        if (position != null) {
-            var moves = gameData.game().validMoves(position);
-            for (var move : moves) {
-                movesRow.add(move.getEndPosition().getRow());
-                movesCol.add(move.getEndPosition().getColumn());
+        try {
+            if (position != null) {
+                var moves = gameData.game().validMoves(position);
+                for (var move : moves) {
+                    movesRow.add(move.getEndPosition().getRow());
+                    movesCol.add(move.getEndPosition().getColumn());
+                }
             }
+        } catch (NullPointerException e) {
+            return SET_TEXT_COLOR_RED + "No piece at that position" + RESET_ALL_FORMATTING + "\n" + LOGGEDIN_HEADER;
         }
 
         boolean whitePerspective = !("black".equalsIgnoreCase(color));

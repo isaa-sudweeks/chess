@@ -40,6 +40,8 @@ public class CommandHelper implements NotificationHandler {
                 return preLogin(command);
             case 1:
                 return postLogin(command);
+            case 2:
+                return resign(command);
             case 3:
                 return gamePlayUI(command);
             default:
@@ -98,12 +100,9 @@ public class CommandHelper implements NotificationHandler {
                 return withHeader(error("There was an error: " + e.getMessage()), LOGGEDIN_HEADER);
             }
         } else if (command.equalsIgnoreCase("resign")) {
-            try {
-                webSocketFacade.resign(this.authToken, this.gameData.gameID());
-                return withHeader(ERASE_SCREEN, LOGGEDIN_HEADER);
-            } catch (ResponseException e) {
-                return withHeader(error("There was an error: " + e.getMessage()), LOGGEDIN_HEADER);
-            }
+            state = 2;
+            return withHeader("are you sure you want to resign", LOGGEDIN_HEADER);
+
         } else if (command.contains("highlight legal moves")) {
             String[] parts = command.split(" ");
             if (parts.length != 4) {
@@ -128,6 +127,24 @@ public class CommandHelper implements NotificationHandler {
         } else {
             return withHeader(warn("Command: " + command + "Was not recognized"), LOGGEDIN_HEADER);
         }
+    }
+
+    private String resign(String command) {
+        if (command.equalsIgnoreCase("yes")) {
+            try {
+                state = 3;
+                webSocketFacade.resign(this.authToken, this.gameData.gameID());
+                return withHeader(ERASE_SCREEN, LOGGEDIN_HEADER);
+            } catch (ResponseException e) {
+                return withHeader(error("There was an error: " + e.getMessage()), LOGGEDIN_HEADER);
+            }
+        } else if (command.equalsIgnoreCase("no")) {
+            state = 3;
+            return withHeader("Resignation cancelled", LOGGEDIN_HEADER);
+        } else {
+            return warn(withHeader(command + " was not reconized must be a yes or no", LOGGEDIN_HEADER));
+        }
+
     }
 
     private boolean validSquare(String s) {
