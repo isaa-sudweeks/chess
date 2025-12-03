@@ -117,8 +117,18 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                                 new ServerMessage(
                                         ServerMessage.ServerMessageType.NOTIFICATION,
                                         checkUsername + " is in checkmate the game is over"));
+                    } else if (gameData.game().isInStalemate(checkColor)) {
+                        gameService.finishGame(gameData);
+                        connections.broadcast_game(
+                                gameID,
+                                new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
+                                        "The game is in stalemate"));
                     } else if (gameData.game().isInCheck(checkColor)) {
-                        connections.broadcast_game(gameID, new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, checkUsername + " is in check"));
+                        connections.broadcast_game(
+                                gameID,
+                                new ServerMessage(
+                                        ServerMessage.ServerMessageType.NOTIFICATION,
+                                        checkUsername + " is in check"));
                     }
                 }
 
