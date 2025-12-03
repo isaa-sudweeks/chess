@@ -93,22 +93,7 @@ public class CommandHelper implements NotificationHandler {
                     int toRow = to.charAt(1) - '0';
                     ChessPiece.PieceType promotion = null;
                     try {
-                        var piece = gameData.game().getBoard().getPiece(new ChessPosition(fromRow, fromCol));
-                        if (piece.getPieceType() == ChessPiece.PieceType.PAWN) {
-                            if (color.equals(ChessGame.TeamColor.WHITE)) {
-                                if (toRow == 8) {
-                                    System.out.print(withHeader("What would you like to promote to?", LOGGEDIN_HEADER));
-
-                                    promotion = promote();
-                                }
-                            }
-                            if (color.equals(ChessGame.TeamColor.BLACK)) {
-                                if (toRow == 1) {
-                                    System.out.print(withHeader("What would you like to promote to?", LOGGEDIN_HEADER));
-                                    promotion = promote();
-                                }
-                            }
-                        }
+                        promotion = getPromotion(fromRow, fromCol, toRow, promotion);
                     } catch (NullPointerException e) {
                         return withHeader(error("There is no valid piece there"), LOGGEDIN_HEADER);
                     }
@@ -156,6 +141,26 @@ public class CommandHelper implements NotificationHandler {
         } else {
             return withHeader(warn("Command: " + command + "Was not recognized"), LOGGEDIN_HEADER);
         }
+    }
+
+    private ChessPiece.PieceType getPromotion(int fromRow, int fromCol, int toRow, ChessPiece.PieceType promotion) {
+        var piece = gameData.game().getBoard().getPiece(new ChessPosition(fromRow, fromCol));
+        if (piece.getPieceType() == ChessPiece.PieceType.PAWN) {
+            if (color.equals(ChessGame.TeamColor.WHITE)) {
+                if (toRow == 8) {
+                    System.out.print(withHeader("What would you like to promote to?", LOGGEDIN_HEADER));
+
+                    promotion = promote();
+                }
+            }
+            if (color.equals(ChessGame.TeamColor.BLACK)) {
+                if (toRow == 1) {
+                    System.out.print(withHeader("What would you like to promote to?", LOGGEDIN_HEADER));
+                    promotion = promote();
+                }
+            }
+        }
+        return promotion;
     }
 
     private ChessPiece.PieceType promote() {
