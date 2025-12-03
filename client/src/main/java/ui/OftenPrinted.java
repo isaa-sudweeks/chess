@@ -158,19 +158,7 @@ public class OftenPrinted {
                 var piece = board.getPiece(new ChessPosition(rowValue, colValue));
                 boolean whiteSquare = (rowValue + colValue) % 2 == 1;
                 String bgColor;
-                if (position != null && rowValue == position.getRow() && colValue == position.getColumn()) {
-                    bgColor = whiteSquare
-                            ? SET_BG_COLOR_YELLOW
-                            : SET_BG_COLOR_DARK_YELLOW;
-                } else if (position != null && movesRow.contains(rowValue) && movesCol.contains(colValue)) {
-                    bgColor = whiteSquare
-                            ? SET_BG_COLOR_GREEN
-                            : SET_BG_COLOR_DARK_GREEN;
-                } else {
-                    bgColor = whiteSquare
-                            ? EscapeSequences.SET_BG_COLOR_WHITE
-                            : EscapeSequences.SET_BG_COLOR_DARK_GREY;
-                }
+                bgColor = setBackgroundColor(position, rowValue, colValue, whiteSquare, movesRow, movesCol);
                 String textColor = whiteSquare
                         ? EscapeSequences.SET_TEXT_COLOR_BLACK
                         : EscapeSequences.SET_TEXT_COLOR_WHITE;
@@ -221,10 +209,25 @@ public class OftenPrinted {
         stringBuilder.append(RESET_ALL_FORMATTING).append("\n");
         stringBuilder.append(divider());
         stringBuilder.append(infoLine("You can still issue commands - type help to see them all."));
-//       stringBuilder.append(LOGGEDIN_HEADER);
-
         return stringBuilder.toString();
+    }
 
+    private String setBackgroundColor(ChessPosition position, int rowValue, int colValue, boolean whiteSquare, List<Integer> movesRow, List<Integer> movesCol) {
+        String bgColor;
+        if (position != null && rowValue == position.getRow() && colValue == position.getColumn()) {
+            bgColor = whiteSquare
+                    ? SET_BG_COLOR_YELLOW
+                    : SET_BG_COLOR_DARK_YELLOW;
+        } else if (position != null && movesRow.contains(rowValue) && movesCol.contains(colValue)) {
+            bgColor = whiteSquare
+                    ? SET_BG_COLOR_GREEN
+                    : SET_BG_COLOR_DARK_GREEN;
+        } else {
+            bgColor = whiteSquare
+                    ? EscapeSequences.SET_BG_COLOR_WHITE
+                    : EscapeSequences.SET_BG_COLOR_DARK_GREY;
+        }
+        return bgColor;
     }
 
 
