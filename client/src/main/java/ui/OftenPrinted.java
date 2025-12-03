@@ -1,5 +1,7 @@
 package ui;
 
+import chess.ChessGame;
+import chess.ChessPiece;
 import chess.ChessPosition;
 import model.GameData;
 
@@ -164,43 +166,43 @@ public class OftenPrinted {
                 String bgColor;
                 bgColor = setBackgroundColor(position, rowValue, colValue, whiteSquare, movesRow, movesCol);
                 String textColor = whiteSquare
-                        ? EscapeSequences.SET_TEXT_COLOR_BLACK
-                        : EscapeSequences.SET_TEXT_COLOR_WHITE;
+                        ? SET_TEXT_COLOR_BLACK
+                        : SET_TEXT_COLOR_WHITE;
 
                 stringBuilder.append(bgColor).append(textColor);
                 if (piece == null) {
-                    stringBuilder.append(EscapeSequences.EMPTY);
-                } else if (piece.getTeamColor() == chess.ChessGame.TeamColor.WHITE) {
-                    if (piece.getPieceType() == chess.ChessPiece.PieceType.KING) {
-                        stringBuilder.append(EscapeSequences.WHITE_KING);
-                    } else if (piece.getPieceType() == chess.ChessPiece.PieceType.QUEEN) {
-                        stringBuilder.append(EscapeSequences.WHITE_QUEEN);
-                    } else if (piece.getPieceType() == chess.ChessPiece.PieceType.BISHOP) {
-                        stringBuilder.append(EscapeSequences.WHITE_BISHOP);
-                    } else if (piece.getPieceType() == chess.ChessPiece.PieceType.KNIGHT) {
-                        stringBuilder.append(EscapeSequences.WHITE_KNIGHT);
-                    } else if (piece.getPieceType() == chess.ChessPiece.PieceType.ROOK) {
-                        stringBuilder.append(EscapeSequences.WHITE_ROOK);
+                    stringBuilder.append(EMPTY);
+                } else if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
+                    if (piece.getPieceType() == ChessPiece.PieceType.KING) {
+                        stringBuilder.append(WHITE_KING);
+                    } else if (piece.getPieceType() == ChessPiece.PieceType.QUEEN) {
+                        stringBuilder.append(WHITE_QUEEN);
+                    } else if (piece.getPieceType() == ChessPiece.PieceType.BISHOP) {
+                        stringBuilder.append(WHITE_BISHOP);
+                    } else if (piece.getPieceType() == ChessPiece.PieceType.KNIGHT) {
+                        stringBuilder.append(WHITE_KNIGHT);
+                    } else if (piece.getPieceType() == ChessPiece.PieceType.ROOK) {
+                        stringBuilder.append(WHITE_ROOK);
                     } else {
-                        stringBuilder.append(EscapeSequences.WHITE_PAWN);
+                        stringBuilder.append(WHITE_PAWN);
                     }
                 } else {
-                    if (piece.getPieceType() == chess.ChessPiece.PieceType.KING) {
-                        stringBuilder.append(EscapeSequences.BLACK_KING);
-                    } else if (piece.getPieceType() == chess.ChessPiece.PieceType.QUEEN) {
-                        stringBuilder.append(EscapeSequences.BLACK_QUEEN);
-                    } else if (piece.getPieceType() == chess.ChessPiece.PieceType.BISHOP) {
-                        stringBuilder.append(EscapeSequences.BLACK_BISHOP);
-                    } else if (piece.getPieceType() == chess.ChessPiece.PieceType.KNIGHT) {
-                        stringBuilder.append(EscapeSequences.BLACK_KNIGHT);
-                    } else if (piece.getPieceType() == chess.ChessPiece.PieceType.ROOK) {
-                        stringBuilder.append(EscapeSequences.BLACK_ROOK);
+                    if (piece.getPieceType() == ChessPiece.PieceType.KING) {
+                        stringBuilder.append(BLACK_KING);
+                    } else if (piece.getPieceType() == ChessPiece.PieceType.QUEEN) {
+                        stringBuilder.append(BLACK_QUEEN);
+                    } else if (piece.getPieceType() == ChessPiece.PieceType.BISHOP) {
+                        stringBuilder.append(BLACK_BISHOP);
+                    } else if (piece.getPieceType() == ChessPiece.PieceType.KNIGHT) {
+                        stringBuilder.append(BLACK_KNIGHT);
+                    } else if (piece.getPieceType() == ChessPiece.PieceType.ROOK) {
+                        stringBuilder.append(BLACK_ROOK);
                     } else {
-                        stringBuilder.append(EscapeSequences.BLACK_PAWN);
+                        stringBuilder.append(BLACK_PAWN);
                     }
                 }
-                stringBuilder.append(EscapeSequences.RESET_TEXT_COLOR);
-                stringBuilder.append(EscapeSequences.RESET_BG_COLOR);
+                stringBuilder.append(RESET_TEXT_COLOR);
+                stringBuilder.append(RESET_BG_COLOR);
             }
             stringBuilder.append(String.format(" %d ", rowValue)).append("\n");
         }
@@ -224,19 +226,28 @@ public class OftenPrinted {
             List<Integer> movesRow,
             List<Integer> movesCol) {
 
-        String bgColor;
+        String bgColor = "";
         if (position != null && rowValue == position.getRow() && colValue == position.getColumn()) {
             bgColor = whiteSquare
                     ? SET_BG_COLOR_YELLOW
                     : SET_BG_COLOR_DARK_YELLOW;
-        } else if (position != null && movesRow.contains(rowValue) && movesCol.contains(colValue)) {
-            bgColor = whiteSquare
-                    ? SET_BG_COLOR_GREEN
-                    : SET_BG_COLOR_DARK_GREEN;
+        } else if (!movesCol.isEmpty()) {
+            for (int i = 0; i < movesRow.toArray().length; i++) {
+                if (position != null && movesRow.get(i) == rowValue && movesCol.get(i) == colValue) {
+                    bgColor = whiteSquare
+                            ? SET_BG_COLOR_GREEN
+                            : SET_BG_COLOR_DARK_GREEN;
+                    break;
+                } else {
+                    bgColor = whiteSquare
+                            ? SET_BG_COLOR_WHITE
+                            : SET_BG_COLOR_DARK_GREY;
+                }
+            }
         } else {
             bgColor = whiteSquare
-                    ? EscapeSequences.SET_BG_COLOR_WHITE
-                    : EscapeSequences.SET_BG_COLOR_DARK_GREY;
+                    ? SET_BG_COLOR_WHITE
+                    : SET_BG_COLOR_DARK_GREY;
         }
         return bgColor;
     }

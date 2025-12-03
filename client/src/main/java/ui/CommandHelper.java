@@ -2,6 +2,7 @@ package ui;
 
 import chess.ChessGame;
 import chess.ChessMove;
+import chess.ChessPiece;
 import chess.ChessPosition;
 import exception.ResponseException;
 import model.*;
@@ -9,6 +10,8 @@ import serverfacade.ServerFacade;
 import websocket.NotificationHandler;
 import websocket.WebSocketFacade;
 import websocket.messages.ServerMessage;
+
+import java.util.Scanner;
 
 import static ui.EscapeSequences.*;
 import static ui.OftenPrinted.*;
@@ -88,8 +91,27 @@ public class CommandHelper implements NotificationHandler {
 
                     int toCol = to.charAt(0) - 'a' + 1;
                     int toRow = to.charAt(1) - '0';
+                    ChessPiece.PieceType promotion = null;
+                    try {
+                        var piece = gameData.game().getBoard().getPiece(new ChessPosition(fromRow, fromCol));
+                        if (piece.equals(ChessPiece.PieceType.PAWN)) {
+                            if (color.equals(ChessGame.TeamColor.WHITE)) {
+                                if (toRow == 8) {
+                                    withHeader("What would you like to promote to?", LOGGEDIN_HEADER);
+                                    promotion = promote();
+                                }
+                            }
+                        }
+                    } catch (NullPointerException e) {
+                        return withHeader(error("There is no valid piece there"), LOGGEDIN_HEADER);
+                    }
 
-                    ChessMove move = new ChessMove(new ChessPosition(fromRow, fromCol), new ChessPosition(toRow, toCol), null);
+
+                    ChessMove move =
+                            new ChessMove(
+                                    new ChessPosition(fromRow, fromCol),
+                                    new ChessPosition(toRow, toCol), promotion);
+
                     webSocketFacade.makeMove(this.authToken, gameData, move);
                     return withHeader("", LOGGEDIN_HEADER);
 
@@ -126,6 +148,24 @@ public class CommandHelper implements NotificationHandler {
             return withHeader(op.renderChessBoard(this.gameData, this.color.name(), new ChessPosition(fromRow, fromCol)), LOGGEDIN_HEADER);
         } else {
             return withHeader(warn("Command: " + command + "Was not recognized"), LOGGEDIN_HEADER);
+        }
+    }
+
+    private ChessPiece.PieceType promote() {
+        Scanner scanner = new Scanner(System.in);
+        while (true) {
+            String command = scanner.nextLine();
+            if (command.equalsIgnoreCase("pawn")) {
+                return ChessPiece.PieceType.PAWN;
+            } else if (command.equalsIgnoreCase("rook")) {
+                return ChessPiece.PieceType.ROOK;
+            } else if (command.equalsIgnoreCase("bishop")) {
+                return ChessPiece.PieceType.BISHOP;
+            } else if (command.equalsIgnoreCase("queen")) {
+                return ChessPiece.PieceType.QUEEN;
+            } else if (command.equalsIgnoreCase("knight")) {
+                return ChessPiece.PieceType.KNIGHT;
+            }
         }
     }
 
