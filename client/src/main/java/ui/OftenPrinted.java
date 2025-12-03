@@ -212,7 +212,14 @@ public class OftenPrinted {
         return stringBuilder.toString();
     }
 
-    private String setBackgroundColor(ChessPosition position, int rowValue, int colValue, boolean whiteSquare, List<Integer> movesRow, List<Integer> movesCol) {
+    private String setBackgroundColor(
+            ChessPosition position,
+            int rowValue,
+            int colValue,
+            boolean whiteSquare,
+            List<Integer> movesRow,
+            List<Integer> movesCol) {
+
         String bgColor;
         if (position != null && rowValue == position.getRow() && colValue == position.getColumn()) {
             bgColor = whiteSquare
