@@ -51,7 +51,7 @@ public class CommandHelper implements NotificationHandler {
         if (command.equalsIgnoreCase("help")) {
             return withHeader(GAMEPLAYUIHELP, LOGGEDIN_HEADER);
         } else if (command.equalsIgnoreCase("redraw chess board")) {
-            return op.renderChessBoard(gameData, this.color.name());
+            return withHeader(op.renderChessBoard(gameData, this.color.name(), null), LOGGEDIN_HEADER);
 
         } else if (command.equalsIgnoreCase("leave")) {
             try {
@@ -124,7 +124,7 @@ public class CommandHelper implements NotificationHandler {
             int fromRow = from.charAt(1) - '0';
 
 
-            return withHeader(op.highlightLegalMoves(this.gameData, this.color.name(), new ChessPosition(fromRow, fromCol)), LOGGEDIN_HEADER);
+            return withHeader(op.renderChessBoard(this.gameData, this.color.name(), new ChessPosition(fromRow, fromCol)), LOGGEDIN_HEADER);
         } else {
             return withHeader(warn("Command: " + command + "Was not recognized"), LOGGEDIN_HEADER);
         }
